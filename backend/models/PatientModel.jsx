@@ -38,22 +38,22 @@ const patientSchema = mongoose.Schema(
       type: String,
       required: false,
     },
-    doctors: {
-      type: [{ type: mongoose.Schema.ObjectId, ref: "Doctor" }],
-      required: false,
-    },
-    appointments: {
-      type: [{ type: mongoose.Schema.ObjectId, ref: "Appointment" }],
-      required: false,
-    },
-    conversations: {
-      type: [{ type: mongoose.Schema.ObjectId, ref: "Conversation" }],
-      required: false,
-    },
-    healthInfo: {
-      type: [{ type: mongoose.Schema.ObjectId, ref: "HealthInformation" }],
-      required: false,
-    },
+    // doctors: {
+    //   type: [{ type: mongoose.Schema.ObjectId, ref: "Doctor" }],
+    //   required: false,
+    // },
+    // appointments: {
+    //   type: [{ type: mongoose.Schema.ObjectId, ref: "Appointment" }],
+    //   required: false,
+    // },
+    // conversations: {
+    //   type: [{ type: mongoose.Schema.ObjectId, ref: "Conversation" }],
+    //   required: false,
+    // },
+    // healthInfo: {
+    //   type: [{ type: mongoose.Schema.ObjectId, ref: "HealthInformation" }],
+    //   required: false,
+    // },
   },
   { timestamps: true }
 );
