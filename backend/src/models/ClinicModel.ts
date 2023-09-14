@@ -26,6 +26,4 @@ const clinicSchema = new Schema(
   { timestamps: true }
 );
 
-const Clinic = model("Clinic", clinicSchema);
-
-module.exports = Clinic;
+export const Clinic = model("Clinic", clinicSchema);

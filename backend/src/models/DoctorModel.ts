@@ -39,6 +39,4 @@ const doctorSchema = new Schema(
   { timestamps: true }
 );
 
-const Doctor = model("Doctor", doctorSchema);
-
-module.exports = Doctor;
+export const Doctor = model("Doctor", doctorSchema);

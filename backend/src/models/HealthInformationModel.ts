@@ -14,9 +14,7 @@ const healthInformationSchema = new Schema(
   { timestamps: true }
 );
 
-const HealthInformation = model(
+export const HealthInformation = model(
   "HealthInformation",
   healthInformationSchema
 );
-
-module.exports = HealthInformation;

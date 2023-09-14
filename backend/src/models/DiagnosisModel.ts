@@ -26,6 +26,4 @@ const diagnosisSchema = new Schema(
   { timestamps: true }
 );
 
-const Diagnosis = model("Diagnosis", diagnosisSchema);
-
-module.exports = Diagnosis;
+export const Diagnosis = model("Diagnosis", diagnosisSchema);

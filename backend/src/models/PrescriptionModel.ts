@@ -26,6 +26,4 @@ const prescriptionSchema = new Schema(
   { timestamps: true }
 );
 
-const Prescription = model("Prescription", prescriptionSchema);
-
-module.exports = Prescription;
+export const Prescription = model("Prescription", prescriptionSchema);
