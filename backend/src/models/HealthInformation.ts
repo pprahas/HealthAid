@@ -1,6 +1,11 @@
-const mongoose = require("mongoose");
+import { Schema, model } from "mongoose";
 
-const healthInformationSchema = mongoose.Schema(
+export type HealthInformation = {
+  question: string;
+  answer: string;
+}
+
+const healthInformationSchema = new Schema(
   {
     question: {
       type: String,
@@ -14,9 +19,7 @@ const healthInformationSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-const HealthInformation = mongoose.model(
+export const HealthInformationDTO = model(
   "HealthInformation",
   healthInformationSchema
 );
-
-module.exports = HealthInformation;

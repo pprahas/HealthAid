@@ -1,5 +1,12 @@
 import { Schema, model } from "mongoose";
 
+export type Appointment = {
+  appointmentId: string;
+  doctorName: string;
+  patientName: string;
+  date: Date;
+}
+
 const appointmentSchema = new Schema(
   {
     appointmentId: {
@@ -22,4 +29,4 @@ const appointmentSchema = new Schema(
   { timestamps: true }
 );
 
-export const Appointment = model("Appointment", appointmentSchema);
+export const AppointmentDTO = model("Appointment", appointmentSchema);

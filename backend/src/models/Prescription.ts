@@ -1,6 +1,14 @@
-const mongoose = require("mongoose");
+import { Schema, model } from "mongoose";
 
-const prescriptionSchema = mongoose.Schema(
+export type Patient = {
+  prescriptionId: string;
+  date: Date;
+  nam: string;
+  expirationDate: Date;
+  remainingRefills?: Number;
+}
+
+const prescriptionSchema = new Schema(
   {
     prescriptionId: {
       type: String,
@@ -26,6 +34,4 @@ const prescriptionSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-const Prescription = mongoose.model("Prescription", prescriptionSchema);
-
-module.exports = Prescription;
+export const PrescriptionDTO = model("Prescription", prescriptionSchema);

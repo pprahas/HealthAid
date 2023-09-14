@@ -1,6 +1,14 @@
-const mongoose = require("mongoose");
+import { Schema, model } from "mongoose";
 
-const clinicSchema = mongoose.Schema(
+export type Clinic = {
+  clinicId: string;
+  name: string;
+  address: string;
+  website: string;
+  phoneNumber: string;
+}
+
+const clinicSchema = new Schema(
   {
     clinicId: {
       type: String,
@@ -26,6 +34,4 @@ const clinicSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-const Clinic = mongoose.model("Clinic", clinicSchema);
-
-module.exports = Clinic;
+export const ClinicDTO = model("Clinic", clinicSchema);
