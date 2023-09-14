@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+import { Schema, model } from "mongoose";
 
-const healthInformationSchema = mongoose.Schema(
+const healthInformationSchema = new Schema(
   {
     question: {
       type: String,
@@ -14,7 +14,7 @@ const healthInformationSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-const HealthInformation = mongoose.model(
+const HealthInformation = model(
   "HealthInformation",
   healthInformationSchema
 );

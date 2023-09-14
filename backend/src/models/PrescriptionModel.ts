@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+import { Schema, model } from "mongoose";
 
-const prescriptionSchema = mongoose.Schema(
+const prescriptionSchema = new Schema(
   {
     prescriptionId: {
       type: String,
@@ -26,6 +26,6 @@ const prescriptionSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-const Prescription = mongoose.model("Prescription", prescriptionSchema);
+const Prescription = model("Prescription", prescriptionSchema);
 
 module.exports = Prescription;

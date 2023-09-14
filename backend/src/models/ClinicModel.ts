@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+import { Schema, model } from "mongoose";
 
-const clinicSchema = mongoose.Schema(
+const clinicSchema = new Schema(
   {
     clinicId: {
       type: String,
@@ -26,6 +26,6 @@ const clinicSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-const Clinic = mongoose.model("Clinic", clinicSchema);
+const Clinic = model("Clinic", clinicSchema);
 
 module.exports = Clinic;

@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+import mongoose, { Schema, model } from "mongoose";
 
-const diagnosisSchema = mongoose.Schema(
+const diagnosisSchema = new Schema(
   {
     diagnosisId: {
       type: String,
@@ -26,6 +26,6 @@ const diagnosisSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-const Diagnosis = mongoose.model("Diagnosis", diagnosisSchema);
+const Diagnosis = model("Diagnosis", diagnosisSchema);
 
 module.exports = Diagnosis;

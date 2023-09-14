@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+import { Schema, model } from "mongoose";
 
-const patientSchema = mongoose.Schema(
+const patientSchema = new Schema(
   {
     firstName: {
       type: String,
@@ -39,21 +39,21 @@ const patientSchema = mongoose.Schema(
       required: false,
     },
     doctors: {
-      type: [{ type: mongoose.Schema.ObjectId, ref: "Doctor" }],
+      type: [{ type: new Schema.ObjectId, ref: "Doctor" }],
       required: false,
     },
     appointments: {
-      type: [{ type: mongoose.Schema.ObjectId, ref: "Appointment" }],
+      type: [{ type: new Schema.ObjectId, ref: "Appointment" }],
       required: false,
     },
     healthInfo: {
-      type: [{ type: mongoose.Schema.ObjectId, ref: "HealthInformation" }],
+      type: [{ type: new Schema.ObjectId, ref: "HealthInformation" }],
       required: false,
     },
   },
   { timestamps: true }
 );
 
-const Patient = mongoose.model("Patient", patientSchema);
+const Patient = model("Patient", patientSchema);
 
 module.exports = Patient;
