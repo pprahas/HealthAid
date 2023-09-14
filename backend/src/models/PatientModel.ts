@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 
 const patientSchema = new Schema(
   {
@@ -39,15 +39,15 @@ const patientSchema = new Schema(
       required: false,
     },
     doctors: {
-      type: [{ type: new Schema.ObjectId, ref: "Doctor" }],
+      type: [{ type: mongoose.Schema.ObjectId, ref: "Doctor" }],
       required: false,
     },
     appointments: {
-      type: [{ type: new Schema.ObjectId, ref: "Appointment" }],
+      type: [{ type: mongoose.Schema.ObjectId, ref: "Appointment" }],
       required: false,
     },
     healthInfo: {
-      type: [{ type: new Schema.ObjectId, ref: "HealthInformation" }],
+      type: [{ type: mongoose.Schema.ObjectId, ref: "HealthInformation" }],
       required: false,
     },
   },
