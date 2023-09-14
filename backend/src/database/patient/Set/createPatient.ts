@@ -1,4 +1,4 @@
-import { Patient, PatientDTO } from "@models/patient/Patient";
+import { Patient, PatientDTO } from "@models/Patient";
 
 export enum CreatePatientError {
     invalidPatientInfo = "Invalid User Info",

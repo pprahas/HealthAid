@@ -1,6 +1,6 @@
 import { createPatient } from "@database/patient/Set/createPatient";
 import { Request, Response } from "express";
-import { Patient } from "@models/patient/Patient";
+import { Patient } from "@models/Patient";
 
 export async function register(req: Request, res: Response): Promise<Response> {
   try {
