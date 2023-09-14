@@ -4,7 +4,7 @@ Scrum Documents - https://drive.google.com/drive/folders/1VJJGyzOLFHTnZvSQiZsNlK
 
 ## Frontend
 
-Start the application by running `npm run dev` in the `client` directory. Then go to http://localhost:3000/
+Start the application by running `npm run dev` in the `frontend` directory. Then go to http://localhost:3000/ to view the frontend.
 
 ## Backend
 
