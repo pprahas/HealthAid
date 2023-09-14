@@ -23,25 +23,25 @@ export async function createPatient(patient: Patient) {
     } catch (error) {
         throw error
     }
+}
 
-    // Helper Functions
-    async function verifyEmailFree(email: String) {
-        const user = await PatientDTO.findOne({ email: email })
-        if (!!user) {
-            throw CreatePatientError.emailInUse
-        }
+// Helper Functions
+async function verifyEmailFree(email: String) {
+    const user = await PatientDTO.findOne({ email: email })
+    if (!!user) {
+        throw CreatePatientError.emailInUse
     }
-    
-    function verifyInfo(patient: Patient) {
-        const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
-        // Verify email is a valid email
-        if (patient.email == "" || !emailRegex.test(patient.email)) {
-            throw CreatePatientError.invalidEmail
-        }
-    
-        // Verify first and last name are not empty
-        if (patient.firstName == "" || patient.lastName == "") {
-            throw CreatePatientError.invalidPatientInfo
-        }
+}
+
+function verifyInfo(patient: Patient) {
+    const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+    // Verify email is a valid email
+    if (patient.email == "" || !emailRegex.test(patient.email)) {
+        throw CreatePatientError.invalidEmail
+    }
+
+    // Verify first and last name are not empty
+    if (patient.firstName == "" || patient.lastName == "") {
+        throw CreatePatientError.invalidPatientInfo
     }
 }
