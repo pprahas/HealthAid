@@ -1,5 +1,13 @@
 import { Schema, model } from "mongoose";
 
+export type Clinic = {
+  clinicId: string;
+  name: string;
+  address: string;
+  website: string;
+  phoneNumber: string;
+}
+
 const clinicSchema = new Schema(
   {
     clinicId: {
@@ -26,4 +34,4 @@ const clinicSchema = new Schema(
   { timestamps: true }
 );
 
-export const Clinic = model("Clinic", clinicSchema);
+export const ClinicDTO = model("Clinic", clinicSchema);

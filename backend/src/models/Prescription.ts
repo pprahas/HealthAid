@@ -1,5 +1,13 @@
 import { Schema, model } from "mongoose";
 
+export type Patient = {
+  prescriptionId: string;
+  date: Date;
+  nam: string;
+  expirationDate: Date;
+  remainingRefills?: Number;
+}
+
 const prescriptionSchema = new Schema(
   {
     prescriptionId: {
@@ -26,4 +34,4 @@ const prescriptionSchema = new Schema(
   { timestamps: true }
 );
 
-export const Prescription = model("Prescription", prescriptionSchema);
+export const PrescriptionDTO = model("Prescription", prescriptionSchema);
