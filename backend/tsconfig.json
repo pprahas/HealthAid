@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+      "allowJs": false,
+      "esModuleInterop": true,
+      "target": "es2017",
+      "module": "commonjs",
+      "noImplicitReturns": true,
+      "noUnusedLocals": true,
+      "outDir": "lib",
+      "sourceMap": true,
+      "baseUrl": "./src",
+      "paths": {
+        "@authentication/*": ["./routes/authentication/*"],
+        "@models/*": ["./models/*"],
+      },
+    },
+    "compileOnSave": true,
+    "include": ["src/**/*.ts", "src/routes/authentication/login.js"],
+  }
+    

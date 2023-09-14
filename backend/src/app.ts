@@ -1,22 +1,24 @@
 // import required libraries and modules
-const express = require("express");
-const mongoose = require("mongoose");
-const morgan = require("morgan");
-const cors = require("cors");
-require("dotenv").config();
-const cookieParser = require("cookie-parser");
+import express from 'express';
+import mongoose from 'mongoose';
+import morgan from 'morgan'
+import cors from 'cors'
+import cookieParser from 'cookie-parser'
+import dotenv from "dotenv";
+import path from "path";
+
+
+const envPath = path.resolve(__dirname, `config/.env`);
+dotenv.config({ path: envPath });
 
 // create an instance of express
 const app = express();
 app.use(express.json());
 
 // connect to MongoDB
-const uri = process.env.MONGODB_CONNECTION_STRING;
+const uri = process.env.MONGODB_CONNECTION_STRING
 mongoose
-  .connect(uri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(uri)
   .then(() => console.log("HealthAid db connection established"))
   .catch((err) => console.log("HealthAid db connection not established"));
 
@@ -28,9 +30,6 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
 // routes
-const loginRoutes = require("./routes/authentication/login");
-app.use("/login", loginRoutes);
-
 // listen on port
 const port = 3001;
 app.listen(port, () => {

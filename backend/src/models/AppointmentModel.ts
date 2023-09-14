@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+import { Schema, model } from "mongoose";
 
-const appointmentSchema = mongoose.Schema(
+const appointmentSchema = new Schema(
   {
     appointmentId: {
       type: String,
@@ -22,6 +22,4 @@ const appointmentSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-const Appointment = mongoose.model("Appointment", appointmentSchema);
-
-module.exports = Appointment;
+export const Appointment = model("Appointment", appointmentSchema);
