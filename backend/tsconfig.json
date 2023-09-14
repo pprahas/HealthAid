@@ -10,11 +10,14 @@
       "sourceMap": true,
       "baseUrl": "./src",
       "paths": {
-        "@authentication/*": ["./routes/authentication/*"],
-        "@models/*": ["./models/*"],
+        "@routes/*": ["routes/*"],
+        "@controllers/*": ["controllers/*"],
+        "@models/*": ["models/*"],
+        "@database/*": ["database/*"],
+        "@endpoints/*": ["endpoints/*"],
       },
     },
     "compileOnSave": true,
-    "include": ["src/**/*.ts", "src/routes/authentication/login.js"],
+    "include": ["src/**/*.ts", "src/**/**/*.ts", "src/**/**/**/*.ts"],
   }
     
