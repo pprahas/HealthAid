@@ -1,5 +1,10 @@
 import { Schema, model } from "mongoose";
 
+export type HealthInformation = {
+  question: string;
+  answer: string;
+}
+
 const healthInformationSchema = new Schema(
   {
     question: {
@@ -14,7 +19,7 @@ const healthInformationSchema = new Schema(
   { timestamps: true }
 );
 
-export const HealthInformation = model(
+export const HealthInformationDTO = model(
   "HealthInformation",
   healthInformationSchema
 );

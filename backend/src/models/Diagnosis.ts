@@ -1,4 +1,12 @@
-import mongoose, { Schema, model } from "mongoose";
+import { Schema, model } from "mongoose";
+
+export type Diagnosis = {
+  diagnosisId: string;
+  isReviewed: Boolean;
+  dateReviewed: Date;
+  content: string;
+  prescriptions?: [typeof Schema.ObjectId]
+}
 
 const diagnosisSchema = new Schema(
   {
@@ -19,11 +27,11 @@ const diagnosisSchema = new Schema(
       required: true,
     },
     prescriptions: {
-      type: [{ type: mongoose.Schema.ObjectId, ref: "Prescription" }],
+      type: [{ type: Schema.ObjectId, ref: "Prescription" }],
       required: false,
     },
   },
   { timestamps: true }
 );
 
-export const Diagnosis = model("Diagnosis", diagnosisSchema);
+export const DiagnosisDTO = model("Diagnosis", diagnosisSchema);

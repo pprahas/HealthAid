@@ -1,5 +1,16 @@
 import mongoose, { Schema, model } from "mongoose";
 
+export type Doctor = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  birthday?: Date;
+  clinic?: typeof Schema.ObjectId;
+  appointments?: [typeof mongoose.Schema.ObjectId];
+  patients?: [typeof mongoose.Schema.ObjectId];
+}
+
 const doctorSchema = new Schema(
   {
     firstName: {
@@ -23,20 +34,20 @@ const doctorSchema = new Schema(
       required: false,
     },
     clinic: {
-      type: mongoose.Schema.ObjectId,
+      type: Schema.ObjectId,
       ref: "Clinic",
       required: false,
     },
     appointments: {
-      type: [{ type: mongoose.Schema.ObjectId, ref: "Appointment" }],
+      type: [{ type: Schema.ObjectId, ref: "Appointment" }],
       required: false,
     },
     patients: {
-      type: [{ type: mongoose.Schema.ObjectId, ref: "Patient" }],
+      type: [{ type: Schema.ObjectId, ref: "Patient" }],
       required: false,
     },
   },
   { timestamps: true }
 );
 
-export const Doctor = model("Doctor", doctorSchema);
+export const DoctorDTO = model("Doctor", doctorSchema);
