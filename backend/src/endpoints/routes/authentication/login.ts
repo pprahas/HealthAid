@@ -5,10 +5,10 @@ class LoginRoutes {
   router = Router();
 
   constructor() {
-    this.intializeRoutes();
+    this.initializeRoutes();
   }
 
-  intializeRoutes() {
+  initializeRoutes() {
     this.router.post("/", login);
   }
 }
