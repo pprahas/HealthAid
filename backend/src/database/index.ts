@@ -1,5 +1,8 @@
 import mongoose from "mongoose";
 
+/**
+   * Connects to our MongoDB database
+   */
 export default function connectToDatabase() {
     const uri = process.env.MONGODB_CONNECTION_STRING
     mongoose
