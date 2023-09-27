@@ -1,63 +1,34 @@
 import "@/styles/globals.css";
-import { Metadata } from "next";
-import { siteConfig } from "@/config/site";
-import { fontSans } from "@/config/fonts";
 import { Providers } from "./providers";
-import { Navbar } from "@/components/navbar";
-import { Link } from "@nextui-org/link";
-import clsx from "clsx";
 
-export const metadata: Metadata = {
-	title: {
-		default: siteConfig.name,
-		template: `%s - ${siteConfig.name}`,
-	},
-	description: siteConfig.description,
-	themeColor: [
-		{ media: "(prefers-color-scheme: light)", color: "white" },
-		{ media: "(prefers-color-scheme: dark)", color: "black" },
-	],
-	icons: {
-		icon: "/favicon.ico",
-		shortcut: "/favicon-16x16.png",
-		apple: "/apple-touch-icon.png",
-	},
-};
-
-export default function RootLayout({
-	children,
-}: {
-	children: React.ReactNode;
-}) {
+export default function RootLayout({children}: { children: React.ReactNode }) {
 	return (
-		<html lang="en" suppressHydrationWarning>
-			<head />
-			<body
-				className={clsx(
-					"min-h-screen bg-background font-sans antialiased",
-					fontSans.variable
-				)}
-			>
-				<Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-					<div className="relative flex flex-col h-screen">
-						<Navbar />
-						<main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow">
-							{children}
-						</main>
-						<footer className="w-full flex items-center justify-center py-3">
-							<Link
-								isExternal
-								className="flex items-center gap-1 text-current"
-								href="https://nextui-docs-v2.vercel.app?utm_source=next-app-template"
-								title="nextui.org homepage"
-							>
-								<span className="text-default-600">Powered by</span>
-								<p className="text-primary">NextUI</p>
-							</Link>
-						</footer>
-					</div>
-				</Providers>
-			</body>
-		</html>
+		<Providers>
+			<div className="healthaid font-outfit min-h-screen flex flex-col">
+				<header
+					className="bg-background last:sticky top-0 h-14"
+				>
+					<aside className="bg-background w-full md:w-60 top-0 h-14 flex justify-center items-center">
+					
+						<h1 className="text-3xl font-bold">HealthAid</h1>
+						
+					</aside>
+				</header>
+				<div className="flex flex-col md:flex-row flex-1">
+					<aside className="bg-background w-full md:w-60">
+					
+					Sidebar entries here
+				
+					</aside>
+					<main className="flex-1">
+						<div>
+							
+						</div>
+						{children}
+					</main>
+				</div>
+			</div>
+			
+		</Providers>
 	);
-}
+  }
