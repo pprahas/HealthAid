@@ -1,7 +1,7 @@
 import { Application } from "express";
 import registerRoutes from "./authentication/register";
 import loginRoutes from "./authentication/login";
-import patientHealthInformationRoutes from "./health_information/patient_health_information";
+import patientHealthInformationRoutes from "./healthInformation/patientHealthInformation";
 
 export default class Routes {
   constructor(app: Application) {

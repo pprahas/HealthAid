@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { update_health_information } from "@endpoints/controllers/health_information/patient_health_information";
+import { updateHealthInformation } from "@endpoints/controllers/healthInformation/patientHealthInformation";
 
 class HealthInformationRoutes {
   router = Router();
@@ -9,7 +9,7 @@ class HealthInformationRoutes {
   }
 
   initializeRoutes() {
-    this.router.post("/", update_health_information);
+    this.router.post("/", updateHealthInformation);
   }
 }
 

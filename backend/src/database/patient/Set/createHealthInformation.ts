@@ -9,7 +9,7 @@ export enum HealthInformationError {
   unsuccessfulLogin = "Incorrect Email.",
 }
 
-export async function updateHealthInformation(body) {
+export async function createHealthInformation(body) {
   try {
     const email = body.email;
 
