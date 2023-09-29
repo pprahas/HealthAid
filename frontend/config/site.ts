@@ -10,11 +10,11 @@ export const siteConfig = {
 	},
 	{
 		label: "|",
-		href: "/name",
+		href: "/profile",
 	},
     {
       label: "Name",
-      href: "/name",
+      href: "/profile",
     },
     // {
     //   label: "Pricing",
