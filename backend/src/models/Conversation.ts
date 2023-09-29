@@ -22,10 +22,10 @@ export const conversationSchema = new Schema(
     date: {
       type: Date,
     },
-    doctorName: {
+    doctor: {
       type: { type: Schema.ObjectId, ref: "Doctor" },
     },
-    patientName: {
+    patient: {
       type: { type: Schema.ObjectId, ref: "Patient" },
     },
     content: {
