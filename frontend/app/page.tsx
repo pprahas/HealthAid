@@ -1,55 +1,86 @@
-import NextLink from "next/link";
-import { Link } from "@nextui-org/link";
-import { Snippet } from "@nextui-org/snippet";
-import { Code } from "@nextui-org/code"
-import { button as buttonStyles } from "@nextui-org/theme";
-import { siteConfig } from "@/config/site";
-import { title, subtitle } from "@/components/primitives";
-import { GithubIcon } from "@/components/icons";
+import { title } from "@/components/primitives";
+"use client";
+import { useState } from 'react';
 
-export default function Home() {
+export default function LoginPage() {
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
+	const [error, setError] = useState('');
+
+	const handleLogin = async () => {
+		try {
+			const requestBody = {
+				email: email,
+				password: password,
+			};
+
+			const response = await fetch('http://localhost:8080/login', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(requestBody), // Send email and password as JSON
+				mode: 'cors', // Enable CORS
+
+			});
+
+			if (response.ok) {
+				// Login successful, redirect to dashboard or another page
+				// You can use react-router or similar for navigation
+				window.location.href = '/dashboard';
+			} else {
+				const data = await response.json();
+				setError('Invalid email or password. Please try again.');
+			}
+		} catch (error) {
+			console.error('Error:', error);
+			setError('An error occurred while logging in.');
+		}
+	};
+
 	return (
 		<section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
-			
 			<div className="inline-block max-w-lg text-center justify-center">
-				<h1 className={title()}>Make&nbsp;</h1>
-				<h1 className={title({ color: "violet" })}>beautiful&nbsp;</h1>
-				<br />
-				<h1 className={title()}>
-					websites regardless of your design experience.
-				</h1>
-				<h2 className={subtitle({ class: "mt-4" })}>
-					Beautiful, fast and modern React UI library.
-				</h2>
+				<h1 className="text-3xl font-bold mb-4">Login</h1>
 			</div>
 
-			<div className="flex gap-3">
-				<Link
-					isExternal
-					as={NextLink}
-					href={siteConfig.links.docs}
-					className={buttonStyles({ color: "primary", radius: "full", variant: "shadow" })}
-				>
-					Documentation
-				</Link>
-				<Link
-					isExternal
-					as={NextLink}
-					className={buttonStyles({ variant: "bordered", radius: "full" })}
-					href={siteConfig.links.github}
-				>
-					<GithubIcon size={20} />
-					GitHub
-				</Link>
+			<div className="mb-4">
+				<input
+					type="text"
+					placeholder="Email"
+					className="border p-2 rounded"
+					value={email}
+					onChange={(e) => setEmail(e.target.value)}
+				/>
 			</div>
 
-			<div className="mt-8">
-				<Snippet hideSymbol hideCopyButton variant="flat">
-					<span>
-						Get started by editing <Code color="primary">app/page.tsx</Code>
-					</span>
-				</Snippet>
+			<div className="mb-4">
+				<input
+					type="password"
+					placeholder="Password"
+					className="border p-2 rounded"
+					value={password}
+					onChange={(e) => setPassword(e.target.value)}
+				/>
 			</div>
+
+			<div className="mb-1">
+				<button
+					className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 mr-4"
+					onClick={handleLogin}>
+					Login
+				</button>
+				<button
+					className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
+					Register
+				</button>
+			</div>
+			<div className="mb-0">
+				<a href="/reset_password">Reset Password</a>
+			</div>
+			{error && (
+				<div className="text-red-600">{error}</div>
+			)}
 		</section>
 	);
 }
