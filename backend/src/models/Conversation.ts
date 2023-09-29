@@ -23,10 +23,10 @@ export const conversationSchema = new Schema(
       type: Date,
     },
     doctorName: {
-      type: String,
+      type: { type: Schema.ObjectId, ref: "Doctor" },
     },
     patientName: {
-      type: String,
+      type: { type: Schema.ObjectId, ref: "Patient" },
     },
     content: {
       type: [{ type: Schema.ObjectId, ref: "Message" }],
