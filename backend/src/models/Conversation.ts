@@ -17,10 +17,10 @@ export const conversationSchema = new Schema(
       type: String,
     },
     title: {
-      type: Date,
+      type: String,
     },
     date: {
-      type: String,
+      type: Date,
     },
     doctorName: {
       type: String,
