@@ -2,7 +2,7 @@ import "@/styles/globals.css";
 import { Metadata } from "next";
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
-import { Providers } from "./providers";
+import { Providers } from "../providers";
 import { Navbar } from "@/components/navbar";
 import { Link } from "@nextui-org/link";
 import clsx from "clsx";
@@ -24,24 +24,24 @@ export const metadata: Metadata = {
 	},
 };
 
-export default function RootLayout({
-	children,
-}: {
-	children: React.ReactNode;
-}) {
+export default function Layout({children}: { children: React.ReactNode }) {
+
 	return (
-		<html lang="en" suppressHydrationWarning>
-			<head />
-			<body
-				className={clsx(
-					"min-h-screen bg-background font-sans antialiased",
-					fontSans.variable
-				)}
-			>
-				<Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-                    {children}
-				</Providers>
-			</body>
-		</html>
+		
+		<div className="healthaid font-outfit min-h-screen flex flex-col bg-background">
+			<header className="last:sticky top-0 h-15">
+				<aside className="w-full md:w-60 top-0 h-14 flex justify-center items-center">
+					<h1 className="text-3xl font-bold">HealthAid</h1>
+				</aside>
+			</header>
+			<div className="flex flex-col md:flex-row flex-1">
+				<aside className="w-full md:w-60">
+					Sidebar entries here
+				</aside>
+				<div className="flex-1 bg-white rounded-tl-3xl">
+					{children}
+				</div>
+			</div>
+		</div>
 	);
 }

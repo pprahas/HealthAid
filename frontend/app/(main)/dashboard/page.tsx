@@ -1,5 +1,5 @@
 import React from "react";
-import { ChatContainer } from "../../components/chatContainer"
+import { ChatContainer } from "../../../components/chatContainer"
 import { messages } from "./testConvo"
 import { Textarea } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
