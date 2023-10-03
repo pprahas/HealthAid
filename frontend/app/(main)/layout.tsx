@@ -6,6 +6,8 @@ import { Providers } from "../providers";
 import { Navbar } from "@/components/navbar";
 import { Link } from "@nextui-org/link";
 import clsx from "clsx";
+import { Sidebar } from "../../components/sidebar"
+import { Patients } from "./home/testList";
 
 export const metadata: Metadata = {
 	title: {
@@ -35,8 +37,8 @@ export default function Layout({children}: { children: React.ReactNode }) {
 				</aside>
 			</header>
 			<div className="flex flex-col md:flex-row flex-1">
-				<aside className="w-full md:w-60">
-					Sidebar entries here
+				<aside className="w-full md:w-60 pr-2 h-[calc(100vh-56px)]">
+					<Sidebar patients={Patients}/>
 				</aside>
 				<div className="flex-1 bg-white rounded-tl-3xl">
 					{children}

@@ -1,4 +1,4 @@
-import { Message } from "../app/(main)/dashboard/testConvo";
+import { Message } from "../app/(main)/home/testConvo";
 import { Avatar } from "./messageAvatar";
 
 

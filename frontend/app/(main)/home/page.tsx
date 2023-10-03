@@ -3,7 +3,6 @@ import { ChatContainer } from "../../../components/chatContainer"
 import { messages } from "./testConvo"
 import { Textarea } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
-import {ScrollShadow} from "@nextui-org/scroll-shadow";
 
 export default function PatientHome() {
 
