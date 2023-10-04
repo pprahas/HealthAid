@@ -31,11 +31,13 @@ export default function Layout({children}: { children: React.ReactNode }) {
 	return (
 		
 		<div className="healthaid font-outfit min-h-screen flex flex-col bg-background">
-			<header className="last:sticky top-0 h-15">
+			<header className="last:sticky flex top-0 h-15 items-center">
 				<aside className="w-full md:w-60 top-0 h-14 flex justify-center items-center">
-					<h1 className="text-3xl font-bold">HealthAid</h1>
+					<div className="text-3xl font-bold">HealthAid</div>
 				</aside>
+				<Navbar/>
 			</header>
+			
 			<div className="flex flex-col md:flex-row flex-1">
 				<aside className="w-full md:w-60 pr-2 h-[calc(100vh-56px)]">
 					<Sidebar patients={Patients}/>
