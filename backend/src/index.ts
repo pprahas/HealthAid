@@ -39,7 +39,6 @@ connectToDatabase();
 // middleware setup
 app.use(morgan("dev"));
 app.use(express.json());
-app.use(cors({ origin: true, credentials: true }));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
