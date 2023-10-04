@@ -20,25 +20,25 @@ export default function SignupPage() {
   }, [email, submit]);
 
   const isFirstNameValid = React.useMemo(() => {
-    if (firstName === "") return submit;
+    if (firstName === "") return !submit;
 
     return firstName.match(/^[A-Za-z\s'-]+$/i) != null;
   }, [firstName, submit]);
 
   const isLastNameValid = React.useMemo(() => {
-    if (lastName === "") return submit;
+    if (lastName === "") return !submit;
 
     return lastName.match(/^[A-Za-z\s'-]+$/i) != null;
   }, [lastName, submit]);
 
   const isPasswordValid = React.useMemo(() => {
-    if (password === "") return submit;
+    if (password === "") return !submit;
 
     return password.match(/^[A-Za-z\s'-]+$/i) != null;
   }, [password, submit]);
 
   const isConfirmPasswordValid = React.useMemo(() => {
-    if (confirmPassword === "" || confirmPassword != password) return submit;
+    if (confirmPassword === "" || confirmPassword != password) return !submit;
 
     return password.match(/^[A-Za-z\s'-]+$/i) != null;
   }, [confirmPassword, submit]);
@@ -78,7 +78,7 @@ export default function SignupPage() {
                   label="First Name"
                   defaultValue=""
                   isInvalid={isFirstNameValid}
-                  color={isFirstNameValid ? "danger" : "default"}
+                  color={isFirstNameValid ? "default" : "danger"}
                   onChange={(e) => {
                     setSubmit(false);
                     setFirstName(e.target.value);
@@ -92,7 +92,7 @@ export default function SignupPage() {
                   label="Last Name"
                   defaultValue=""
                   isInvalid={isLastNameValid}
-                  color={isLastNameValid ? "danger" : "default"}
+                  color={isLastNameValid ? "default" : "danger"}
                   onChange={(e) => {
                     setSubmit(false);
                     setLastName(e.target.value);
@@ -123,6 +123,11 @@ export default function SignupPage() {
                 type="password"
                 label="Password"
                 defaultValue=""
+                errorMessage={
+                  !isConfirmPasswordValid && "Passwords do not match"
+                }
+                isInvalid={isPasswordValid}
+                color={isPasswordValid ? "default" : "danger"}
                 onChange={(e) => {
                   setSubmit(false);
                   setPassword(e.target.value);
@@ -135,6 +140,11 @@ export default function SignupPage() {
                 type="password"
                 label="Confirm Password"
                 defaultValue=""
+                errorMessage={
+                  !isConfirmPasswordValid && "Passwords do not match"
+                }
+                isInvalid={isConfirmPasswordValid}
+                color={isConfirmPasswordValid ? "default" : "danger"}
                 onChange={(e) => {
                   setSubmit(false);
                   setConfirmPassword(e.target.value);
