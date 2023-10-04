@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, MouseEvent, FormEvent } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
 
@@ -12,11 +12,14 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [submit, setSubmit] = useState(false);
+  const [error, setError] = useState("");
 
   const isEmailValid = React.useMemo(() => {
-    if (email === "") return submit;
+    if (email === "") return !submit;
 
-    return email.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i) != null;
+    return (
+      email.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/i) != null
+    );
   }, [email, submit]);
 
   const isFirstNameValid = React.useMemo(() => {
@@ -55,8 +58,15 @@ export default function SignupPage() {
       });
 
       console.log("Response:", response.data);
+      const data = await response.data;
+      console.log(data.patient);
+      localStorage.setItem("user", JSON.stringify(data.patient));
+      window.location.href = "/dashboard";
     } catch (error) {
-      console.log("Error:", error);
+      const axiosError = error as AxiosError;
+      let errorText = axiosError.response?.data;
+      console.log(errorText);
+      setError("" + errorText);
     }
   };
 
@@ -108,8 +118,11 @@ export default function SignupPage() {
                   label="Email"
                   defaultValue=""
                   isInvalid={isEmailValid}
-                  errorMessage={isEmailValid && "Please enter a valid email"}
-                  color={isEmailValid ? "danger" : "default"}
+                  errorMessage={
+                    (!isEmailValid && "Please enter a valid email") ||
+                    (error != "" && error)
+                  }
+                  color={isEmailValid ? "default" : "danger"}
                   onChange={(e) => {
                     setSubmit(false);
                     setEmail(e.target.value);

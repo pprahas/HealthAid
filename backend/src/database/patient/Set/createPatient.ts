@@ -30,8 +30,8 @@ export async function createPatient(patient: Patient) {
         let patientDTO = new PatientDTO(patient)
 
         // Save patient
-        let document = await patientDTO.save();
-        console.log(document)
+        await patientDTO.save();
+        return patientDTO
     } catch (error) {
         throw error
     }
