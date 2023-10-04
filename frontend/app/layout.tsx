@@ -12,13 +12,16 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <html lang="en">
-      <body>
-        <div className="relative flex flex-col h-screen">
-          <main className="">{children}</main>
-        </div>
-      </body>
-    </html>
-  );
+	return (
+		<html lang="en" suppressHydrationWarning>
+			<head />
+			<body
+				className="text-black"
+			>
+				<Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
+                    {children}
+				</Providers>
+			</body>
+		</html>
+	);
 }
