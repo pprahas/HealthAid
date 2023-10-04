@@ -26,6 +26,9 @@ export default function LoginPage() {
       if (response.ok) {
         // Login successful, redirect to dashboard or another page
         // You can use react-router or similar for navigation
+        const data = await response.json();
+        console.log(data.patient);
+        localStorage.setItem("user", JSON.stringify(data.patient));
         window.location.href = "/dashboard";
       } else {
         const data = await response.json();
@@ -38,7 +41,7 @@ export default function LoginPage() {
   };
 
   const handleRegister = () => {
-    window.location.href = "/signup";
+    window.location.href = "/register";
   };
 
   return (

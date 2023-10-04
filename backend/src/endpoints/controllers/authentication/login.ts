@@ -3,7 +3,6 @@ import { Patient, PatientDTO } from "@models/Patient"; // Import the Patient mod
 import { pbkdf2Sync } from "crypto";
 
 export enum LoginPatientError {
-  successfulLogin = "Successful Login",
   unsuccessfulLogin = "Incorrect Email or Password. Try Again.",
 }
 
@@ -31,7 +30,7 @@ export async function login(req: Request, res: Response): Promise<Response> {
     if (hashedInputPassword === patientAccount.password) {
       return res
         .status(200)
-        .send({ message: LoginPatientError.successfulLogin });
+        .send({ message: "Success", patient: patientAccount });
     }
     return res
       .status(400)

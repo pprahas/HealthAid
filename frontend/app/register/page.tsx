@@ -16,7 +16,9 @@ export default function SignupPage() {
   const isEmailValid = React.useMemo(() => {
     if (email === "") return submit;
 
-    return email.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i) != null;
+    return (
+      email.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/i) != null
+    );
   }, [email, submit]);
 
   const isFirstNameValid = React.useMemo(() => {
