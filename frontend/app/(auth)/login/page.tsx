@@ -24,13 +24,9 @@ export default function LoginPage() {
       });
 
       if (response.ok) {
-        // Login successful, redirect to dashboard or another page
-        // You can use react-router or similar for navigation
         window.location.href = "/home";
         let loginData = await response.json();
-        console.log("Register response:", loginData);
-        console.log(loginData.patient);
-        // loginData.patient.type = "patient";
+        loginData.patient.type = "patient";
         localStorage.setItem("user", JSON.stringify(loginData.patient));
       } else {
         const data = await response.json();
