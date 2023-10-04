@@ -1,37 +1,38 @@
+import { Doctor, DoctorDTO } from "@models/Doctor";
 import { Patient, PatientDTO } from "@models/Patient";
 import { pbkdf2Sync } from "crypto";
 
 // Errors that can be thrown during signup
-export enum CreatePatientError {
-    invalidPatientInfo = "Invalid Patient Info",
+export enum CreateDoctorError {
+    invalidDoctorInfo = "Invalid Doctor Info",
     invalidPassword = "Invalid Password",
     invalidEmail = "Invalid Email Address",
     emailInUse = "Email already in use"
 }
 
 /**
-   * Adds a patient to the dataase
+   * Adds a doctor to the dataase
    *
-   * @param patient - Info of the patient you are creating
+   * @param doctor - Info of the doctor you are creating
    *
    */
-export async function createPatient(patient: Patient) {
+export async function createDoctor(doctor: Doctor) {
     try {
         // Verfication checks
-        verifyInfo(patient)
-        await verifyEmailFree(patient.email);
+        verifyInfo(doctor)
+        await verifyEmailFree(doctor.email);
 
         // Hash password
-        let userPassword = patient.password
+        let userPassword = doctor.password
         let hashedPassword = pbkdf2Sync(userPassword, '', 10000, 64, 'sha512').toString('hex');
-        patient.password = hashedPassword
+        doctor.password = hashedPassword
         
         // Create mongoDB patient
-        let patientDTO = new PatientDTO(patient)
+        let doctorDTO = new DoctorDTO(doctor)
 
         // Save patient
-        await patientDTO.save();
-        return patientDTO
+        await doctorDTO.save();
+        return doctorDTO
     } catch (error) {
         throw error
     }
@@ -50,7 +51,7 @@ export async function createPatient(patient: Patient) {
 async function verifyEmailFree(email: String) {
     const user = await PatientDTO.findOne({ email: email })
     if (!!user) {
-        throw CreatePatientError.emailInUse
+        throw CreateDoctorError.emailInUse
     }
 }
 
@@ -66,11 +67,11 @@ function verifyInfo(patient: Patient) {
     const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
     // Verify email is a valid email
     if (patient.email == "" || !emailRegex.test(patient.email)) {
-        throw CreatePatientError.invalidEmail
+        throw CreateDoctorError.invalidEmail
     }
 
     // Verify first and last name are not empty
     if (patient.firstName == "" || patient.lastName == "") {
-        throw CreatePatientError.invalidPatientInfo
+        throw CreateDoctorError.invalidDoctorInfo
     }
 }

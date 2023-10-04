@@ -1,4 +1,4 @@
-
+"use client";
 import { Button } from "@nextui-org/button";
 import { Kbd } from "@nextui-org/kbd";
 import { Link } from "@nextui-org/link";
@@ -11,34 +11,52 @@ import NextLink from "next/link";
 import clsx from "clsx";
 
 import {
-	TwitterIcon,
-	GithubIcon,
-	DiscordIcon,
-	HeartFilledIcon,
-	SearchIcon,
+  TwitterIcon,
+  GithubIcon,
+  DiscordIcon,
+  HeartFilledIcon,
+  SearchIcon,
 } from "@/components/icons";
 
 import { Logo } from "@/components/icons";
+import { useEffect, useState } from "react";
 
 export const Navbar = () => {
-	return (
-		
-		<ul className="lg:flex gap-4 ml-auto px-5">
-			{siteConfig.navItems.map((item) => (
-				<div key={item.href}>
-					<NextLink
-						className={clsx(
-							linkStyles({ color: "foreground", size: "lg" }),
-							"data-[active=true]:text-primary data-[active=true]:font-medium"
-						)}
-						color="foreground"
-						href={item.href}
-					>
-						{item.label}
-					</NextLink>
-				</div>
-			))}
-		</ul>
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
 
-	);
+  useEffect(() => {
+    let userObjectString = localStorage.getItem("user") ?? "";
+    if (userObjectString != "") {
+      let userObject = JSON.parse(userObjectString);
+      let firstName = userObject.firstName;
+      let lastName = userObject.lastName;
+      setFirstName(firstName);
+      setLastName(lastName);
+      siteConfig.navItems.push({
+        label: `${firstName} ${lastName}`,
+        href: "/profile",
+      });
+    } else {
+      window.location.href = "/";
+    }
+  }, []);
+  return (
+    <ul className="lg:flex gap-4 ml-auto px-5">
+      {siteConfig.navItems.map((item) => (
+        <div key={item.href}>
+          <NextLink
+            className={clsx(
+              linkStyles({ color: "foreground", size: "lg" }),
+              "data-[active=true]:text-primary data-[active=true]:font-medium"
+            )}
+            color="foreground"
+            href={item.href}
+          >
+            {item.label}
+          </NextLink>
+        </div>
+      ))}
+    </ul>
+  );
 };

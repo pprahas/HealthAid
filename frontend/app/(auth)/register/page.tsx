@@ -4,6 +4,7 @@ import React, { useState, MouseEvent, FormEvent } from "react";
 import axios, { AxiosError } from "axios";
 import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
+import { Checkbox, CheckboxGroup } from "@nextui-org/react";
 
 export default function SignupPage() {
   const [firstName, setFirstName] = useState("");
@@ -13,6 +14,7 @@ export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [submit, setSubmit] = useState(false);
   const [error, setError] = useState("");
+  const [role, setRole] = useState(["patient"]);
 
   const isEmailValid = React.useMemo(() => {
     if (email === "") return !submit;
@@ -46,22 +48,46 @@ export default function SignupPage() {
     return password.match(/^[A-Za-z\s'-]+$/i) != null;
   }, [confirmPassword, submit]);
 
-  const handleRegister = async (e: MouseEvent<HTMLButtonElement>) => {
+  const handleGoToOnboard = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     try {
       setSubmit(true);
-      const response = await axios.post("http://localhost:8080/register", {
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        password: password,
-      });
+      if (role && role[0] == "doctor") {
+        const registerResponse = await axios.post(
+          "http://localhost:8080/register/doctor",
+          {
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            password: password,
+            type: "doctor",
+          }
+        );
 
-      console.log("Response:", response.data);
-      const data = await response.data;
-      console.log(data.patient);
-      localStorage.setItem("user", JSON.stringify(data.patient));
-      window.location.href = "/dashboard";
+        console.log("Register response:", registerResponse.data);
+        const registerData = await registerResponse.data;
+        console.log(registerData.patient);
+        registerData.patient.type = "doctor";
+        localStorage.setItem("user", JSON.stringify(registerData.patient));
+      } else {
+        const registerResponse = await axios.post(
+          "http://localhost:8080/register/patient",
+          {
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            password: password,
+            type: "patient",
+          }
+        );
+
+        console.log("Register response:", registerResponse.data);
+        const registerData = await registerResponse.data;
+        console.log(registerData.patient);
+        registerData.patient.type = "patient";
+        localStorage.setItem("user", JSON.stringify(registerData.patient));
+      }
+      window.location.href = "/onboard";
     } catch (error) {
       const axiosError = error as AxiosError;
       let errorText = axiosError.response?.data;
@@ -164,12 +190,27 @@ export default function SignupPage() {
                 }}
               />
             </div>
-
+            <CheckboxGroup
+              label="What role fits you best:"
+              orientation="horizontal"
+              color="secondary"
+              value={role}
+              defaultValue={["patient"]}
+              onValueChange={(value) => {
+                console.log(value);
+                let last = value[value.length - 1];
+                value = [last];
+                setRole([last]);
+              }}
+            >
+              <Checkbox value="patient">Patient</Checkbox>
+              <Checkbox value="doctor">Doctor</Checkbox>
+            </CheckboxGroup>
             <div>
               <Button
                 type="submit"
                 onClick={async (e) => {
-                  await handleRegister(e);
+                  await handleGoToOnboard(e);
                 }}
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-2 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >

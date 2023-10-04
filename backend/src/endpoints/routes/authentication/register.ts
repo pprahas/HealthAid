@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { register } from "@endpoints/controllers/authentication/register";
+import { registerDoctor, registerPatient } from "@endpoints/controllers/authentication/register";
 
 class RegisterRoutes {
   router = Router();
@@ -9,7 +9,8 @@ class RegisterRoutes {
   }
 
   initializeRoutes() {
-    this.router.post("/", register);
+    this.router.post("/patient", registerPatient);
+    this.router.post("/doctor", registerDoctor);
   }
 }
 
