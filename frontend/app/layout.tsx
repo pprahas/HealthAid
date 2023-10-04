@@ -33,10 +33,7 @@ export default function RootLayout({
 		<html lang="en" suppressHydrationWarning>
 			<head />
 			<body
-				className={clsx(
-					"min-h-screen bg-background font-sans antialiased",
-					fontSans.variable
-				)}
+				className="text-black"
 			>
 				<Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
                     {children}
