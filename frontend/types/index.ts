@@ -8,10 +8,24 @@ export interface Patient {
   firstName: string,
   lastName: string,
   email: string,
+  doctors: string[]
+}
+
+export interface Doctor {
+  firstName: string,
+  lastName: string,
+  email: string
 }
 
 export const PatientDefault: Patient = {
   firstName: "",
   lastName: "",
   email: "",
+  doctors: [],
+}
+
+export const DoctorDefault: Doctor = {
+  firstName: "",
+  lastName: "",
+  email: ""
 }
