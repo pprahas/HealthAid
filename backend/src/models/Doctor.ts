@@ -1,4 +1,4 @@
-import mongoose, { Schema, model } from "mongoose";
+import { Schema, model, ObjectId } from "mongoose";
 
 export type Doctor = {
   firstName: string;
@@ -7,8 +7,8 @@ export type Doctor = {
   password: string;
   birthday?: Date;
   clinic?: typeof Schema.ObjectId;
-  appointments?: [typeof mongoose.Schema.ObjectId];
-  patients?: [typeof mongoose.Schema.ObjectId];
+  appointments?: [ObjectId];
+  patients?: [ObjectId];
 };
 
 const doctorSchema = new Schema(
