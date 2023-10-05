@@ -21,7 +21,7 @@ export async function registerDoctor(req: Request, res: Response): Promise<Respo
     const doctor = req.body as Doctor
     console.log(doctor)
     let doctorDTO = await createDoctor(doctor)
-    return res.json({ message: "Success", patient: doctorDTO });
+    return res.json({ message: "Success", doctor: doctorDTO });
   } catch(error) {
     return res.status(400).send(error)
   }

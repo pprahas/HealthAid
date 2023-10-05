@@ -1,7 +1,6 @@
 import { Schema, model } from "mongoose";
 
 export type Patient = {
-  prescriptionId: string;
   date: Date;
   nam: string;
   expirationDate: Date;
@@ -10,10 +9,6 @@ export type Patient = {
 
 const prescriptionSchema = new Schema(
   {
-    prescriptionId: {
-      type: String,
-      required: true,
-    },
     date: {
       type: Date,
       required: true,

@@ -10,19 +10,12 @@ export default function SignupPage() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [isEmailValid, setIsEmailValid] = useState(true);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [submit, setSubmit] = useState(false);
   const [error, setError] = useState("");
   const [role, setRole] = useState(["patient"]);
-
-  const isEmailValid = React.useMemo(() => {
-    if (email === "") return !submit;
-
-    return (
-      email.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/i) != null
-    );
-  }, [email, submit]);
 
   const isFirstNameValid = React.useMemo(() => {
     if (firstName === "") return !submit;
@@ -36,63 +29,80 @@ export default function SignupPage() {
     return lastName.match(/^[A-Za-z\s'-]+$/i) != null;
   }, [lastName, submit]);
 
+  function emailCheck() {
+    if (email === "") return !submit;
+
+    return (
+      email.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/i) != null
+    );
+  }
+
   const isPasswordValid = React.useMemo(() => {
     if (password === "") return !submit;
 
-    return password.match(/^[A-Za-z\s'-]+$/i) != null;
+    return password.match(/^[\x20-\x7E]+$/) != null;
   }, [password, submit]);
 
   const isConfirmPasswordValid = React.useMemo(() => {
     if (confirmPassword === "" || confirmPassword != password) return !submit;
 
-    return password.match(/^[A-Za-z\s'-]+$/i) != null;
+    return password.match(/^[\x20-\x7E]+$/) != null;
   }, [confirmPassword, submit]);
 
   const handleGoToOnboard = async (e: MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    try {
-      setSubmit(true);
-      if (role && role[0] == "doctor") {
-        const registerResponse = await axios.post(
-          "http://localhost:8080/register/doctor",
-          {
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            password: password,
-            type: "doctor",
-          }
-        );
+    if (
+      isFirstNameValid &&
+      isLastNameValid &&
+      isEmailValid &&
+      isPasswordValid &&
+      isConfirmPasswordValid
+    ) {
+      e.preventDefault();
+      try {
+        setSubmit(true);
+        if (role && role[0] == "doctor") {
+          const registerResponse = await axios.post(
+            "http://localhost:8080/register/doctor",
+            {
+              firstName: firstName,
+              lastName: lastName,
+              email: email,
+              password: password,
+              type: "doctor",
+            }
+          );
 
-        console.log("Register response:", registerResponse.data);
-        const registerData = await registerResponse.data;
-        console.log(registerData.patient);
-        registerData.patient.type = "doctor";
-        localStorage.setItem("user", JSON.stringify(registerData.patient));
-      } else {
-        const registerResponse = await axios.post(
-          "http://localhost:8080/register/patient",
-          {
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            password: password,
-            type: "patient",
-          }
-        );
+          console.log("Register response:", registerResponse.data);
+          const registerData = await registerResponse.data;
+          console.log(registerData.doctor);
+          registerData.doctor.type = "doctor";
+          localStorage.setItem("user", JSON.stringify(registerData.doctor));
+          window.location.href = "/onboard";
+        } else {
+          const registerResponse = await axios.post(
+            "http://localhost:8080/register/patient",
+            {
+              firstName: firstName,
+              lastName: lastName,
+              email: email,
+              password: password,
+              type: "patient",
+            }
+          );
 
-        console.log("Register response:", registerResponse.data);
-        const registerData = await registerResponse.data;
-        console.log(registerData.patient);
-        registerData.patient.type = "patient";
-        localStorage.setItem("user", JSON.stringify(registerData.patient));
+          console.log("Register response:", registerResponse.data);
+          const registerData = await registerResponse.data;
+          console.log(registerData.patient);
+          registerData.patient.type = "patient";
+          localStorage.setItem("user", JSON.stringify(registerData.patient));
+          window.location.href = "/onboard";
+        }
+      } catch (error) {
+        const axiosError = error as AxiosError;
+        let errorText = axiosError.response?.data;
+        console.log(errorText);
+        setError("" + errorText);
       }
-      window.location.href = "/onboard";
-    } catch (error) {
-      const axiosError = error as AxiosError;
-      let errorText = axiosError.response?.data;
-      console.log(errorText);
-      setError("" + errorText);
     }
   };
 
@@ -117,6 +127,7 @@ export default function SignupPage() {
                   color={isFirstNameValid ? "default" : "danger"}
                   onChange={(e) => {
                     setSubmit(false);
+                    setError("");
                     setFirstName(e.target.value);
                   }}
                 />
@@ -131,6 +142,7 @@ export default function SignupPage() {
                   color={isLastNameValid ? "default" : "danger"}
                   onChange={(e) => {
                     setSubmit(false);
+                    setError("");
                     setLastName(e.target.value);
                   }}
                 />
@@ -143,7 +155,7 @@ export default function SignupPage() {
                   type="email"
                   label="Email"
                   defaultValue=""
-                  isInvalid={isEmailValid}
+                  isInvalid={!isEmailValid}
                   errorMessage={
                     (!isEmailValid && "Please enter a valid email") ||
                     (error != "" && error)
@@ -151,7 +163,14 @@ export default function SignupPage() {
                   color={isEmailValid ? "default" : "danger"}
                   onChange={(e) => {
                     setSubmit(false);
+                    setError("");
                     setEmail(e.target.value);
+                  }}
+                  onFocusChange={(focus) => {
+                    if (!focus) {
+                      console.log("Lost focus");
+                      setIsEmailValid(emailCheck());
+                    }
                   }}
                 />
               </div>
@@ -169,6 +188,7 @@ export default function SignupPage() {
                 color={isPasswordValid ? "default" : "danger"}
                 onChange={(e) => {
                   setSubmit(false);
+                  setError("");
                   setPassword(e.target.value);
                 }}
               />
@@ -186,6 +206,7 @@ export default function SignupPage() {
                 color={isConfirmPasswordValid ? "default" : "danger"}
                 onChange={(e) => {
                   setSubmit(false);
+                  setError("");
                   setConfirmPassword(e.target.value);
                 }}
               />
