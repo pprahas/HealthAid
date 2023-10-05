@@ -1,23 +1,22 @@
-import 'module-alias/register';
+import "module-alias/register";
 import express, { Application } from "express";
 import cors, { CorsOptions } from "cors";
 import Routes from "./endpoints/routes";
-import morgan from 'morgan';
-import cookieParser from 'cookie-parser';
+import morgan from "morgan";
+import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import path from "path";
-import connectToDatabase from '@database/index';
-
+import connectToDatabase from "@database/index";
 
 class Server {
   constructor(app: Application) {
     this.config(app);
-    new Routes(app)
+    new Routes(app);
   }
 
   private config(app: Application): void {
     const corsOptions: CorsOptions = {
-      origin: "http://localhost:8081"
+      origin: "http://localhost:3000",
     };
 
     app.use(cors(corsOptions));
@@ -40,14 +39,13 @@ connectToDatabase();
 // middleware setup
 app.use(morgan("dev"));
 app.use(express.json());
-app.use(cors({ origin: true, credentials: true }));
 app.use(cookieParser());
-app.use(express.urlencoded({ extended: true }))
+app.use(express.urlencoded({ extended: true }));
 
 app
   .listen(PORT, "localhost", function () {
-      console.log(`Server is running on port ${PORT}.`);
-      console.log(`Server: ${server}`)
+    console.log(`Server is running on port ${PORT}.`);
+    console.log(`Server: ${server}`);
   })
   .on("error", (err: any) => {
     if (err.code === "EADDRINUSE") {

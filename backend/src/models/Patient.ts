@@ -1,4 +1,7 @@
 import { Schema, model } from "mongoose";
+import { Doctor } from "./Doctor";
+import { Appointment } from "./Appointment";
+import { HealthInformation } from "./HealthInformation";
 
 // Local Model
 export type Patient = {
@@ -11,48 +14,52 @@ export type Patient = {
   weight?: Number;
   height?: Number;
   bio?: string;
-  doctors?: [any?];
-  appointments?: [any?];
-  healthInfo?: [any?];
-}
+  doctors?: [Doctor];
+  appointments?: [Appointment];
+  healthInfo?: [HealthInformation];
+};
 
 export const patientSchema = new Schema(
   {
     firstName: {
-      type: String
+      type: String,
+      required: true,
     },
     lastName: {
-      type: String
+      type: String,
+      required: true,
     },
     email: {
-      type: String
+      type: String,
+      required: true,
     },
     password: {
-      type: String
+      type: String,
+      required: true,
     },
     birthday: {
-      type: Date
+      type: Date,
     },
     gender: {
-      type: String
+      type: String,
     },
     weight: {
-      type: Number
+      type: Number,
     },
     height: {
-      type: Number
+      type: Number,
     },
     bio: {
-      type: String
+      type: String,
     },
     doctors: {
-      type: [{ type: Schema.ObjectId, ref: "Doctor" }]
+      type: [{ type: Schema.ObjectId, ref: "Doctor" }],
     },
     appointments: {
-      type: [{ type: Schema.ObjectId, ref: "Appointment" }]
+      type: [{ type: Schema.ObjectId, ref: "Appointment" }],
     },
     healthInfo: {
-      type: [{ type: Schema.ObjectId, ref: "HealthInformation" }]
+      type: [{ type: Schema.ObjectId, ref: "HealthInformation" }],
     },
   },
   { timestamps: true }

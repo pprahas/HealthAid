@@ -1,7 +1,6 @@
 import { Schema, model } from "mongoose";
 
 export type Diagnosis = {
-  diagnosisId: string;
   isReviewed: Boolean;
   dateReviewed: Date;
   content: string;
@@ -10,10 +9,6 @@ export type Diagnosis = {
 
 const diagnosisSchema = new Schema(
   {
-    diagnosisId: {
-      type: String,
-      required: true,
-    },
     isReviewed: {
       type: Boolean,
       required: true,

@@ -1,15 +1,16 @@
 import { Router } from "express";
-import { register } from "@endpoints/controllers/authentication/register";
+import { registerDoctor, registerPatient } from "@endpoints/controllers/authentication/register";
 
 class RegisterRoutes {
   router = Router();
 
   constructor() {
-    this.intializeRoutes();
+    this.initializeRoutes();
   }
 
-  intializeRoutes() {
-    this.router.post("/", register);
+  initializeRoutes() {
+    this.router.post("/patient", registerPatient);
+    this.router.post("/doctor", registerDoctor);
   }
 }
 
