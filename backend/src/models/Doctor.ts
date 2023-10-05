@@ -1,4 +1,7 @@
 import { Schema, model, ObjectId } from "mongoose";
+import { Appointment } from "./Appointment";
+import { Patient } from "./Patient";
+import { Clinic } from "./Clinic";
 
 export type Doctor = {
   firstName: string;
@@ -6,9 +9,9 @@ export type Doctor = {
   email: string;
   password: string;
   birthday?: Date;
-  clinic?: typeof Schema.ObjectId;
-  appointments?: [ObjectId];
-  patients?: [ObjectId];
+  clinic?: (typeof Schema.ObjectId | Clinic);
+  appointments?: [Appointment];
+  patients?: [Patient];
 };
 
 const doctorSchema = new Schema(
