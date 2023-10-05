@@ -4,10 +4,10 @@ import { Diagnosis } from "./Diagnosis";
 
 // Local Model
 export type Conversation = {
-  doctor: String;
+  doctor?: String;
   patient: String;
-  messages: [Message];
-  diagnosis: Diagnosis;
+  messages?: [Message];
+  diagnosis?: Diagnosis;
 };
 []
 export const conversationSchema = new Schema(
