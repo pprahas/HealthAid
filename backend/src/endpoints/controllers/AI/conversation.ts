@@ -9,7 +9,7 @@ export async function createConversation(
   try {
     const body = req.body;
     let patientDTO = await createConvo(body);
-    return res.json({ message: patientDTO });
+    return res.status(200).send(patientDTO);
   } catch (error) {
     return res.status(400).send(error);
   }

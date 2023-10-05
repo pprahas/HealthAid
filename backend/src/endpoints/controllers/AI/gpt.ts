@@ -35,7 +35,6 @@ export async function AskGPT(prompt: String, messages: ([Message] | Message[])) 
         });
         console.log(formattedMessages);
         console.log(chatCompletion)
-
         return (chatCompletion.choices);
     } catch (error) {
         console.log("failed")
