@@ -13,7 +13,7 @@ const clinicSchema = new Schema(
       type: String,
       required: true,
     },
-    address: {
+    postalCode: {
       type: String,
       required: true,
     },
