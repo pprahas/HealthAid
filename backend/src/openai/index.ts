@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { AskGPT } from "./controllers/askgpt";
+import { AskGPTWrapper } from "./controllers/askgpt";
 
 class GPTRoutes {
   router = Router();
@@ -9,7 +9,7 @@ class GPTRoutes {
   }
 
   initializeRoutes() {
-    this.router.post("/", AskGPT);
+    this.router.post("/", AskGPTWrapper);
   }
 }
 

@@ -11,7 +11,5 @@ export default class Routes {
     app.use("/register", registerRoutes);
     app.use("/login", loginRoutes);
     app.use("/patient_health_information", patientHealthInformationRoutes);
-
-
   }
 }
