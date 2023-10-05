@@ -104,7 +104,7 @@ const PatientQuestions = () => {
       setLoading(true);
       let currUserObject = fetchUserData();
       const updateHealthInfoResponse = await axios.post(
-        "http://localhost:8080/patient_health_information",
+        "http://localhost:8080/patientHealthInformation",
         {
           email: currUserObject.email,
           information: answers,

@@ -1,5 +1,4 @@
 import { Doctor, DoctorDTO } from "@models/Doctor";
-import { Patient, PatientDTO } from "@models/Patient";
 import { pbkdf2Sync } from "crypto";
 
 // Errors that can be thrown during signup
@@ -49,29 +48,29 @@ export async function createDoctor(doctor: Doctor) {
    * @returns Void, will throw an error if email is taken
    */
 async function verifyEmailFree(email: String) {
-    const user = await PatientDTO.findOne({ email: email })
+    const user = await DoctorDTO.findOne({ email: email })
     if (!!user) {
         throw CreateDoctorError.emailInUse
     }
 }
 
 /**
-   * Verifies that all patient info is valid
+   * Verifies that all doctor info is valid
    * Checks that the email is a valid email and first/last name are not empty
    *
-   * @param patient - Info of the patient
+   * @param doctor - Info of the doctor
    *
    * @returns Void, will throw an error if email is taken
    */
-function verifyInfo(patient: Patient) {
+function verifyInfo(doctor: Doctor) {
     const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
     // Verify email is a valid email
-    if (patient.email == "" || !emailRegex.test(patient.email)) {
+    if (doctor.email == "" || !emailRegex.test(doctor.email)) {
         throw CreateDoctorError.invalidEmail
     }
 
     // Verify first and last name are not empty
-    if (patient.firstName == "" || patient.lastName == "") {
+    if (doctor.firstName == "" || doctor.lastName == "") {
         throw CreateDoctorError.invalidDoctorInfo
     }
 }

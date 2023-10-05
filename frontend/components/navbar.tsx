@@ -20,23 +20,39 @@ import {
 
 import { Logo } from "@/components/icons";
 import { useEffect, useState } from "react";
+import { Patient, User } from "@/types";
 
 export const Navbar = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
 
+  function addUserNameToNavBar(user: User) {
+    let firstName = user.firstName;
+    let lastName = user.lastName;
+    setFirstName(firstName);
+    setLastName(lastName);
+    let index = siteConfig.navItems.find((value) => {
+      return value.href == "/profile";
+    });
+    if (index == undefined) {
+      siteConfig.navItems.push(
+        {
+          label: "|",
+          href: "",
+        },
+        {
+          label: `${firstName} ${lastName}`,
+          href: "/profile",
+        }
+      );
+    }
+  }
+
   useEffect(() => {
     let userObjectString = localStorage.getItem("user") ?? "";
     if (userObjectString != "") {
       let userObject = JSON.parse(userObjectString);
-      let firstName = userObject.firstName;
-      let lastName = userObject.lastName;
-      setFirstName(firstName);
-      setLastName(lastName);
-      siteConfig.navItems.push({
-        label: `${firstName} ${lastName}`,
-        href: "/profile",
-      });
+      addUserNameToNavBar(userObject);
     } else {
       window.location.href = "/";
     }

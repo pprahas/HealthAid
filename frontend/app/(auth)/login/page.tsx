@@ -24,13 +24,9 @@ export default function LoginPage() {
       });
 
       if (response.ok) {
-        // Login successful, redirect to dashboard or another page
-        // You can use react-router or similar for navigation
         window.location.href = "/home";
         let loginData = await response.json();
-        console.log("Register response:", loginData);
-        console.log(loginData.patient);
-        // loginData.patient.type = "patient";
+        loginData.patient.type = "patient";
         localStorage.setItem("user", JSON.stringify(loginData.patient));
       } else {
         const data = await response.json();
@@ -40,6 +36,10 @@ export default function LoginPage() {
       console.error("Error:", error);
       setError("An error occurred while logging in.");
     }
+  };
+
+  const handleRegister = () => {
+    window.location.href = "/register";
   };
 
   return (
@@ -75,7 +75,10 @@ export default function LoginPage() {
         >
           Login
         </button>
-        <button className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
+        <button
+          className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+          onClick={handleRegister}
+        >
           Register
         </button>
       </div>
