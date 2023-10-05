@@ -26,13 +26,13 @@ export default function SignupPage() {
   }
 
   const isNewPasswordValid = React.useMemo(() => {
-    if (newPassword === "") return !submit;
+    if (newPassword === "") return false;
 
     return newPassword.match(/^[\x20-\x7E]+$/) != null;
   }, [newPassword, submit]);
 
   const isConfirmPasswordValid = React.useMemo(() => {
-    if (confirmPassword === "" || confirmPassword != newPassword) return !submit;
+    if (confirmPassword === "" || confirmPassword != newPassword) return false;
 
     return newPassword.match(/^[\x20-\x7E]+$/) != null;
   }, [confirmPassword, submit]);
@@ -55,6 +55,10 @@ export default function SignupPage() {
 
       if (!response.ok) {        
         setIsOldPasswordValid(false);
+        setError("Invalid email or password. Please try again.");
+        return;
+      } else {
+        setIsOldPasswordValid(true);
       }
     } catch (error) {
       console.error("Error:", error);
@@ -68,16 +72,27 @@ export default function SignupPage() {
       isOldPasswordValid
     ) {
       e.preventDefault();
-      try {
-        setSubmit(true);
-        
-
-        
-        // Update password here
-
-
-
-
+      try {        
+        setSubmit(true);     
+        const requestBody = {
+          email: email,
+          password: oldPassword,
+          newPassword: newPassword,
+        };
+        const response = await fetch("http://localhost:8080/resetPassword", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestBody), // Send email and password as JSON
+          mode: "cors", // Enable CORS
+        });
+  
+        if (response.ok) {   
+          window.location.href = "/login";
+        } else {
+          setError("Could not reset password");
+        }
       } catch (error) {
         const axiosError = error as AxiosError;
         let errorText = axiosError.response?.data;
@@ -85,6 +100,7 @@ export default function SignupPage() {
         setError("" + errorText);
       }
     }
+    setSubmit(false);
   };
 
   return (
@@ -96,18 +112,18 @@ export default function SignupPage() {
       </div>
       <div className="bg-white px-10 pb-5 rounded-2xl">
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6">
+          {/* <form className="space-y-6"> */}
+          <div className="space-y-6">
             <div className="col-span-2">
               <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
                 <Input
                   isRequired
                   type="email"
                   label="Email"
-                  defaultValue=""
+                  value={email}
                   isInvalid={!isEmailValid}
                   errorMessage={
-                    (!isEmailValid && "Please enter a valid email") ||
-                    (error != "" && error)
+                    (!isEmailValid && "Please enter a valid email")
                   }
                   color={isEmailValid ? "default" : "danger"}
                   onChange={(e) => {
@@ -129,13 +145,15 @@ export default function SignupPage() {
                 isRequired
                 type="password"
                 label="Old Password"
-                defaultValue=""
+                value={oldPassword}
                 isInvalid={isOldPasswordValid}
+                errorMessage={error != "" && error}
                 color={isOldPasswordValid ? "default" : "danger"}
                 onChange={(e) => {
                   setSubmit(false);
                   setError("");
                   setOldPassword(e.target.value);
+                  setIsOldPasswordValid(true)
                 }}
               />
             </div>
@@ -187,7 +205,8 @@ export default function SignupPage() {
                 Submit
               </Button>
             </div>
-          </form>
+          {/* </form> */}
+          </div>
         </div>
       </div>
     </div>
