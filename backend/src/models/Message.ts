@@ -2,7 +2,6 @@ import { Schema, model } from "mongoose";
 
 // Local Model
 export type Message = {
-  date: Date;
   senderType: String;
   content: String;
 };

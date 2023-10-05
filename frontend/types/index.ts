@@ -69,7 +69,7 @@ export interface Conversation {
   doctorName: String;
   patientName: String;
   messages: [Message];
-  diagnosis: any;
+  diagnosis: Diagnosis;
 }
 
 // Message

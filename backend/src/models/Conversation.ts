@@ -1,12 +1,13 @@
 import { Schema, model } from "mongoose";
+import { Message } from "./Message";
+import { Diagnosis } from "./Diagnosis";
 
 // Local Model
 export type Conversation = {
-  date: Date;
-  doctorName: String;
-  patientName: String;
-  messages: [any];
-  diagnosis: any;
+  doctor: String;
+  patient: String;
+  messages: [Message];
+  diagnosis: Diagnosis;
 };
 []
 export const conversationSchema = new Schema(

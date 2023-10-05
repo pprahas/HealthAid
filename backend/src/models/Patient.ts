@@ -1,4 +1,7 @@
 import { Schema, model } from "mongoose";
+import { Doctor } from "./Doctor";
+import { Appointment } from "./Appointment";
+import { HealthInformation } from "./HealthInformation";
 
 // Local Model
 export type Patient = {
@@ -11,9 +14,9 @@ export type Patient = {
   weight?: Number;
   height?: Number;
   bio?: string;
-  doctors?: [any?];
-  appointments?: [any?];
-  healthInfo?: [any?];
+  doctors?: [Doctor];
+  appointments?: [Appointment];
+  healthInfo?: [HealthInformation];
 };
 
 export const patientSchema = new Schema(
