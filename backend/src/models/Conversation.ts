@@ -2,33 +2,21 @@ import { Schema, model } from "mongoose";
 
 // Local Model
 export type Conversation = {
-  conversationId: String;
-  title: String;
-  date: Date;
   doctorName: String;
   patientName: String;
-  content: [any];
+  messages: [any];
   diagnosis: any;
 };
 
 export const conversationSchema = new Schema(
   {
-    conversationId: {
-      type: String,
-    },
-    title: {
-      type: String,
-    },
-    date: {
-      type: Date,
-    },
     doctor: {
       type: { type: Schema.ObjectId, ref: "Doctor" },
     },
     patient: {
       type: { type: Schema.ObjectId, ref: "Patient" },
     },
-    content: {
+    messages: {
       type: [{ type: Schema.ObjectId, ref: "Message" }],
     },
     diagnosis: {
