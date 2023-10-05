@@ -8,9 +8,6 @@ export type Message = {
 
 export const messageSchema = new Schema(
   {
-    date: {
-      type: Date,
-    },
     senderType: {
       type: String,
     },

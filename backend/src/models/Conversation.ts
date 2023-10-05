@@ -12,9 +12,6 @@ export type Conversation = {
 []
 export const conversationSchema = new Schema(
   {
-    date: {
-      type: Date,
-    },
     doctor: {
       type: { type: Schema.ObjectId, ref: "Doctor" },
     },
