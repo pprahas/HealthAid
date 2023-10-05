@@ -25,7 +25,8 @@ export async function createPatient(patient: Patient) {
         let userPassword = patient.password
         let hashedPassword = pbkdf2Sync(userPassword, '', 10000, 64, 'sha512').toString('hex');
         patient.password = hashedPassword
-        
+        patient.userType = "patient"
+
         // Create mongoDB patient
         let patientDTO = new PatientDTO(patient)
 

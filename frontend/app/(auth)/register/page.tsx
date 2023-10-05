@@ -15,7 +15,7 @@ export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [submit, setSubmit] = useState(false);
   const [error, setError] = useState("");
-  const [role, setRole] = useState(["patient"]);
+  const [role, setRole] = useState([""]);
 
   const isFirstNameValid = React.useMemo(() => {
     if (firstName === "") return !submit;
@@ -68,14 +68,12 @@ export default function SignupPage() {
               lastName: lastName,
               email: email,
               password: password,
-              type: "doctor",
             }
           );
 
           console.log("Register response:", registerResponse.data);
           const registerData = await registerResponse.data;
           console.log(registerData.doctor);
-          registerData.doctor.type = "doctor";
           localStorage.setItem("user", JSON.stringify(registerData.doctor));
           window.location.href = "/onboard";
         } else {
@@ -86,14 +84,12 @@ export default function SignupPage() {
               lastName: lastName,
               email: email,
               password: password,
-              type: "patient",
             }
           );
 
           console.log("Register response:", registerResponse.data);
           const registerData = await registerResponse.data;
           console.log(registerData.patient);
-          registerData.patient.type = "patient";
           localStorage.setItem("user", JSON.stringify(registerData.patient));
           window.location.href = "/onboard";
         }

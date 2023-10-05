@@ -12,7 +12,7 @@ export default function OnboardPage() {
   useEffect(() => {
     let userObjectString = localStorage.getItem("user") ?? "";
     let userObject = JSON.parse(userObjectString);
-    let role = userObject.type;
+    let role = userObject.userType;
     let firstName = userObject.firstName;
     let lastName = userObject.lastName;
     setRole(role);

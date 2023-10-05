@@ -9,6 +9,7 @@ export type Patient = {
   lastName: string;
   email: string;
   password: string;
+  userType: String;
   birthday?: Date;
   gender?: string;
   weight?: Number;
@@ -30,6 +31,10 @@ export const patientSchema = new Schema(
       required: true,
     },
     email: {
+      type: String,
+      required: true,
+    },
+    userType: {
       type: String,
       required: true,
     },
