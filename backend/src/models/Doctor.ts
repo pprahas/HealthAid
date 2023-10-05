@@ -47,9 +47,6 @@ const doctorSchema = new Schema(
       type: [{ type: Schema.ObjectId, ref: "Patient" }],
       required: false,
     },
-    healthInfo: {
-      type: [{ type: Schema.ObjectId, ref: "HealthInformation" }],
-    },
   },
   { timestamps: true }
 );
