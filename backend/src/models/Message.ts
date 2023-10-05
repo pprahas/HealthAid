@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 
 // Local Model
-export type Message = {
+export interface Message {
   senderType: String;
   content: String;
 };
