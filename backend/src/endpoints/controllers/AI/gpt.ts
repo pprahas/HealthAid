@@ -1,10 +1,22 @@
 import { Message } from "@models/Message";
-import OpenAI from "openai";
+import OpenAI from "openai"
+import { Request, Response } from "express";
 
-async function AskGPT(prompt: String, messages: [Message]) {
+export async function AskGPTWrapper(req: Request, res: Response) {
+    try {
+        let prompt = req.body.prompt
+        let messages: [Message] = req.body.messages
+        let response = await AskGPT(prompt, messages)
+        res.status(200).send(response)
+    } catch (error) {
+        return res.status(400).send(error);
+    }
+}
+
+export async function AskGPT(prompt: String, messages: ([Message] | Message[])) {
     try {
         console.log("asking gpt")
-        let formattedMessages: { role: string; content: String; }[] = []
+        let formattedMessages: any[] = []
         if (messages) {
             formattedMessages = messages.map((message) => ({
                 role: message.senderType === "gpt" ? "assistant" : "user",
@@ -13,7 +25,7 @@ async function AskGPT(prompt: String, messages: [Message]) {
         }
 
         // If you also want to include the prompt in the messages, you can do:
-        formattedMessages.push({ role: "user", content: prompt });
+        formattedMessages.push({ role: "assistant", content: prompt });
 
         const openai = new OpenAI({ apiKey: `${process.env.OPENAI_API_KEY}` });
 
