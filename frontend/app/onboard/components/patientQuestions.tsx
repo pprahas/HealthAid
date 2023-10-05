@@ -100,27 +100,29 @@ const PatientQuestions = () => {
   };
 
   async function handleRegister() {
-    try {
-      setLoading(true);
-      let currUserObject = fetchUserData();
-      const updateHealthInfoResponse = await axios.post(
-        "http://localhost:8080/patientHealthInformation",
-        {
-          email: currUserObject.email,
-          information: answers,
-        }
-      );
+    if (answers != undefined) {
+      try {
+        setLoading(true);
+        let currUserObject = fetchUserData();
+        const updateHealthInfoResponse = await axios.post(
+          "http://localhost:8080/patientHealthInformation",
+          {
+            email: currUserObject.email,
+            information: answers,
+          }
+        );
 
-      console.log("Update health response:", updateHealthInfoResponse.data);
-      const updateHealthInfoData = await updateHealthInfoResponse.data;
-      console.log(updateHealthInfoData.patient);
-      setLoading(false);
-      window.location.href = "/home";
-    } catch (error) {
-      const axiosError = error as AxiosError;
-      let errorText = axiosError.response?.data;
-      console.log(errorText);
-      setError("" + errorText);
+        console.log("Update health response:", updateHealthInfoResponse.data);
+        const updateHealthInfoData = await updateHealthInfoResponse.data;
+        console.log(updateHealthInfoData.patient);
+        setLoading(false);
+        window.location.href = "/home";
+      } catch (error) {
+        const axiosError = error as AxiosError;
+        let errorText = axiosError.response?.data;
+        console.log(errorText);
+        setError("" + errorText);
+      }
     }
   }
 
