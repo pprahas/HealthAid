@@ -4,6 +4,7 @@ import { HealthInformationDTO } from "@models/HealthInformation";
 
 import { PatientDTO } from "@models/Patient";
 import { DEFAULT_PROMPT } from "./sendMessage";
+import { AskGPT } from "@endpoints/controllers/AI/gpt";
 
 
 export async function createConversation(body) {
@@ -27,7 +28,8 @@ export async function createConversation(body) {
     }
 
     promptToGPT += DEFAULT_PROMPT
-    return promptToGPT;
+    let gptResponse = await AskGPT(promptToGPT, [])
+    return gptResponse;
   } catch (err) {
     console.log("error:", err);
     throw err;
