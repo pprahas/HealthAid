@@ -9,7 +9,6 @@ export type Doctor = {
   clinic?: typeof Schema.ObjectId;
   appointments?: [typeof mongoose.Schema.ObjectId];
   patients?: [typeof mongoose.Schema.ObjectId];
-  healthInfo?: [any?];
 };
 
 const doctorSchema = new Schema(

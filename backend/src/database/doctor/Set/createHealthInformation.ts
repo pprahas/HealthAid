@@ -1,11 +1,8 @@
 import { DoctorDTO } from "@models/Doctor"; // Import the Doctor model and document types
-import {
-  HealthInformation,
-  HealthInformationDTO,
-} from "@models/HealthInformation";
+import { Clinic, ClinicDTO } from "@models/Clinic";
 import mongoose from "mongoose"; // Import mongoose
 
-export enum HealthInformationError {
+export enum ClinicInformationError {
   unsuccessfulLogin = "Incorrect Email.",
 }
 
@@ -18,7 +15,7 @@ export async function createHealthInformation(body) {
     const doctorAccount = await DoctorDTO.findOne({ email: email });
 
     if (!doctorAccount) {
-      throw HealthInformationError.unsuccessfulLogin;
+      throw ClinicInformationError.unsuccessfulLogin;
     }
 
     for (const key in information) {

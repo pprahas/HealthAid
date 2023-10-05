@@ -2,9 +2,10 @@ import { Schema, model } from "mongoose";
 
 export type Clinic = {
   name: string;
-  address: string;
+  postalCode: string;
   website: string;
   phoneNumber: string;
+  specialties: [string];
 };
 
 const clinicSchema = new Schema(
