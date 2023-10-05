@@ -5,7 +5,7 @@ export type Clinic = {
   postalCode: string;
   website: string;
   phoneNumber: string;
-  specialties: [string];
+  specialties: string;
 };
 
 const clinicSchema = new Schema(
@@ -27,7 +27,7 @@ const clinicSchema = new Schema(
       required: true,
     },
     specialties: {
-      type: [String],
+      type: String,
     },
   },
   { timestamps: true }
