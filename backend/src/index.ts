@@ -16,7 +16,7 @@ class Server {
 
   private config(app: Application): void {
     const corsOptions: CorsOptions = {
-      origin: "http://localhost:3000",
+      origin: "http://localhost:3001",
     };
 
     app.use(cors(corsOptions));
