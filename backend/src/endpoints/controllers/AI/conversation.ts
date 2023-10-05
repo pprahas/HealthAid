@@ -10,7 +10,7 @@ export async function createConversation(
   try {
     const body = req.body;
     let gptResponse = await createConvo(body);
-    return res.status(200).send(gptResponse);
+    return res.status(200).send({ response: gptResponse });
   } catch (error) {
     return res.status(400).send(error);
   }

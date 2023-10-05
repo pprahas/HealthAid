@@ -40,8 +40,11 @@ export async function AskGPT(prompt: String, messages: ([Message] | Message[]), 
         });
         console.log(formattedMessages);
         console.log(chatCompletion)
-        let message = chatCompletion.choices[0].message.content
 
+        let message: Message = {
+            senderType: "gpt",
+            content: chatCompletion.choices[0].message.content
+        }
         // 1. Create and save the new message
         const newMessage = new MessageDTO(message);
         await newMessage.save();
