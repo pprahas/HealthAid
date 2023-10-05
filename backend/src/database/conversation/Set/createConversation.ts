@@ -1,8 +1,10 @@
-export enum ConversationError {}
+export enum ConversationError { }
 
 import { HealthInformationDTO } from "@models/HealthInformation";
 
 import { PatientDTO } from "@models/Patient";
+import { DEFAULT_PROMPT } from "./sendMessage";
+
 
 export async function createConversation(body) {
   try {
@@ -11,26 +13,21 @@ export async function createConversation(body) {
     const patientAccount = await PatientDTO.findById(patientId);
 
     const healthInformation = patientAccount.healthInfo;
-    const healthInformationObjects = [];
+
+    let promptToGPT = `Hello ChatGPT. I am a medical professional using this AI to assist with patient assessments. I have the following health information about the patient:`;
 
     for (const healthInfoId of healthInformation) {
       const healthInfoObject = await HealthInformationDTO.findById(
         healthInfoId
       );
       if (healthInfoObject) {
-        healthInformationObjects.push(healthInfoObject);
+        promptToGPT += `
+        Question: ${healthInfoObject.question} Answer: ${healthInfoObject.answer} `;
       }
     }
 
-    return healthInformationObjects;
-
-    if (patientAccount) {
-      return healthInformation;
-    } else {
-      return "none";
-    }
-
-    // console.log("patient account is", patientAccount);
+    promptToGPT += DEFAULT_PROMPT
+    return promptToGPT;
   } catch (err) {
     console.log("error:", err);
     throw err;
