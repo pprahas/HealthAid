@@ -1,4 +1,4 @@
-import { Schema, model, ObjectId } from "mongoose";
+import { Schema, model } from "mongoose";
 import { Appointment } from "./Appointment";
 import { Patient } from "./Patient";
 import { Clinic } from "./Clinic";
