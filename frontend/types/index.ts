@@ -1,4 +1,4 @@
-import {SVGProps} from "react";
+import { SVGProps } from "react";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -6,31 +6,33 @@ export type IconSvgProps = SVGProps<SVGSVGElement> & {
 
 // Generic User
 export interface User {
+  _id: string,
   firstName: string,
   lastName: string,
   email: string,
-  doctors: string[]
-}
-
-export interface Doctor {
-  firstName: string,
-  lastName: string,
-  email: string
 }
 
 export const UserDefualt: User = {
+  _id: "",
   firstName: "",
   lastName: "",
   email: "",
-  doctors: [],
 }
 
 export const DoctorDefault: Doctor = {
+  _id: "",
   firstName: "",
   lastName: "",
   email: ""
 }
 
+export const PatientDefault: Patient = {
+  _id: "",
+  firstName: "",
+  lastName: "",
+  email: "",
+  doctors: []
+}
 
 // Patient
 export interface Patient extends User {
@@ -39,7 +41,7 @@ export interface Patient extends User {
   weight?: Number;
   height?: Number;
   bio?: string;
-  doctors?: [Doctor];
+  doctors: string[];
   appointments?: [Appointment];
   healthInfo?: [HealthInformation];
 }
@@ -78,18 +80,27 @@ export interface Appointment {
 
 // Conversations
 export interface Conversation {
+  _id: string,
   title: String;
   date: Date;
-  doctorName: String;
-  patientName: String;
-  messages: [Message];
-  diagnosis: Diagnosis;
+  doctor?: String;
+  patient: String;
+  messages: Message[];
+  diagnosis?: Diagnosis;
+}
+
+export const DefaultConversation: Conversation = {
+  _id: "",
+  title: "Chat with AI",
+  date: new Date(),
+  patient: "",
+  messages: [],
 }
 
 // Message
 export interface Message {
   date: Date;
-  senderType: String;
+  senderType: string;
   content: String;
 }
 
