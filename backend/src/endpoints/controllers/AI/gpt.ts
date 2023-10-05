@@ -3,12 +3,13 @@ import OpenAI from "openai"
 import { Request, Response } from "express";
 import { ConversationDTO } from "@models/Conversation";
 
+const DEFAULT_PROMPT = `Now, I want you to act like a doctor, introduce yourself to the patient humanly, and be friendly. Introduce yourself as ChatGPT, not any doctor, and keep the introduction message short and ask the patient about their current health concerns. If you think you have a diagnosis for the patient after talking to them for a while, respond with "you have been diagnosed with: " and then include the diagnosis. don't tell them to seek medical attention, and tell them to forward this entire conversation with the diagnosis to a doctor if they want to. Don't include the health information i have provided above in the introductory message, but do keep them in mind when providing a diagnosis. Ask as many questions as possible, at least 3 minimum questions. `;
+
 export async function AskGPTWrapper(req: Request, res: Response) {
     try {
-        let prompt = req.body.prompt
         let messages: [Message] = req.body.messages
         let conversationId = req.body.conversationId
-        let response = await AskGPT(prompt, messages, conversationId)
+        let response = await AskGPT("", messages, conversationId)
         res.status(200).send(response)
     } catch (error) {
         return res.status(400).send(error);
@@ -19,15 +20,17 @@ export async function AskGPT(prompt: String, messages: ([Message] | Message[]), 
     try {
         console.log("asking gpt")
         let formattedMessages: any[] = []
+
+        formattedMessages.push({ role: "assistant", content: prompt })
+        formattedMessages.push({ role: "assistant", content: DEFAULT_PROMPT });
+        formattedMessages.push({ role: "assistant", content: "This is the conversation that you have already had" })
+
         if (messages) {
             formattedMessages = messages.map((message) => ({
                 role: message.senderType === "gpt" ? "assistant" : "user",
                 content: message.content
             }));
         }
-
-        // If you also want to include the prompt in the messages, you can do:
-        formattedMessages.push({ role: "assistant", content: prompt });
 
         const openai = new OpenAI({ apiKey: `${process.env.OPENAI_API_KEY}` });
 
@@ -50,7 +53,7 @@ export async function AskGPT(prompt: String, messages: ([Message] | Message[]), 
             { new: true, useFindAndModify: false }
         );
 
-        return (chatCompletion.choices);
+        return message;
     } catch (error) {
         console.log("failed")
         console.log(error);

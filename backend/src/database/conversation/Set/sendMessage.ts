@@ -3,10 +3,10 @@ export enum ConversationError { }
 import { ConversationDTO } from "@models/Conversation";
 import { Message, MessageDTO } from "@models/Message";
 import { AskGPT } from "@endpoints/controllers/AI/gpt";
+import { PatientDTO } from "@models/Patient";
+import { HealthInformationDTO } from "@models/HealthInformation";
 
-export const DEFAULT_PROMPT = `Now, I want you to act like a doctor, introduce yourself to the patient humanly, and be friendly. Introduce yourself as ChatGPT, not any doctor, and keep the introduction message short and ask the patient about their current health concerns. If you think you have a diagnosis for the patient after talking to them for a while, respond with "you have been diagnosed with: " and then include the diagnosis. don't tell them to seek medical attention, and tell them to forward this entire conversation with the diagnosis to a doctor if they want to. Don't include the health information i have provided above in the introductory message, but do keep them in mind when providing a diagnosis. Ask as many questions as possible, at least 3 minimum questions. `;
-
-export async function sendMessage(conversationId: String, message: Message) {
+export async function sendMessage(patientId: String, conversationId: String, message: Message) {
     try {
         // 1. Create and save the new message
         const newMessage = new MessageDTO(message);
@@ -30,8 +30,23 @@ export async function sendMessage(conversationId: String, message: Message) {
             content: msg.content
         }));
 
+        const patientAccount = await PatientDTO.findById(patientId);
+        const healthInformation = patientAccount.healthInfo;
+
+        let promptToGPT = `Hello ChatGPT. I am a medical professional using this AI to assist with patient assessments. I have the following health information about the patient:`;
+
+        for (const healthInfoId of healthInformation) {
+            const healthInfoObject = await HealthInformationDTO.findById(
+                healthInfoId
+            );
+            if (healthInfoObject) {
+                promptToGPT += `
+        Question: ${healthInfoObject.question} Answer: ${healthInfoObject.answer} `;
+            }
+        }
+
         console.log("All Messages:", allMessages);
-        let gptResponse = AskGPT(DEFAULT_PROMPT, allMessages, conversationId)
+        let gptResponse = AskGPT(promptToGPT, allMessages, conversationId)
         console.log(gptResponse);
         return gptResponse
 

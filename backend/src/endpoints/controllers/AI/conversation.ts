@@ -17,9 +17,10 @@ export async function createConversation(
 
 export async function sendMessage(req: Request, res: Response) {
   try {
+    let patientId = req.body.patientId
     let conversationId = req.body.conversationId
     let newMessage = req.body.newMessage
-    let gptResponse = await sendMessageToGpt(conversationId, newMessage)
+    let gptResponse = await sendMessageToGpt(patientId, conversationId, newMessage)
     return res.status(200).send(gptResponse)
     return
   } catch (error) {

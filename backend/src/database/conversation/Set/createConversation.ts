@@ -3,7 +3,6 @@ export enum ConversationError { }
 import { HealthInformationDTO } from "@models/HealthInformation";
 
 import { PatientDTO } from "@models/Patient";
-import { DEFAULT_PROMPT } from "./sendMessage";
 import { AskGPT } from "@endpoints/controllers/AI/gpt";
 import { Conversation, ConversationDTO } from "@models/Conversation";
 
@@ -36,7 +35,6 @@ export async function createConversation(body) {
       }
     }
 
-    promptToGPT += DEFAULT_PROMPT
     console.log(`Conversatio ID: ${newConversation._id}`)
     let gptResponse = await AskGPT(promptToGPT, [], `${newConversation._id}`)
     return gptResponse;
