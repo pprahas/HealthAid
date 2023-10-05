@@ -1,6 +1,6 @@
 export enum ConversationError { }
 
-import { conversationDTO } from "@models/Conversation";
+import { ConversationDTO } from "@models/Conversation";
 import { Message, MessageDTO } from "@models/Message";
 import { AskGPT } from "@endpoints/controllers/AI/gpt";
 
@@ -13,7 +13,7 @@ export async function sendMessage(conversationId: String, message: Message) {
         await newMessage.save();
 
         // 2. Add the new message's ObjectId to the Conversation's messages array and retrieve the updated conversation
-        const updatedConversation = await conversationDTO.findByIdAndUpdate(
+        const updatedConversation = await ConversationDTO.findByIdAndUpdate(
             conversationId,
             { $push: { messages: newMessage._id } },
             { new: true, useFindAndModify: false }
@@ -31,7 +31,7 @@ export async function sendMessage(conversationId: String, message: Message) {
         }));
 
         console.log("All Messages:", allMessages);
-        let gptResponse = AskGPT(DEFAULT_PROMPT, allMessages)
+        let gptResponse = AskGPT(DEFAULT_PROMPT, allMessages, conversationId)
         console.log(gptResponse);
         return gptResponse
 

@@ -29,4 +29,4 @@ export const conversationSchema = new Schema(
 );
 
 // Database Model
-export const conversationDTO = model("Conversation", conversationSchema);
+export const ConversationDTO = model("Conversation", conversationSchema);

@@ -5,7 +5,7 @@ import { HealthInformationDTO } from "@models/HealthInformation";
 import { PatientDTO } from "@models/Patient";
 import { DEFAULT_PROMPT } from "./sendMessage";
 import { AskGPT } from "@endpoints/controllers/AI/gpt";
-import { Conversation, conversationDTO } from "@models/Conversation";
+import { Conversation, ConversationDTO } from "@models/Conversation";
 
 
 export async function createConversation(body) {
@@ -19,7 +19,7 @@ export async function createConversation(body) {
     }
 
     // 1. Create and save the new conversation
-    const newConversation = new conversationDTO(conversation);
+    const newConversation = new ConversationDTO(conversation);
     await newConversation.save();
 
     const healthInformation = patientAccount.healthInfo;
@@ -38,7 +38,7 @@ export async function createConversation(body) {
 
     promptToGPT += DEFAULT_PROMPT
     console.log(`Conversatio ID: ${newConversation._id}`)
-    let gptResponse = await AskGPT(promptToGPT, [])
+    let gptResponse = await AskGPT(promptToGPT, [], `${newConversation._id}`)
     return gptResponse;
   } catch (err) {
     console.log("error:", err);

@@ -1,19 +1,21 @@
-import { Message } from "@models/Message";
+import { Message, MessageDTO } from "@models/Message";
 import OpenAI from "openai"
 import { Request, Response } from "express";
+import { ConversationDTO } from "@models/Conversation";
 
 export async function AskGPTWrapper(req: Request, res: Response) {
     try {
         let prompt = req.body.prompt
         let messages: [Message] = req.body.messages
-        let response = await AskGPT(prompt, messages)
+        let conversationId = req.body.conversationId
+        let response = await AskGPT(prompt, messages, conversationId)
         res.status(200).send(response)
     } catch (error) {
         return res.status(400).send(error);
     }
 }
 
-export async function AskGPT(prompt: String, messages: ([Message] | Message[])) {
+export async function AskGPT(prompt: String, messages: ([Message] | Message[]), conversationId: String) {
     try {
         console.log("asking gpt")
         let formattedMessages: any[] = []
@@ -35,6 +37,19 @@ export async function AskGPT(prompt: String, messages: ([Message] | Message[])) 
         });
         console.log(formattedMessages);
         console.log(chatCompletion)
+        let message = chatCompletion.choices[0].message.content
+
+        // 1. Create and save the new message
+        const newMessage = new MessageDTO(message);
+        await newMessage.save();
+
+        // 2. Add the new message's ObjectId to the Conversation's messages array and retrieve the updated conversation
+        await ConversationDTO.findByIdAndUpdate(
+            conversationId,
+            { $push: { messages: newMessage._id } },
+            { new: true, useFindAndModify: false }
+        );
+
         return (chatCompletion.choices);
     } catch (error) {
         console.log("failed")
