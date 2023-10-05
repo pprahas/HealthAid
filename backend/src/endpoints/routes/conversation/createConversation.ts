@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { conversation } from "@endpoints/controllers/conversation/createConversation";
+import { createConversation, sendMessage } from "@endpoints/controllers/AI/conversation";
 
 class ConversationRoutes {
   router = Router();
@@ -9,7 +9,8 @@ class ConversationRoutes {
   }
 
   initializeRoutes() {
-    this.router.post("/", conversation);
+    this.router.post("/createConversation", createConversation);
+    this.router.post("/sendMessage", sendMessage);
   }
 }
 
