@@ -7,6 +7,7 @@ import getDoctorById from "./doctor/getDoctorById";
 import patientHealthInformationRoutes from "./extraInformation/patientHealthInformation";
 import doctorClinicInformationRoutes from "./extraInformation/doctorClinicInformation";
 import conversationRoutes from "./conversation/conversation";
+import updatePatientRoutes from "./updatePatient/updatePatient";
 export default class Routes {
   constructor(app: Application) {
     app.use("/register", registerRoutes);
@@ -16,5 +17,6 @@ export default class Routes {
     app.use("/patientHealthInformation", patientHealthInformationRoutes);
     app.use("/doctorClinicInformation", doctorClinicInformationRoutes);
     app.use("/conversation", conversationRoutes);
+    app.use("/updatePatient", updatePatientRoutes);
   }
 }
