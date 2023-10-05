@@ -23,7 +23,7 @@ const clinicSchema = new Schema(
       required: true,
     },
     phoneNumber: {
-      type: Date,
+      type: String,
       required: true,
     },
     specialties: {
