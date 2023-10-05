@@ -12,6 +12,7 @@ export async function createClinicInformation(doctorEmail, clinicInfo) {
       throw ClinicInformationError.unsuccessfulLogin;
     }
     const newClinic = new ClinicDTO(clinicInfo)
+    await newClinic.save();
 
     doctorAccount.clinic = newClinic._id;
     await doctorAccount.save();
