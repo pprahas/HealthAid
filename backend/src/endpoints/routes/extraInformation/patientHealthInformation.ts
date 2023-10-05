@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { updateHealthInformation } from "@endpoints/controllers/healthInformation/patientHealthInformation";
+import { updateHealthInformation } from "@endpoints/controllers/extraInformation/patientHealthInformation";
 
 class HealthInformationRoutes {
   router = Router();
