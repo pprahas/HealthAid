@@ -38,6 +38,10 @@ export default function LoginPage() {
     }
   };
 
+  const handleRegister = () => {
+    window.location.href = "/register";
+  };
+
   return (
     <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
       <div className="inline-block max-w-lg text-center justify-center">
@@ -71,7 +75,10 @@ export default function LoginPage() {
         >
           Login
         </button>
-        <button className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
+        <button
+          className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+          onClick={handleRegister}
+        >
           Register
         </button>
       </div>

@@ -66,9 +66,10 @@ export default function SignupPage() {
 
         console.log("Register response:", registerResponse.data);
         const registerData = await registerResponse.data;
-        console.log(registerData.patient);
-        registerData.patient.type = "doctor";
-        localStorage.setItem("user", JSON.stringify(registerData.patient));
+        console.log(registerData.doctor);
+        registerData.doctor.type = "doctor";
+        localStorage.setItem("user", JSON.stringify(registerData.doctor));
+        window.location.href = "/onboard";
       } else {
         const registerResponse = await axios.post(
           "http://localhost:8080/register/patient",
@@ -86,8 +87,8 @@ export default function SignupPage() {
         console.log(registerData.patient);
         registerData.patient.type = "patient";
         localStorage.setItem("user", JSON.stringify(registerData.patient));
+        window.location.href = "/onboard";
       }
-      window.location.href = "/onboard";
     } catch (error) {
       const axiosError = error as AxiosError;
       let errorText = axiosError.response?.data;
