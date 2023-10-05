@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { createConversation as createConvo } from "@database/conversation/Set/createConversation";
 import { sendMessage as sendMessageToGpt } from "@database/conversation/Set/sendMessage";
 import { getConversations as getConvo } from "@database/conversation/Get/getConversations";
+import { Message } from "@models/Message";
 
 export async function createConversation(
   req: Request,
@@ -21,7 +22,11 @@ export async function sendMessage(req: Request, res: Response) {
     let patientId = req.body.patientId
     let conversationId = req.body.conversationId
     let newMessage = req.body.newMessage
-    let gptResponse = await sendMessageToGpt(patientId, conversationId, newMessage)
+    let message: Message = {
+      senderType: "me",
+      content: newMessage
+    }
+    let gptResponse = await sendMessageToGpt(patientId, conversationId, message)
     return res.status(200).send(gptResponse)
   } catch (error) {
     return res.status(400).send(error);
