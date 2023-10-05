@@ -9,8 +9,8 @@ export async function createConversation(
 ): Promise<Response> {
   try {
     const body = req.body;
-    let patientDTO = await createConvo(body);
-    return res.status(200).send(patientDTO);
+    let gptResponse = await createConvo(body);
+    return res.status(200).send(gptResponse);
   } catch (error) {
     return res.status(400).send(error);
   }
