@@ -1,8 +1,8 @@
-import { conversationDTO } from "@models/Conversation";
+import { ConversationDTO } from "@models/Conversation";
 
 export async function getConversations(patientId) {
   try {
-    const conversations = await conversationDTO.find({ patient: patientId });
+    const conversations = await ConversationDTO.find({ patient: patientId });
 
     return conversations;
   } catch (err) {
