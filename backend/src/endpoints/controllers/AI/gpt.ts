@@ -25,7 +25,7 @@ export async function AskGPT(prompt: String, messages: ([Message] | Message[]), 
         formattedMessages.push({ role: "assistant", content: DEFAULT_PROMPT });
         formattedMessages.push({ role: "assistant", content: "This is the conversation that you have already had" })
 
-        if (messages) {
+        if (messages && messages.length != 0) {
             formattedMessages = messages.map((message) => ({
                 role: message.senderType === "gpt" ? "assistant" : "user",
                 content: message.content
