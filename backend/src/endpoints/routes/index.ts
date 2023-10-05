@@ -2,7 +2,7 @@ import { Application } from "express";
 import registerRoutes from "./authentication/register";
 import loginRoutes from "./authentication/login";
 import patientHealthInformationRoutes from "./healthInformation/patientHealthInformation";
-
+import conversationRoutes from "./conversation/createConversation";
 import gptRoutes from "../../openai/index";
 export default class Routes {
   constructor(app: Application) {
@@ -11,5 +11,6 @@ export default class Routes {
     app.use("/register", registerRoutes);
     app.use("/login", loginRoutes);
     app.use("/patient_health_information", patientHealthInformationRoutes);
+    app.use("/create_conversation", conversationRoutes);
   }
 }
