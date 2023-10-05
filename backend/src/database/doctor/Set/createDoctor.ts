@@ -1,38 +1,38 @@
-import { Patient, PatientDTO } from "@models/Patient";
+import { Doctor, DoctorDTO } from "@models/Doctor";
 import { pbkdf2Sync } from "crypto";
 
 // Errors that can be thrown during signup
-export enum CreatePatientError {
-    invalidPatientInfo = "Invalid Patient Info",
+export enum CreateDoctorError {
+    invalidDoctorInfo = "Invalid Doctor Info",
     invalidPassword = "Invalid Password",
     invalidEmail = "Invalid Email Address",
     emailInUse = "Email already in use"
 }
 
 /**
-   * Adds a patient to the dataase
+   * Adds a doctor to the dataase
    *
-   * @param patient - Info of the patient you are creating
+   * @param doctor - Info of the doctor you are creating
    *
    */
-export async function createPatient(patient: Patient) {
+export async function createDoctor(doctor: Doctor) {
     try {
         // Verfication checks
-        verifyInfo(patient)
-        await verifyEmailFree(patient.email);
+        verifyInfo(doctor)
+        await verifyEmailFree(doctor.email);
 
         // Hash password
-        let userPassword = patient.password
+        let userPassword = doctor.password
         let hashedPassword = pbkdf2Sync(userPassword, '', 10000, 64, 'sha512').toString('hex');
-        patient.password = hashedPassword
-        patient.userType = "patient"
+        doctor.password = hashedPassword
+        doctor.userType = "doctor"
 
         // Create mongoDB patient
-        let patientDTO = new PatientDTO(patient)
+        let doctorDTO = new DoctorDTO(doctor)
 
         // Save patient
-        await patientDTO.save();
-        return patientDTO
+        await doctorDTO.save();
+        return doctorDTO
     } catch (error) {
         throw error
     }
@@ -49,29 +49,29 @@ export async function createPatient(patient: Patient) {
    * @returns Void, will throw an error if email is taken
    */
 async function verifyEmailFree(email: String) {
-    const user = await PatientDTO.findOne({ email: email })
+    const user = await DoctorDTO.findOne({ email: email })
     if (!!user) {
-        throw CreatePatientError.emailInUse
+        throw CreateDoctorError.emailInUse
     }
 }
 
 /**
-   * Verifies that all patient info is valid
+   * Verifies that all doctor info is valid
    * Checks that the email is a valid email and first/last name are not empty
    *
-   * @param patient - Info of the patient
+   * @param doctor - Info of the doctor
    *
    * @returns Void, will throw an error if email is taken
    */
-function verifyInfo(patient: Patient) {
+function verifyInfo(doctor: Doctor) {
     const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
     // Verify email is a valid email
-    if (patient.email == "" || !emailRegex.test(patient.email)) {
-        throw CreatePatientError.invalidEmail
+    if (doctor.email == "" || !emailRegex.test(doctor.email)) {
+        throw CreateDoctorError.invalidEmail
     }
 
     // Verify first and last name are not empty
-    if (patient.firstName == "" || patient.lastName == "") {
-        throw CreatePatientError.invalidPatientInfo
+    if (doctor.firstName == "" || doctor.lastName == "") {
+        throw CreateDoctorError.invalidDoctorInfo
     }
 }

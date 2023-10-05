@@ -8,14 +8,6 @@ export const siteConfig = {
 		label: "Calendar",
 		href: "/calendar",
 	},
-	{
-		label: "|",
-		href: "/profile",
-	},
-    {
-      label: "Name",
-      href: "/profile",
-    },
     // {
     //   label: "Pricing",
     //   href: "/pricing",

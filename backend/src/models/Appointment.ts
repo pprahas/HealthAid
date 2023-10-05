@@ -1,7 +1,6 @@
 import { Schema, model } from "mongoose";
 
 export type Appointment = {
-  appointmentId: string;
   doctorName: string;
   patientName: string;
   date: Date;
@@ -9,10 +8,6 @@ export type Appointment = {
 
 const appointmentSchema = new Schema(
   {
-    appointmentId: {
-      type: String,
-      required: true,
-    },
     doctorName: {
       type: String,
       required: true,

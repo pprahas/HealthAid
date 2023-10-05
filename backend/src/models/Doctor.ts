@@ -1,15 +1,19 @@
-import mongoose, { Schema, model } from "mongoose";
+import { Schema, model } from "mongoose";
+import { Appointment } from "./Appointment";
+import { Patient } from "./Patient";
+import { Clinic } from "./Clinic";
 
 export type Doctor = {
   firstName: string;
   lastName: string;
   email: string;
   password: string;
+  userType: String,
   birthday?: Date;
-  clinic?: typeof Schema.ObjectId;
-  appointments?: [typeof mongoose.Schema.ObjectId];
-  patients?: [typeof mongoose.Schema.ObjectId];
-}
+  clinic?: (typeof Schema.ObjectId | Clinic);
+  appointments?: [Appointment];
+  patients?: [Patient];
+};
 
 const doctorSchema = new Schema(
   {
@@ -22,6 +26,10 @@ const doctorSchema = new Schema(
       required: true,
     },
     email: {
+      type: String,
+      required: true,
+    },
+    userType: {
       type: String,
       required: true,
     },

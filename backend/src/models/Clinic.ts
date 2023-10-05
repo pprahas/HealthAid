@@ -1,24 +1,20 @@
 import { Schema, model } from "mongoose";
 
 export type Clinic = {
-  clinicId: string;
   name: string;
-  address: string;
+  postalCode: string;
   website: string;
   phoneNumber: string;
-}
+  specialties: string;
+};
 
 const clinicSchema = new Schema(
   {
-    clinicId: {
-      type: String,
-      required: true,
-    },
     name: {
       type: String,
       required: true,
     },
-    address: {
+    postalCode: {
       type: String,
       required: true,
     },
@@ -27,8 +23,11 @@ const clinicSchema = new Schema(
       required: true,
     },
     phoneNumber: {
-      type: Date,
+      type: String,
       required: true,
+    },
+    specialties: {
+      type: String,
     },
   },
   { timestamps: true }

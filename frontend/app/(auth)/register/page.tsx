@@ -4,23 +4,18 @@ import React, { useState, MouseEvent, FormEvent } from "react";
 import axios, { AxiosError } from "axios";
 import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
+import { Checkbox, CheckboxGroup } from "@nextui-org/react";
 
 export default function SignupPage() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [isEmailValid, setIsEmailValid] = useState(true);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [submit, setSubmit] = useState(false);
   const [error, setError] = useState("");
-
-  const isEmailValid = React.useMemo(() => {
-    if (email === "") return !submit;
-
-    return (
-      email.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/i) != null
-    );
-  }, [email, submit]);
+  const [role, setRole] = useState([""]);
 
   const isFirstNameValid = React.useMemo(() => {
     if (firstName === "") return !submit;
@@ -34,39 +29,76 @@ export default function SignupPage() {
     return lastName.match(/^[A-Za-z\s'-]+$/i) != null;
   }, [lastName, submit]);
 
+  function emailCheck() {
+    if (email === "") return !submit;
+
+    return (
+      email.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/i) != null
+    );
+  }
+
   const isPasswordValid = React.useMemo(() => {
     if (password === "") return !submit;
 
-    return password.match(/^[A-Za-z\s'-]+$/i) != null;
+    return password.match(/^[\x20-\x7E]+$/) != null;
   }, [password, submit]);
 
   const isConfirmPasswordValid = React.useMemo(() => {
     if (confirmPassword === "" || confirmPassword != password) return !submit;
 
-    return password.match(/^[A-Za-z\s'-]+$/i) != null;
+    return password.match(/^[\x20-\x7E]+$/) != null;
   }, [confirmPassword, submit]);
 
-  const handleRegister = async (e: MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    try {
-      setSubmit(true);
-      const response = await axios.post("http://localhost:8080/register", {
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        password: password,
-      });
+  const handleGoToOnboard = async (e: MouseEvent<HTMLButtonElement>) => {
+    if (
+      isFirstNameValid &&
+      isLastNameValid &&
+      isEmailValid &&
+      isPasswordValid &&
+      isConfirmPasswordValid
+    ) {
+      e.preventDefault();
+      try {
+        setSubmit(true);
+        if (role && role[0] == "doctor") {
+          const registerResponse = await axios.post(
+            "http://localhost:8080/register/doctor",
+            {
+              firstName: firstName,
+              lastName: lastName,
+              email: email,
+              password: password,
+            }
+          );
 
-      console.log("Response:", response.data);
-      const data = await response.data;
-      console.log(data.patient);
-      localStorage.setItem("user", JSON.stringify(data.patient));
-      window.location.href = "/dashboard";
-    } catch (error) {
-      const axiosError = error as AxiosError;
-      let errorText = axiosError.response?.data;
-      console.log(errorText);
-      setError("" + errorText);
+          console.log("Register response:", registerResponse.data);
+          const registerData = await registerResponse.data;
+          console.log(registerData.doctor);
+          localStorage.setItem("user", JSON.stringify(registerData.doctor));
+          window.location.href = "/onboard";
+        } else {
+          const registerResponse = await axios.post(
+            "http://localhost:8080/register/patient",
+            {
+              firstName: firstName,
+              lastName: lastName,
+              email: email,
+              password: password,
+            }
+          );
+
+          console.log("Register response:", registerResponse.data);
+          const registerData = await registerResponse.data;
+          console.log(registerData.patient);
+          localStorage.setItem("user", JSON.stringify(registerData.patient));
+          window.location.href = "/onboard";
+        }
+      } catch (error) {
+        const axiosError = error as AxiosError;
+        let errorText = axiosError.response?.data;
+        console.log(errorText);
+        setError("" + errorText);
+      }
     }
   };
 
@@ -91,6 +123,7 @@ export default function SignupPage() {
                   color={isFirstNameValid ? "default" : "danger"}
                   onChange={(e) => {
                     setSubmit(false);
+                    setError("");
                     setFirstName(e.target.value);
                   }}
                 />
@@ -105,6 +138,7 @@ export default function SignupPage() {
                   color={isLastNameValid ? "default" : "danger"}
                   onChange={(e) => {
                     setSubmit(false);
+                    setError("");
                     setLastName(e.target.value);
                   }}
                 />
@@ -117,7 +151,7 @@ export default function SignupPage() {
                   type="email"
                   label="Email"
                   defaultValue=""
-                  isInvalid={isEmailValid}
+                  isInvalid={!isEmailValid}
                   errorMessage={
                     (!isEmailValid && "Please enter a valid email") ||
                     (error != "" && error)
@@ -125,7 +159,14 @@ export default function SignupPage() {
                   color={isEmailValid ? "default" : "danger"}
                   onChange={(e) => {
                     setSubmit(false);
+                    setError("");
                     setEmail(e.target.value);
+                  }}
+                  onFocusChange={(focus) => {
+                    if (!focus) {
+                      console.log("Lost focus");
+                      setIsEmailValid(emailCheck());
+                    }
                   }}
                 />
               </div>
@@ -143,6 +184,7 @@ export default function SignupPage() {
                 color={isPasswordValid ? "default" : "danger"}
                 onChange={(e) => {
                   setSubmit(false);
+                  setError("");
                   setPassword(e.target.value);
                 }}
               />
@@ -160,16 +202,32 @@ export default function SignupPage() {
                 color={isConfirmPasswordValid ? "default" : "danger"}
                 onChange={(e) => {
                   setSubmit(false);
+                  setError("");
                   setConfirmPassword(e.target.value);
                 }}
               />
             </div>
-
+            <CheckboxGroup
+              label="What role fits you best:"
+              orientation="horizontal"
+              color="secondary"
+              value={role}
+              defaultValue={["patient"]}
+              onValueChange={(value) => {
+                console.log(value);
+                let last = value[value.length - 1];
+                value = [last];
+                setRole([last]);
+              }}
+            >
+              <Checkbox value="patient">Patient</Checkbox>
+              <Checkbox value="doctor">Doctor</Checkbox>
+            </CheckboxGroup>
             <div>
               <Button
                 type="submit"
                 onClick={async (e) => {
-                  await handleRegister(e);
+                  await handleGoToOnboard(e);
                 }}
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-2 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >

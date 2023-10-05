@@ -1,34 +1,24 @@
 import { Schema, model } from "mongoose";
+import { Message } from "./Message";
+import { Diagnosis } from "./Diagnosis";
 
 // Local Model
 export type Conversation = {
-  conversationId: String;
-  title: String;
-  date: Date;
-  doctorName: String;
-  patientName: String;
-  content: [any];
-  diagnosis: any;
+  doctor?: String;
+  patient: String;
+  messages?: [Message];
+  diagnosis?: Diagnosis;
 };
-
+[]
 export const conversationSchema = new Schema(
   {
-    conversationId: {
-      type: String,
-    },
-    title: {
-      type: String,
-    },
-    date: {
-      type: Date,
-    },
     doctor: {
       type: { type: Schema.ObjectId, ref: "Doctor" },
     },
     patient: {
       type: { type: Schema.ObjectId, ref: "Patient" },
     },
-    content: {
+    messages: {
       type: [{ type: Schema.ObjectId, ref: "Message" }],
     },
     diagnosis: {
@@ -39,4 +29,4 @@ export const conversationSchema = new Schema(
 );
 
 // Database Model
-export const conversationDTO = model("Conversation", conversationSchema);
+export const ConversationDTO = model("Conversation", conversationSchema);
