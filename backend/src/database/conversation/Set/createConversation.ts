@@ -6,7 +6,6 @@ import { PatientDTO } from "@models/Patient";
 import { AskGPT } from "@endpoints/controllers/AI/gpt";
 import { Conversation, ConversationDTO } from "@models/Conversation";
 
-
 export async function createConversation(body) {
   try {
     const patientId = body.patientId;
@@ -14,8 +13,7 @@ export async function createConversation(body) {
     const patientAccount = await PatientDTO.findById(patientId);
     let conversation: Conversation = {
       patient: patientId,
-
-    }
+    };
 
     // 1. Create and save the new conversation
     const newConversation = new ConversationDTO(conversation);
