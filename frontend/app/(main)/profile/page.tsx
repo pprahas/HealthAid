@@ -101,6 +101,7 @@ export default function ProfilePage() {
           information: record,
         }
       );
+      window.location.reload();
     } catch (error) {
       console.error("Error:", error);
     }

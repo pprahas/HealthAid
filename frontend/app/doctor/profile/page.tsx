@@ -83,14 +83,6 @@ export default function ProfilePage() {
   };
 
   const updateClinicInfo = async () => {
-    // let record: Record<string, string> = {};
-
-    // record["name"] = clinicName
-    // record["phoneNumber"] = clinicPhone
-    // record["address"] = clinicAddress
-    // record["website"] = clinicWebsite
-    // record["postalCode"] = clinicPostCode
-    // record["specialties"] = clinicSpecialties
 
     const newClinic : Clinic = {
       name: clinicName,
@@ -105,8 +97,10 @@ export default function ProfilePage() {
       const response = await axios.post(
         "http://localhost:8080/updateDoctor",
         {
-          id: doctor._id,
-          add: newClinic,
+          doctorId: doctor._id,
+          add: {
+            clinic: newClinic
+          }
         }
       );
     } catch (error) {

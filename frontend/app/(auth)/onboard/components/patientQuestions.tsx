@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@nextui-org/button";
 import axios, { AxiosError } from "axios";
 
@@ -125,6 +125,15 @@ const PatientQuestions = () => {
       }
     }
   }
+
+  useEffect(() => {
+    questions.forEach((question) => {
+      setAnswers((prevAnswers) => ({
+        ...prevAnswers,
+        [question.question]: " ",
+      }));
+    });
+  }, []);
 
   function fetchUserData() {
     let userObjectString = localStorage.getItem("user") ?? "";

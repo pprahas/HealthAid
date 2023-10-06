@@ -183,7 +183,7 @@ export function Sidebar() {
         + New
       </div>
       {doctorList?.map((doctor, index: number) => (
-        <div key={index} className="text-left snap-start relative group">
+        <div key={index} className="text-center snap-start relative group">
           <div
             className={`${
               sidebarIndex == index
@@ -194,7 +194,7 @@ export function Sidebar() {
               setSidebarIndex(index);
             }}
           >
-            <div className="pl-3">
+            <div>
               Dr. {doctor.firstName} {doctor.lastName}
             </div>
           </div>

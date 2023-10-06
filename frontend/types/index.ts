@@ -68,7 +68,7 @@ export interface Doctor extends User {
   birthday?: Date;
   clinic?: string;
   appointments?: [Appointment];
-  patients?: string[];
+  patients: string[];
 }
 
 // Clinic
