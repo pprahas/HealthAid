@@ -9,26 +9,25 @@ export interface User {
   firstName: string,
   lastName: string,
   email: string,
-  doctors: string[]
-}
-
-export interface Doctor {
-  firstName: string,
-  lastName: string,
-  email: string
 }
 
 export const UserDefualt: User = {
   firstName: "",
   lastName: "",
   email: "",
-  doctors: [],
 }
 
 export const DoctorDefault: Doctor = {
   firstName: "",
   lastName: "",
   email: ""
+}
+
+export const PatientDefault: Patient ={
+  firstName: "",
+  lastName: "",
+  email: "",
+  doctors: [] as string[]
 }
 
 
@@ -39,7 +38,7 @@ export interface Patient extends User {
   weight?: Number;
   height?: Number;
   bio?: string;
-  doctors?: [Doctor];
+  doctors: string[]
   appointments?: [Appointment];
   healthInfo?: [HealthInformation];
 }

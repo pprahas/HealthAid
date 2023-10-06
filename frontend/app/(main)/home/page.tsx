@@ -8,7 +8,7 @@ import axios, { AxiosError } from "axios";
 import { SidebarContext } from "@/app/(main)/layout";
 import { PatientContext } from "@/app/(main)/layout";
 import { SetStateAction, useContext, useState } from "react";
-import { Patient } from "@/types";
+import { Patient, PatientDefault } from "@/types";
 import { Doctor, DoctorDefault } from "@/types";
 import { ConversationList, Conversation } from "./conversation";
 import { RightArrow } from "@/components/rightArrow";
@@ -17,15 +17,20 @@ import { RightArrow } from "@/components/rightArrow";
 export default function PatientHome() {
 
     const [sidebarIndex, setSidebarIndex] = useContext(SidebarContext) as any[]
-    const [patient, setPatient] = useContext(PatientContext) as [Patient, SetStateAction<Patient>]
+    const [patient, setPatient] = useContext(PatientContext) as [Patient, React.Dispatch<React.SetStateAction<Patient>>]
     const [doctor, setDoctor] = useState(DoctorDefault)
     const [convoIndex, setConvoIndex] = useState(0)
 
     const getDoctorInfo = async () => {
+        
+        if (typeof patient.doctors === 'undefined' || patient.doctors.length == 0) {
+            setDoctor(DoctorDefault)
+            return;
+        }
 		try {
 			const response = await axios.post('http://localhost:8080/getDoctorFromId', {
 				id: patient.doctors[sidebarIndex] 
-			});
+			})
 	
 			const data = await response.data;
             setDoctor(data.doctor)

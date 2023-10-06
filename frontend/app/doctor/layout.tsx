@@ -1,7 +1,7 @@
 'use client'
 import "@/styles/globals.css";
-import { Navbar } from "@/components/navbar";
-import { Sidebar } from "../../components/sidebar"
+import { Navbar } from "./components/navbar";
+import { Sidebar } from "./components/sidebar"
 import { Patients } from "./home/testList";
 import { useEffect, useState, createContext, useContext } from "react";
 import axios, { AxiosError } from "axios";

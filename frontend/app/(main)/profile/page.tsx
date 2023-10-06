@@ -1,6 +1,8 @@
 "use client";
-import { title } from "@/components/primitives";
 import React, { useState } from "react";
+import {Input} from "@nextui-org/input";
+import { Button } from "@nextui-org/button";
+import {Textarea} from "@nextui-org/input";
 
 interface FormData {
   [key: string]: string;
@@ -18,6 +20,12 @@ export default function ProfilePage() {
     confirmPassword: "", // Confirm password field
   });
 
+  const [firstName, setFirstName] = useState("")
+  const [lastName, setLastName] = useState("")
+  const [birthday, setBirthday] = useState("")
+  const [address, setAddress] = useState("")
+  const [gender, setGender] = useState("")
+
   const [questions, setQuestions] = useState([
     { id: 1, question: "Question 1", answer: "" },
     { id: 2, question: "Question 2", answer: "" },
@@ -27,28 +35,12 @@ export default function ProfilePage() {
   ]);
 
   const handleSave = () => {
-    if (formData.newPassword === formData.confirmPassword) {
-      // Passwords match, you can proceed
-      console.log("Personal Info:", formData);
-    } else {
-      // Passwords don't match, show an error message or take appropriate action
-      console.error("Passwords do not match");
-    }
+    //Handle save
   };
 
   const handleLogout = () => {
     localStorage.removeItem("user");
     window.location.href = "/";
-  };
-
-  const handleFieldChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    fieldName: string
-  ) => {
-    setFormData({
-      ...formData,
-      [fieldName]: e.target.value,
-    });
   };
 
   const handleQuestionChange = (
@@ -61,76 +53,107 @@ export default function ProfilePage() {
     setQuestions(updatedQuestions);
   };
 
-  // Define an array of field names for personal information
-  const personalInfoFields = [
-    { label: "First Name", name: "firstName" },
-    { label: "Last Name", name: "lastName" },
-    { label: "Birthday", name: "birthday" },
-    { label: "Address", name: "address" },
-    { label: "Gender", name: "gender" },
-    { label: "New Password", name: "newPassword", type: "password" }, // New password field
-    { label: "Confirm Password", name: "confirmPassword", type: "password" }, // Confirm password field
-  ];
 
   return (
-    <div>
-      <div style={{ display: "flex" }}>
-        {/* Left Side: Personal Information */}
-        <div style={{ flex: 1 }}>
-          <div className="inline-block max-w-lg text-center justify-center">
-            <h1 className="text-3xl font-bold mb-4">Personal Information</h1>
-          </div>
-          {personalInfoFields.map((field) => (
-            <div className="mb-4" key={field.name}>
-              <div className="mb-2">
-                <label className="text-xl font-bold">{field.label}:</label>
+    <section className="columns-2 items-start h-[calc(100vh-60px)]">
+      <div className="w-full h-full pt-9 pl-10 pr-8 overflow-hidden">
+          <h1 className="font-bold text-4xl">Personal Information</h1>
+          <div className="overflow-auto h-full my-3 mt-10">
+            <div className="grid grid-cols-3 gap-4 items-center text-xl font-bold">
+              <div> First Name </div>
+              <div className="col-span-2">
+                <Input
+                  value={firstName}
+                  onValueChange={setFirstName}
+                />
               </div>
-              <input
-                type="text"
-                placeholder={field.label}
-                className="border p-2 rounded"
-                value={formData[field.name]}
-                onChange={(e) => handleFieldChange(e, field.name)}
-              />
-            </div>
-          ))}
-        </div>
 
-        {/* Right Side: Health Questions */}
-        <div style={{ flex: 1 }}>
-          <div className="inline-block max-w-lg text-center justify-center">
-            <h1 className="text-3xl font-bold mb-4">Health Information</h1>
-          </div>
-          {questions.map((q) => (
-            <div className="mb-4" key={q.id}>
-              <div className="mb-2">
-                <label className="text-xl font-bold">{q.question}:</label>
+              <div> Last Name </div>
+              <div className="col-span-2">
+                <Input
+                  value={lastName}
+                  onValueChange={setLastName}
+                />
               </div>
-              <input
-                type="text"
-                placeholder=""
-                className="border p-2 rounded"
-                value={q.answer}
-                onChange={(e) => handleQuestionChange(e, q.id)}
-              />
+              
+              <div> Birthday </div>
+              <div className="col-span-2">
+                <Input
+                  value={birthday}
+                  onValueChange={setBirthday}
+                />
+              </div>
+
+              <div> Address </div>
+              <div className="col-span-2">
+                <Input
+                  value={address}
+                  onValueChange={setAddress}
+                />
+              </div>
+
+              <div> Gender </div>
+              <div className="col-span-2">
+                <Input
+                  value={gender}
+                  onValueChange={setGender}
+                />
+              </div>
+              
+              
             </div>
-          ))}
-        </div>
+            
+            <div className="flex pt-10 space-x-8">
+                <Button
+                  size="lg"
+                  color="success"
+                  onClick={handleSave}
+                >
+                  Save changes
+                </Button>
+                <Button
+                  size="lg"
+                >
+                  Change password
+              </Button>
+              <Button
+                  size="lg"
+                  color="danger"
+                  onClick={handleLogout}
+                >
+                  Log out
+              </Button>
+            </div>
+              
+          </div>
       </div>
+      <div className="h-[calc(100vh-56px)] bg-slate-200 rounded-tl-3xl pt-8 pl-10 flex flex-col overflow-hidden">
+          <div className="font-bold h-16 text-4xl pr-10">Health Information</div>
+            <div className="flex-grow overflow-y-auto space-x-1 pr-10">
+            {questions.map((q) => (
+              <div className="mb-4" key={q.id}>
+                <div>
+                  <label>{q.question}:</label>
+                </div>
+                <Textarea
+                  placeholder=""
+                  value={q.answer}
+                  onChange={(e) => handleQuestionChange(e, q.id)}
+                />
+              </div>
+            ))}
+            </div>
+            <div className="flex space-x-1 pl-1 py-3 place-items-center  ">
+              <Button
+                  color="success"
+                  className="h-16"
+                  size="lg"
+              >
+                <div className="font-bold">Update</div>
+              </Button>           
+            </div>
+      </div>
+    </section>
+  )
 
-      {/* Save Button */}
-      <button
-        className="bg-blue-500 text-white p-4 rounded hover:bg-blue-600 mr-4"
-        onClick={handleSave}
-      >
-        Save
-      </button>
-      <button
-        className="bg-red-500 text-white p-4 rounded hover:bg-red-600 mr-4"
-        onClick={handleLogout}
-      >
-        Logout
-      </button>
-    </div>
-  );
-}
+  }
