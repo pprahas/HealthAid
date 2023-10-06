@@ -11,7 +11,6 @@ import {
   Patient,
   PatientDefault,
 } from "@/types";
-import { ConversationList } from "./home/page";
 
 type SidebarContextType = [
   number,
@@ -39,8 +38,8 @@ export const CurrentConvoContext = createContext<
 >(undefined);
 
 type ConvoListContextType = [
-  ConversationList,
-  React.Dispatch<React.SetStateAction<ConversationList>>
+  Conversation[],
+  React.Dispatch<React.SetStateAction<Conversation[]>>
 ];
 export const ConvoListContext = createContext<ConvoListContextType | undefined>(
   undefined

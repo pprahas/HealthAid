@@ -27,18 +27,11 @@ export const DoctorDefault: Doctor = {
 }
 
 export const PatientDefault: Patient ={
-  firstName: "",
-  lastName: "",
-  email: "",
-  doctors: [] as string[]
-}
-
-export const PatientDefault: Patient = {
   _id: "",
   firstName: "",
   lastName: "",
   email: "",
-  doctors: []
+  doctors: [] as string[]
 }
 
 // Patient
