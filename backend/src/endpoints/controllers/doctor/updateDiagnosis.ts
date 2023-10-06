@@ -10,9 +10,10 @@ export async function updateDiagnosis(
     const conversationId = body.conversationId as string;
     // console.log(conversationId);
     const diagnosis = body.diagnosis;
-    await updateDia(conversationId, diagnosis);
+    const doctorEmail = body.doctorEmail;
+    let assignedDoctorId = await updateDia(conversationId, diagnosis, doctorEmail);
     // console.log("its bnack hee as well")
-    return res.status(200).send("The diagnosis has been updated");
+    return res.status(200).send(assignedDoctorId);
   } catch (error) {
     return res.status(400).send(error);
   }

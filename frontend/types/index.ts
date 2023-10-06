@@ -89,7 +89,7 @@ export interface Conversation {
   doctor?: String;
   patient: String;
   messages: Message[];
-  diagnosis?: Diagnosis;
+  diagnosis: String;
 }
 
 export const DefaultConversation: Conversation = {
@@ -98,6 +98,7 @@ export const DefaultConversation: Conversation = {
   date: new Date(),
   patient: "",
   messages: [],
+  diagnosis: "none"
 }
 
 // Message

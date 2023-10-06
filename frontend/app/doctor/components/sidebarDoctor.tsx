@@ -1,7 +1,7 @@
 "use client";
 //import { Patient } from "../app/(main)/home/testList";
 import { SetStateAction, useContext, useEffect, useState } from "react";
-import { SidebarContext } from "@/app/doctor/layout";
+import { PatientListContext, SidebarContext } from "@/app/doctor/layout";
 import { DoctorContext } from "@/app/doctor/layout";
 import axios, { AxiosError } from "axios";
 import { Patient } from "@/types";
@@ -16,7 +16,10 @@ export function Sidebar() {
     Doctor,
     React.Dispatch<React.SetStateAction<Doctor>>
   ];
-  const [patientList, setPatientList] = useState<Array<Patient>>([]);
+  const [patientList, setPatientList] = useContext(PatientListContext) as [
+    Patient[],
+    React.Dispatch<React.SetStateAction<Patient[]>>
+  ];
 
   const getPatients = async (patientId: string) => {
     try {
@@ -37,6 +40,8 @@ export function Sidebar() {
   async function getAllPatients() {
     const patientData = await Promise.all(doctor.patients.map(getPatients));
     setPatientList(patientData);
+    setSidebarIndex(0);
+    console.log("pats:", patientData);
   }
 
   useEffect(() => {

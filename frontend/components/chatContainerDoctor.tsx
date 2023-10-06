@@ -9,9 +9,9 @@ import { Avatar } from "./messageAvatar";
 import {
   ConvoListContext,
   CurrentConvoContext,
-  DoctorListContext,
+  DoctorContext,
   PatientContext,
-} from "@/app/(main)/layout";
+} from "@/app/doctor/layout";
 import { useContext, useEffect } from "react";
 import axios from "axios";
 
@@ -19,7 +19,7 @@ interface chatProps {
   messages: Message[];
 }
 
-export const ChatContainer = ({ messages }: chatProps) => {
+export const ChatContainerDoctor = ({ messages }: chatProps) => {
   const [convo, setConvo] = useContext(CurrentConvoContext) as [
     Conversation,
     React.Dispatch<React.SetStateAction<Conversation>>
@@ -33,9 +33,9 @@ export const ChatContainer = ({ messages }: chatProps) => {
     Patient,
     React.Dispatch<React.SetStateAction<Patient>>
   ];
-  const [doctorList, setDoctorList] = useContext(DoctorListContext) as [
-    Doctor[],
-    React.Dispatch<React.SetStateAction<Doctor[]>>
+  const [doctor, setDoctor] = useContext(DoctorContext) as [
+    Doctor,
+    React.Dispatch<React.SetStateAction<Doctor>>
   ];
   const formatDate = (dateTimeStr: string) => {
     // Convert UTC date-time string to local Date object
@@ -111,68 +111,6 @@ export const ChatContainer = ({ messages }: chatProps) => {
     }
   };
 
-  async function getAllDoctors() {
-    if (patient && patient.doctors != undefined) {
-      try {
-        console.log("Doctors:", patient.doctors);
-        const allDoctorData: Doctor[] = [
-          {
-            _id: "gpt",
-            firstName: "Chat",
-            lastName: "GPT",
-            email: "chatgpt@openai.com",
-            patients: Array(1).fill(PatientDefault),
-          },
-        ];
-        const doctorDataDatabase = await Promise.all(
-          patient.doctors.map(getDoctors)
-        );
-        allDoctorData.push(...doctorDataDatabase);
-        setDoctorList(allDoctorData);
-      } catch (error) {
-        console.log(error);
-      }
-    } else {
-      setDoctorList([]);
-    }
-  }
-
-  const handleSendToDoctor = async () => {
-    try {
-      const updateDiagnosisResponse = await axios.post(
-        "http://localhost:8080/updateDiagnosis",
-        {
-          diagnosis: "pending",
-          conversationId: convo._id,
-          doctorEmail: "doctor@doctor.com",
-        }
-      );
-      convo.diagnosis = "pending";
-      await getAllDoctors();
-      const data = await updateDiagnosisResponse.data;
-      const updateDoctorsResponse = await axios.post(
-        "http://localhost:8080/updatePatient",
-        {
-          patientId: patient._id,
-          add: {
-            doctors: `${data}`,
-          },
-        }
-      );
-      console.log("data:", data);
-      let currPatient = Object.assign({}, data) as Patient;
-      if (currPatient.doctors) {
-        currPatient.doctors.push(`${data}`);
-      } else {
-        currPatient.doctors = [`${data}`];
-      }
-      setPatient(currPatient);
-      return data.doctor;
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
   const diagnosisStatusMessage: Map<String, String> = new Map([
     ["none", "Send to Doctor"],
     ["pending", "Pending approval from doctor"],
@@ -187,20 +125,86 @@ export const ChatContainer = ({ messages }: chatProps) => {
     ["denied", "bg-[#d2222d]"],
   ]);
 
+  const handleApprove = async (conversationId: String) => {
+    try {
+      const updateDiagnosisResponse = await axios.post(
+        "http://localhost:8080/updateDiagnosis",
+        {
+          diagnosis: "approved",
+          conversationId: convo._id,
+          doctorEmail: doctor.email,
+        }
+      );
+      let convoCopy = Object.assign({}, convo);
+      convoCopy.diagnosis = "approved";
+      setConvo(convoCopy);
+      const data = await updateDiagnosisResponse.data;
+      console.log("data:", data);
+      return data.doctor;
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const handleDeny = async (conversationId: String) => {
+    try {
+      const updateDiagnosisResponse = await axios.post(
+        "http://localhost:8080/updateDiagnosis",
+        {
+          diagnosis: "denied",
+          conversationId: conversationId,
+          doctorEmail: doctor.email,
+        }
+      );
+      let convoCopy = Object.assign({}, convo);
+      convoCopy.diagnosis = "denied";
+      setConvo(convoCopy);
+      const data = await updateDiagnosisResponse.data;
+      console.log("data:", data);
+      return data.doctor;
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   return (
     <div className="h-full mr-10">
-      {convo.doctor != "gpt" && (
-        <div
-          onClick={async () => {
-            if (convo.diagnosis == "none") {
-              await handleSendToDoctor();
-            }
-          }}
-          className={`py-3 px-5 text-center border-white border-2 hover:border-black ${
-            convo.diagnosis == "none" ? "cursor-pointer" : ""
-          } ${diagnosisStatusColor.get(convo.diagnosis)} rounded-2xl w-[10vw]`}
-        >
-          {diagnosisStatusMessage.get(convo.diagnosis)}
+      {convo.diagnosis == "pending" && (
+        <div className="flex gap-x-3 pb-3 items-center justify-center">
+          <div
+            onClick={() => {
+              handleDeny(convo._id);
+            }}
+            className={`py-3 px-5 text-center border-white bg-[#d2222d] text-white border-2 hover:border-black rounded-2xl w-[10vw]`}
+          >
+            Deny
+          </div>
+          <div
+            onClick={() => {
+              handleApprove(convo._id);
+            }}
+            className={`py-3 px-5 text-center border-white bg-[#007000] text-white border-2 hover:border-black rounded-2xl w-[10vw]`}
+          >
+            Approve
+          </div>
+        </div>
+      )}
+      {convo.diagnosis == "approved" && (
+        <div className="flex gap-x-3 pb-3 items-center justify-center">
+          <div
+            className={`py-3 px-5 text-center border-white bg-[#007000] text-white border-2 hover:border-black rounded-2xl w-[10vw]`}
+          >
+            Approved!
+          </div>
+        </div>
+      )}
+      {convo.diagnosis == "denied" && (
+        <div className="flex gap-x-3 pb-3 items-center justify-center">
+          <div
+            className={`py-3 px-5 text-center border-white bg-[#d2222d] text-white border-2 hover:border-black rounded-2xl w-[10vw]`}
+          >
+            Denied!
+          </div>
         </div>
       )}
       {messages &&

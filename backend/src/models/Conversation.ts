@@ -6,8 +6,8 @@ import { Message } from "./Message";
 export type Conversation = {
   doctor: String;
   patient: String;
-  messages?: [Message];
-  diagnosis: String;
+  messages?: Message[];
+  diagnosis?: String;
 };
 [];
 export const conversationSchema = new Schema(

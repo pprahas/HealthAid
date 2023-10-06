@@ -32,7 +32,7 @@ export const Navbar = () => {
     setFirstName(firstName);
     setLastName(lastName);
     let index = siteConfig.navItems.find((value) => {
-      return value.href == "/profile";
+      return value.href == "/doctor/profile";
     });
     if (index == undefined) {
       siteConfig.navItems.push(

@@ -7,6 +7,7 @@ export const ConversationList: Conversation[] = [
     date: new Date(),
     patient: "",
     messages: [],
+    diagnosis: "none",
   },
   {
     _id: "",
@@ -14,6 +15,7 @@ export const ConversationList: Conversation[] = [
     date: new Date(),
     patient: "",
     messages: [],
+    diagnosis: "none",
   },
   {
     _id: "",
@@ -21,6 +23,7 @@ export const ConversationList: Conversation[] = [
     date: new Date(),
     patient: "",
     messages: [],
+    diagnosis: "none",
   },
   {
     _id: "",
@@ -28,6 +31,7 @@ export const ConversationList: Conversation[] = [
     date: new Date(),
     patient: "",
     messages: [],
+    diagnosis: "none",
   },
 ];
 

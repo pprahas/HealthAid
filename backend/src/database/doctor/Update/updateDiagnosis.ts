@@ -1,7 +1,9 @@
 import { ConversationDTO } from "@models/Conversation";
+import { DoctorDTO } from "@models/Doctor";
 
-export async function updateDiagnosis(conversationId, diagnosis) {
+export async function updateDiagnosis(conversationId: string, diagnosis: string, doctorEmail: string) {
   try {
+    const doctor = await DoctorDTO.findOne({ email: doctorEmail })
     const conversation = await ConversationDTO.findById(conversationId);
     // console.log(conversation);
 
@@ -10,9 +12,9 @@ export async function updateDiagnosis(conversationId, diagnosis) {
     }
 
     conversation.diagnosis = diagnosis;
-    let obj = await conversation.save();
-    // console.log("saveed, " + obj);
-    return obj;
+    if (doctorEmail != "") { conversation.doctor = `${doctor._id}` }
+    await conversation.save();
+    return `${doctor._id}`;
   } catch (error) {
     throw error;
   }
