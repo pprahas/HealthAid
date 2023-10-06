@@ -6,12 +6,14 @@ import {
   CurrentConvoContext,
   SidebarContext,
   ConvoLoadingContext,
+  DoctorListContext,
 } from "@/app/(main)/layout";
 import { PatientContext } from "@/app/(main)/layout";
 import axios, { AxiosError } from "axios";
 import { Conversation, Doctor, Message, Patient } from "@/types";
 import { DoctorDefault } from "@/types";
 import { usePathname } from "next/navigation";
+import { waitUntilSymbol } from "next/dist/server/web/spec-extension/fetch-event";
 
 // interface props {
 //     patients: Patient[];
@@ -26,7 +28,10 @@ export function Sidebar() {
     Patient,
     React.Dispatch<React.SetStateAction<Patient>>
   ];
-  const [doctorList, setDoctorList] = useState<Array<Doctor>>([]);
+  const [doctorList, setDoctorList] = useContext(DoctorListContext) as [
+    Doctor[],
+    React.Dispatch<React.SetStateAction<Doctor[]>>
+  ];
   const [convo, setConvo] = useContext(CurrentConvoContext) as [
     Conversation,
     React.Dispatch<React.SetStateAction<Conversation>>
@@ -81,8 +86,33 @@ export function Sidebar() {
     }
   }
 
+  const getGptConvos = async () => {
+    console.log("new convo");
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/conversation/getConversations",
+        {
+          patientId: patient._id,
+          doctorId: "gpt",
+        }
+      );
+
+      const data = await response.data;
+      console.log("Data:", data);
+      setConvoList(data);
+      setConvoLoading(false);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  useEffect(() => {
+    setConvo(convoList[convoList.length - 1]);
+  }, [convoList]);
+
   const createNewConvo = async () => {
     setConvoLoading(true);
+    setSidebarIndex(0);
     try {
       const createConvoResponse = await axios.post(
         "http://localhost:8080/conversation/createConversation",
@@ -104,12 +134,35 @@ export function Sidebar() {
         patient: "",
         messages: [newGPTMessage],
       };
-      setConvoList([...convoList, newConversation]);
-      setConvo(newConversation);
+      await getGptConvos();
     } catch (error) {
       console.error("Error:", error);
     }
-    setConvoLoading(false);
+  };
+
+  const deleteDoctor = async (doctorId: String) => {
+    try {
+      let doctorIndex = doctorList.findIndex((doctor) => {
+        doctor._id == doctorId;
+      });
+      let currDoctorList = [...doctorList];
+      currDoctorList.splice(doctorIndex - 1, 1);
+      setDoctorList(currDoctorList);
+      setSidebarIndex(0);
+      const updatePatientResponse = await axios.post(
+        "http://localhost:8080/updatePatient",
+        {
+          patientId: patient._id,
+          remove: {
+            doctors: doctorId,
+          },
+        }
+      );
+      const data = await updatePatientResponse.data;
+      console.log(data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   useEffect(() => {
@@ -129,7 +182,7 @@ export function Sidebar() {
         + New
       </div>
       {doctorList?.map((doctor, index: number) => (
-        <div key={index} className="text-center snap-start">
+        <div key={index} className="text-center snap-start relative group">
           <div
             className={`${
               sidebarIndex == index
@@ -144,6 +197,27 @@ export function Sidebar() {
               Dr. {doctor.firstName} {doctor.lastName}
             </div>
           </div>
+
+          {doctor.email != "chatgpt@openai.com" && (
+            <div
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition duration-300 cursor-pointer"
+              onClick={() => {
+                deleteDoctor(doctor._id);
+              }}
+            >
+              <svg
+                className="h-6 w-6 bg-red color-red text-red-500"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                stroke="#ff0000"
+                fill="#ff0000"
+              >
+                <path d="M3 6v18h18v-18h-18zm5 14c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm5 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm5 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm4-18v2h-20v-2h5.711c.9 0 1.631-1.099 1.631-2h5.315c0 .901.73 2 1.631 2h5.712z" />
+              </svg>
+            </div>
+          )}
         </div>
       ))}
     </div>
