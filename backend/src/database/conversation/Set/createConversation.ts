@@ -9,10 +9,12 @@ import { Conversation, ConversationDTO } from "@models/Conversation";
 export async function createConversation(body) {
   try {
     const patientId = body.patientId;
+    const doctorId = body.doctorId ?? "gpt";
 
     const patientAccount = await PatientDTO.findById(patientId);
     let conversation: Conversation = {
       patient: patientId,
+      doctor: doctorId
     };
 
     // 1. Create and save the new conversation
@@ -35,7 +37,10 @@ export async function createConversation(body) {
 
     console.log(`Conversatio ID: ${newConversation._id}`)
     let gptResponse = await AskGPT(promptToGPT, [], `${newConversation._id}`)
-    return gptResponse;
+    return {
+      conversationId: newConversation._id,
+      gptResponse: gptResponse
+    };
   } catch (err) {
     console.log("error:", err);
     throw err;

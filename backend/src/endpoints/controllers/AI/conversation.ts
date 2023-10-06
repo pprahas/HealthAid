@@ -37,7 +37,8 @@ export async function sendMessage(req: Request, res: Response) {
 export async function getConversations(req: Request, res: Response) {
   try {
     let patientId = req.body.patientId;
-    let conversations = await getConvo(patientId);
+    let doctorId = req.body.doctorId;
+    let conversations = await getConvo(patientId, doctorId);
     return res.status(200).send(conversations);
   } catch (error) {
     return res.status(400).send(error);

@@ -4,7 +4,7 @@ import { Diagnosis } from "./Diagnosis";
 
 // Local Model
 export type Conversation = {
-  doctor?: String;
+  doctor: String;
   patient: String;
   messages?: [Message];
   diagnosis?: Diagnosis;
@@ -13,10 +13,10 @@ export type Conversation = {
 export const conversationSchema = new Schema(
   {
     doctor: {
-      type: { type: Schema.ObjectId, ref: "Doctor" },
+      type: String,
     },
     patient: {
-      type: { type: Schema.ObjectId, ref: "Patient" },
+      type: String,
     },
     messages: {
       type: [{ type: Schema.ObjectId, ref: "Message" }],
