@@ -55,7 +55,7 @@ export function Sidebar() {
         patient._id == patientId;
       });
       let currPatientList = [...patientList];
-      currPatientList.splice(patientIndex - 1, 1);
+      currPatientList.splice(patientIndex, 1);
       setPatientList(currPatientList);
       setSidebarIndex(0);
       const updatePatientResponse = await axios.post(
