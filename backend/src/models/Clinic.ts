@@ -29,6 +29,9 @@ const clinicSchema = new Schema(
     specialties: {
       type: String,
     },
+    address: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
