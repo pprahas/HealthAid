@@ -21,9 +21,9 @@ export async function AskGPT(prompt: String, messages: ([Message] | Message[]), 
         console.log("asking gpt")
         let formattedMessages: any[] = []
 
-        formattedMessages.push({ role: "assistant", content: prompt })
-        formattedMessages.push({ role: "assistant", content: DEFAULT_PROMPT });
-        formattedMessages.push({ role: "assistant", content: "This is the conversation that you have already had" })
+        formattedMessages.push({ role: "system", content: prompt })
+        formattedMessages.push({ role: "system", content: DEFAULT_PROMPT });
+        formattedMessages.push({ role: "system", content: "This is the conversation that you have already had" })
 
         if (messages && messages.length != 0) {
             formattedMessages = messages.map((message) => ({
@@ -31,6 +31,8 @@ export async function AskGPT(prompt: String, messages: ([Message] | Message[]), 
                 content: message.content
             }));
         }
+
+        formattedMessages.push({ role: "system", content: "What will your next response be?" })
 
         const openai = new OpenAI({ apiKey: `${process.env.OPENAI_API_KEY}` });
 
