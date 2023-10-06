@@ -60,15 +60,19 @@ export function Sidebar() {
     if (patient && patient.doctors != undefined) {
       try {
         console.log("Doctors:", patient.doctors);
-        const doctorData = await Promise.all(patient.doctors.map(getDoctors));
-        let gptDoctor: Doctor = {
-          _id: "gpt",
-          firstName: "Chat",
-          lastName: "GPT",
-          email: "chatgpt@openai.com",
-        };
-        doctorData.push(gptDoctor);
-        setDoctorList(doctorData);
+        const allDoctorData: Doctor[] = [
+          {
+            _id: "gpt",
+            firstName: "Chat",
+            lastName: "GPT",
+            email: "chatgpt@openai.com",
+          },
+        ];
+        const doctorDataDatabase = await Promise.all(
+          patient.doctors.map(getDoctors)
+        );
+        allDoctorData.push(...doctorDataDatabase);
+        setDoctorList(allDoctorData);
       } catch (error) {
         console.log(error);
       }
