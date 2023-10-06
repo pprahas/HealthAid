@@ -135,7 +135,7 @@ const PatientQuestions = () => {
     questions.forEach((question) => {
       setAnswers((prevAnswers) => ({
         ...prevAnswers,
-        [question.question]: "",
+        [question.question]: " ",
       }));
     });
   }, []);
