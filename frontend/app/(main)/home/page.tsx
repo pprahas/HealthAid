@@ -59,13 +59,13 @@ export default function PatientHome() {
         patients: Array(1).fill(PatientDefault)
       };
       setDoctor(gptDoctor);
-    }
-    if (patient && patient.doctors) {
+    } else {
+      console.log("doctor:", doctor._id);
       try {
         const response = await axios.post(
           "http://localhost:8080/getDoctorFromId",
           {
-            id: doctor._id,
+            id: patient.doctors[sidebarIndex - 1],
           }
         );
 
@@ -77,13 +77,13 @@ export default function PatientHome() {
     }
   };
 
-  const getConversations = async (patientId: string) => {
+  const getConversations = async (doctorId: string) => {
     try {
       const response = await axios.post(
         "http://localhost:8080/conversation/getConversations",
         {
           patientId: patient._id,
-          doctorId: doctor._id,
+          doctorId: doctorId,
         }
       );
 
@@ -141,12 +141,13 @@ export default function PatientHome() {
   };
 
   useEffect(() => {
-    if (sidebarIndex != -1) {
-      getDoctorInfo();
-      getConversations(doctor._id);
-    } else {
-      setMessages([]);
-    }
+    console.log("doctor:", doctor._id);
+    getConversations(doctor._id);
+  }, [doctor]);
+
+  useEffect(() => {
+    console.log("index:", sidebarIndex);
+    getDoctorInfo();
   }, [sidebarIndex, patient]);
 
   if (convoLoading) {
