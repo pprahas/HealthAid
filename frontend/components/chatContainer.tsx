@@ -189,20 +189,18 @@ export const ChatContainer = ({ messages }: chatProps) => {
 
   return (
     <div className="h-full mr-10">
-      {convo.doctor != "gpt" && (
-        <div
-          onClick={async () => {
-            if (convo.diagnosis == "none") {
-              await handleSendToDoctor();
-            }
-          }}
-          className={`py-3 px-5 text-center border-white border-2 hover:border-black ${
-            convo.diagnosis == "none" ? "cursor-pointer" : ""
-          } ${diagnosisStatusColor.get(convo.diagnosis)} rounded-2xl w-[10vw]`}
-        >
-          {diagnosisStatusMessage.get(convo.diagnosis)}
-        </div>
-      )}
+      <div
+        onClick={async () => {
+          if (convo.diagnosis == "none") {
+            await handleSendToDoctor();
+          }
+        }}
+        className={`py-3 px-5 text-center border-white border-2 hover:border-black ${
+          convo.diagnosis == "none" ? "cursor-pointer" : ""
+        } ${diagnosisStatusColor.get(convo.diagnosis)} rounded-2xl w-[10vw]`}
+      >
+        {diagnosisStatusMessage.get(convo.diagnosis)}
+      </div>
       {messages &&
         messages.map((message: Message, index: number) => (
           <div>
