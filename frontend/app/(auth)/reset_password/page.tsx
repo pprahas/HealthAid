@@ -26,13 +26,14 @@ export default function SignupPage() {
   }
 
   const isNewPasswordValid = React.useMemo(() => {
-    if (newPassword === "") return false;
+    if (newPassword === "") return !submit;
 
     return newPassword.match(/^[\x20-\x7E]+$/) != null;
   }, [newPassword, submit]);
 
   const isConfirmPasswordValid = React.useMemo(() => {
-    if (confirmPassword === "" || confirmPassword != newPassword) return false;
+    if (confirmPassword === "" || confirmPassword != newPassword)
+      return !submit;
 
     return newPassword.match(/^[\x20-\x7E]+$/) != null;
   }, [confirmPassword, submit]);
@@ -53,7 +54,7 @@ export default function SignupPage() {
         mode: "cors", // Enable CORS
       });
 
-      if (!response.ok) {        
+      if (!response.ok) {
         setIsOldPasswordValid(false);
         setError("Invalid email or password. Please try again.");
         return;
@@ -64,7 +65,6 @@ export default function SignupPage() {
       console.error("Error:", error);
     }
 
-
     if (
       isEmailValid &&
       isNewPasswordValid &&
@@ -72,8 +72,8 @@ export default function SignupPage() {
       isOldPasswordValid
     ) {
       e.preventDefault();
-      try {        
-        setSubmit(true);     
+      try {
+        setSubmit(true);
         const requestBody = {
           email: email,
           password: oldPassword,
@@ -87,8 +87,8 @@ export default function SignupPage() {
           body: JSON.stringify(requestBody), // Send email and password as JSON
           mode: "cors", // Enable CORS
         });
-  
-        if (response.ok) {   
+
+        if (response.ok) {
           window.location.href = "/login";
         } else {
           setError("Could not reset password");
@@ -122,9 +122,7 @@ export default function SignupPage() {
                   label="Email"
                   value={email}
                   isInvalid={!isEmailValid}
-                  errorMessage={
-                    (!isEmailValid && "Please enter a valid email")
-                  }
+                  errorMessage={!isEmailValid && "Please enter a valid email"}
                   color={isEmailValid ? "default" : "danger"}
                   onChange={(e) => {
                     setSubmit(false);
@@ -153,7 +151,7 @@ export default function SignupPage() {
                   setSubmit(false);
                   setError("");
                   setOldPassword(e.target.value);
-                  setIsOldPasswordValid(true)
+                  setIsOldPasswordValid(true);
                 }}
               />
             </div>
@@ -193,7 +191,7 @@ export default function SignupPage() {
                 }}
               />
             </div>
-      
+
             <div>
               <Button
                 type="submit"
@@ -205,7 +203,7 @@ export default function SignupPage() {
                 Submit
               </Button>
             </div>
-          {/* </form> */}
+            {/* </form> */}
           </div>
         </div>
       </div>
