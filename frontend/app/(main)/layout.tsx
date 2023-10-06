@@ -108,7 +108,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <div className="healthaid font-outfit min-h-screen flex flex-col bg-background">
                   <header className="last:sticky flex top-0 h-15 items-center">
                     <aside className="w-full md:w-60 top-0 h-14 flex justify-center items-center">
-                      <div className="text-3xl font-bold">HealthAid</div>
+                      <div
+                        onClick={() => {
+                          window.location.href = "/home";
+                        }}
+                        className="cursor-pointer text-3xl font-bold"
+                      >
+                        HealthAid
+                      </div>
                     </aside>
                     <Navbar />
                   </header>

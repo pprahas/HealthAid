@@ -12,19 +12,21 @@ import conversationRoutes from "./conversation/conversation";
 import updatePatientRoutes from "./updatePatient/updatePatient";
 import UpdateDoctorRoutes from "./updateDoctor/updateDoctor";
 import getClinic from "./extraInformation/getClinic";
+import diagnosisRoutes from "./doctor/updateDiagnosis";
 export default class Routes {
   constructor(app: Application) {
     app.use("/resetPassword", resetPasswordRoutes);
     app.use("/register", registerRoutes);
     app.use("/login", loginRoutes);
-    app.use("/getPatientByEmail", getPatient)
-    app.use("/getPatientFromId", getPatientById)
-    app.use("/getDoctorFromId", getDoctorById)
+    app.use("/getPatientByEmail", getPatient);
+    app.use("/getPatientFromId", getPatientById);
+    app.use("/getDoctorFromId", getDoctorById);
     app.use("/patientHealthInformation", patientHealthInformationRoutes);
     app.use("/doctorClinicInformation", doctorClinicInformationRoutes);
     app.use("/conversation", conversationRoutes);
     app.use("/updatePatient", updatePatientRoutes);
     app.use("/updateDoctor", UpdateDoctorRoutes);
     app.use("/getClinic", getClinic);
+    app.use("/updateDiagnosis", diagnosisRoutes);
   }
 }

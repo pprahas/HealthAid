@@ -1,4 +1,4 @@
-import { ConversationDTO } from "@models/Conversation";
+import { Conversation, ConversationDTO } from "@models/Conversation";
 import { Message, MessageDTO } from "@models/Message";
 
 export async function getConversations(patientId: String, doctorId: String) {
@@ -8,9 +8,8 @@ export async function getConversations(patientId: String, doctorId: String) {
 
     const conversationsWithMessages = await Promise.all(
       conversations.map(async (conversation) => {
-        const convoToAdd = Object.assign({}, conversation) as any;
-        convoToAdd.messages = [];
-        convoToAdd._id = conversation._id
+        const convoToAddDoc = Object.assign({}, conversation) as any;
+        const convoToAdd: Conversation = convoToAddDoc._doc
 
         const messages: Message[] = await Promise.all(
           conversation.messages.map(async (messageId) => {

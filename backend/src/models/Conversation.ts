@@ -1,15 +1,15 @@
 import { Schema, model } from "mongoose";
 import { Message } from "./Message";
-import { Diagnosis } from "./Diagnosis";
+// import { Diagnosis } from "./Diagnosis";
 
 // Local Model
 export type Conversation = {
   doctor: String;
   patient: String;
-  messages?: [Message];
-  diagnosis?: Diagnosis;
+  messages?: Message[];
+  diagnosis?: String;
 };
-[]
+[];
 export const conversationSchema = new Schema(
   {
     doctor: {
@@ -22,7 +22,7 @@ export const conversationSchema = new Schema(
       type: [{ type: Schema.ObjectId, ref: "Message" }],
     },
     diagnosis: {
-      type: { type: Schema.ObjectId, ref: "Diagnosis" },
+      type: String,
     },
   },
   { timestamps: true }

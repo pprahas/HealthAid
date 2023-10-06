@@ -10,7 +10,13 @@ import {
 } from "@/app/(main)/layout";
 import { PatientContext } from "@/app/(main)/layout";
 import axios, { AxiosError } from "axios";
-import { Conversation, Doctor, Message, Patient, PatientDefault } from "@/types";
+import {
+  Conversation,
+  Doctor,
+  Message,
+  Patient,
+  PatientDefault,
+} from "@/types";
 import { DoctorDefault } from "@/types";
 import { usePathname } from "next/navigation";
 import { waitUntilSymbol } from "next/dist/server/web/spec-extension/fetch-event";
@@ -71,7 +77,7 @@ export function Sidebar() {
             firstName: "Chat",
             lastName: "GPT",
             email: "chatgpt@openai.com",
-            patients: Array(1).fill(PatientDefault)
+            patients: Array(1).fill(PatientDefault),
           },
         ];
         const doctorDataDatabase = await Promise.all(
@@ -123,18 +129,6 @@ export function Sidebar() {
       );
       const data = await createConvoResponse.data;
       console.log(data);
-      let newGPTMessage: Message = {
-        senderType: "gpt",
-        date: new Date(),
-        content: data.response.gptResponse.content,
-      };
-      let newConversation: Conversation = {
-        _id: data.response.conversationId,
-        title: "",
-        date: new Date(),
-        patient: "",
-        messages: [newGPTMessage],
-      };
       await getGptConvos();
     } catch (error) {
       console.error("Error:", error);
