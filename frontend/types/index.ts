@@ -23,7 +23,8 @@ export const DoctorDefault: Doctor = {
   _id: "",
   firstName: "",
   lastName: "",
-  email: ""
+  email: "",
+  patients: [] as string[]
 }
 
 export const PatientDefault: Patient ={
@@ -58,7 +59,7 @@ export interface Doctor extends User {
   birthday?: Date;
   clinic?: Clinic;
   appointments?: [Appointment];
-  patients?: [Patient];
+  patients: string[];
 }
 
 // Clinic

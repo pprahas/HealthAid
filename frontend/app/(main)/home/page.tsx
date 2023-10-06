@@ -13,7 +13,7 @@ import {
   ConvoLoadingContext,
 } from "@/app/(main)/layout";
 import { SetStateAction, useContext, useState } from "react";
-import { Patient } from "@/types";
+import { Patient, PatientDefault } from "@/types";
 import {
   Doctor,
   DoctorDefault,
@@ -23,6 +23,7 @@ import {
 import { ConversationList } from "./conversation";
 import { RightArrow } from "@/components/rightArrow";
 import { Message } from "@/types";
+import {Spinner} from "@nextui-org/spinner";
 
 export default function PatientHome() {
   const [sidebarIndex, setSidebarIndex] = useContext(SidebarContext) as any[];
@@ -55,6 +56,7 @@ export default function PatientHome() {
         firstName: "Chat",
         lastName: "GPT",
         email: "chatgpt@openai.com",
+        patients: Array(1).fill(PatientDefault)
       };
       setDoctor(gptDoctor);
     }
@@ -153,9 +155,10 @@ export default function PatientHome() {
         className={`flex items-center justify-center h-[calc(100vh-60px)]`}
       >
         <div role="status">
+
           <svg
             aria-hidden="true"
-            className="w-[15vw] h-[15vw] mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+            className="w-[15vw] h-[15vw] mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-green-500"
             viewBox="0 0 100 101"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -181,7 +184,7 @@ export default function PatientHome() {
             Dr. {doctor.firstName} {doctor.lastName}
           </h1>
           <div className="overflow-auto h-full my-3">
-            <div className="grid grid-cols-2 gap-y-3 text-2xl">
+            <div className="grid grid-cols-2 gap-y-3 text-lg">
               <div>
                 <p className="font-bold">Clinic name</p>
                 <p>Address</p>

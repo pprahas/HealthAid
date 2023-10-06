@@ -9,7 +9,7 @@ import {
 } from "@/app/(main)/layout";
 import { PatientContext } from "@/app/(main)/layout";
 import axios, { AxiosError } from "axios";
-import { Conversation, Doctor, Message, Patient } from "@/types";
+import { Conversation, Doctor, Message, Patient, PatientDefault } from "@/types";
 import { DoctorDefault } from "@/types";
 import { usePathname } from "next/navigation";
 
@@ -66,6 +66,7 @@ export function Sidebar() {
           firstName: "Chat",
           lastName: "GPT",
           email: "chatgpt@openai.com",
+          patients: Array(1).fill(PatientDefault)
         };
         doctorData.push(gptDoctor);
         setDoctorList(doctorData);

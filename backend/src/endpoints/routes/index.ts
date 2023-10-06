@@ -3,6 +3,7 @@ import registerRoutes from "./authentication/register";
 import loginRoutes from "./authentication/login";
 import resetPasswordRoutes from "./authentication/resetPassword";
 import getPatient from "./patient/getPatient";
+import getPatientById from "./patient/getPatientById";
 import getDoctorById from "./doctor/getDoctorById";
 
 import patientHealthInformationRoutes from "./extraInformation/patientHealthInformation";
@@ -15,6 +16,7 @@ export default class Routes {
     app.use("/register", registerRoutes);
     app.use("/login", loginRoutes);
     app.use("/getPatientByEmail", getPatient)
+    app.use("/getPatientFromId", getPatientById)
     app.use("/getDoctorFromId", getDoctorById)
     app.use("/patientHealthInformation", patientHealthInformationRoutes);
     app.use("/doctorClinicInformation", doctorClinicInformationRoutes);
