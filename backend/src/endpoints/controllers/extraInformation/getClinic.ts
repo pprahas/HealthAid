@@ -9,7 +9,7 @@ export async function getClinic(
     const body = req.body;
     const clinicId = body.clinicId;
     let clinicDTO = await getCli(clinicId);
-    return res.json({ message: "Success", patient: clinicDTO });
+    return res.json({ message: "Success", clinic: clinicDTO });
   } catch (error) {
     return res.status(400).send(error);
   }

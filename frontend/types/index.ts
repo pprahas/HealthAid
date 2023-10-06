@@ -56,7 +56,7 @@ export interface HealthInformation {
 // Doctor
 export interface Doctor extends User {
   birthday?: Date;
-  clinic?: Clinic;
+  clinic?: string;
   appointments?: [Appointment];
   patients?: string[];
 }
@@ -64,9 +64,11 @@ export interface Doctor extends User {
 // Clinic
 export interface Clinic {
   name: string;
-  address: string;
+  postalCode: string;
   website: string;
   phoneNumber: string;
+  specialties: string;
+  address: string;
 }
 
 

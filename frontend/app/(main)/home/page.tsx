@@ -14,7 +14,7 @@ import {
   DoctorListContext,
 } from "@/app/(main)/layout";
 import { SetStateAction, useContext, useState } from "react";
-import { Patient } from "@/types";
+import { Clinic, Patient } from "@/types";
 import {
   Doctor,
   DoctorDefault,
@@ -52,6 +52,7 @@ export default function PatientHome() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [clinic, setClinic] = useState<Clinic>();
 
   const getDoctorInfo = async () => {
     if (sidebarIndex == 0) {
@@ -144,9 +145,27 @@ export default function PatientHome() {
     setConvo(conversation);
   };
 
+  const getClinicInformation = async (clinicId?: string) => {
+    console.log("doctor:", doctor._id);
+    try {
+      const response = await axios.post("http://localhost:8080/getClinic", {
+        clinicId: clinicId,
+      });
+
+      const data = await response.data;
+      setClinic(data.clinic);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   useEffect(() => {
     console.log("new doctor:", doctor._id);
     getConversations(doctor._id);
+    console.log("clinic id:", doctor.clinic);
+    if (doctor._id != "gpt") {
+      getClinicInformation(doctor.clinic);
+    }
   }, [doctor]);
 
   useEffect(() => {
@@ -199,14 +218,13 @@ export default function PatientHome() {
               } grid grid-cols-2 gap-y-3 text-2xl`}
             >
               <div>
-                <p className="font-bold">Clinic name</p>
-                <p>Address</p>
-                <p>City</p>
-                <p>Zip Code</p>
+                <p className="font-bold">{clinic?.name}</p>
+                <p>{clinic?.address}</p>
+                <p>{clinic?.postalCode}</p>
               </div>
               <div className="flex flex-col items-end">
-                <p>Phone number</p>
-                <p>Website</p>
+                <p>{clinic?.phoneNumber}</p>
+                <p>{clinic?.website}</p>
                 <p className="my-3">
                   <Button
                     size="lg"
