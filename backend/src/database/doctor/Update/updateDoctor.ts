@@ -18,16 +18,18 @@ export async function updateDoctor(doctorId, fieldsToAdd, fieldsToRemove) {
     if (fieldsToAdd) {
       for (const key in fieldsToAdd) {
         const value = fieldsToAdd[key];
-        if (key === "patient") {
-          doctorAccount.patients.push(value);
-          console.log("adding patients 1 " + key + " " + value);
-          //   doctorAccount.patients.push(value);
-          const patientAccount = await PatientDTO.findById(value);
-          //   await doctorAccount.save();
-          patientAccount.doctors.push(doctorId);
-          await patientAccount.save();
-          console.log("adding patients" + key + value);
-        }
+        // if (key === "patient") {
+        //   console.log("adding patients 1 " + key + " " + value);
+        //   console.log("THE DOCTOR ACC IS ", doctorAccount);
+        //   doctorAccount.patients.push(value);
+        //   doctorAccount.patients.push(value);
+        //   const patientAccount = await PatientDTO.findById(value);
+        //   console.log("THE PATIENT ACC IS ", patientAccount);
+        //   //   await doctorAccount.save();
+        //   patientAccount.doctors.push(doctorId);
+        //   await patientAccount.save();
+        //   console.log("adding patients" + key + value);
+        // }
         if (key === "clinic") {
           //   let clinicInfo = JSON.stringify(value);
           const newClinic = new ClinicDTO(value);
@@ -35,30 +37,34 @@ export async function updateDoctor(doctorId, fieldsToAdd, fieldsToRemove) {
 
           doctorAccount.clinic = newClinic._id;
 
-          console.log("new clinic" + newClinic);
+          // console.log("new clinic" + newClinic);
         }
       }
     }
 
     if (fieldsToRemove) {
-      for (const key in fieldsToAdd) {
-        const value = fieldsToAdd[key];
+      for (const key in fieldsToRemove) {
+        const value = fieldsToRemove[key];
         if (key === "patient") {
           const patientIndex = doctorAccount.patients.indexOf(value);
+          // console.log("deleting for doctors index is ", patientIndex);
           if (patientIndex !== -1) {
+            // console.log("deleting for doctors");
             doctorAccount.patients.splice(patientIndex, 1);
           }
 
           const patientAccount = await PatientDTO.findById(value);
           const doctorIndex = patientAccount.doctors.indexOf(doctorId);
+          // console.log("deleting for patients index is ", doctorIndex);
           if (doctorIndex !== -1) {
+            // console.log("deleting for patients");
             patientAccount.doctors.splice(doctorIndex, 1);
           }
           await patientAccount.save();
         }
       }
     }
-    console.log("DOCTOR BEING SAVED");
+    // console.log("DOCTOR BEING SAVED");
     await doctorAccount.save();
   } catch (error) {
     throw error;
