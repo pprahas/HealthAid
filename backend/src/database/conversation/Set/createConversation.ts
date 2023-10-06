@@ -1,4 +1,4 @@
-export enum ConversationError { }
+export enum ConversationError {}
 
 import { HealthInformationDTO } from "@models/HealthInformation";
 
@@ -14,7 +14,8 @@ export async function createConversation(body) {
     const patientAccount = await PatientDTO.findById(patientId);
     let conversation: Conversation = {
       patient: patientId,
-      doctor: doctorId
+      doctor: doctorId,
+      diagnosis: "none",
     };
 
     // 1. Create and save the new conversation
@@ -35,11 +36,11 @@ export async function createConversation(body) {
       }
     }
 
-    console.log(`Conversatio ID: ${newConversation._id}`)
-    let gptResponse = await AskGPT(promptToGPT, [], `${newConversation._id}`)
+    console.log(`Conversatio ID: ${newConversation._id}`);
+    let gptResponse = await AskGPT(promptToGPT, [], `${newConversation._id}`);
     return {
       conversationId: newConversation._id,
-      gptResponse: gptResponse
+      gptResponse: gptResponse,
     };
   } catch (err) {
     console.log("error:", err);
