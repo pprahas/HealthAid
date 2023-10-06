@@ -38,6 +38,9 @@ export async function updateDoctor(doctorId, fieldsToAdd, fieldsToRemove) {
           doctorAccount.clinic = newClinic._id;
 
           // console.log("new clinic" + newClinic);
+        } else {
+          doctorAccount[key] = value;
+
         }
       }
     }

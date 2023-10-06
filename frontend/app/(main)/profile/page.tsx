@@ -16,22 +16,33 @@ export default function ProfilePage() {
     Patient,
     React.SetStateAction<Patient>
   ];
-  // State for personal information
-  const [formData, setFormData] = useState<FormData>({
-    firstName: "",
-    lastName: "",
-    birthday: "",
-    address: "",
-    gender: "",
-    newPassword: "", // New password field
-    confirmPassword: "", // Confirm password field
-  });
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [birthday, setBirthday] = useState("");
-  const [address, setAddress] = useState("");
   const [gender, setGender] = useState("");
+  const [height, setHeight] = useState("");
+  const [weight, setWeight] = useState("");
+
+  const changeHeight = (value: string) => {
+    let res = parseInt(value).toString()
+    if (res !== "NaN") {
+      setHeight(res)
+    }
+    if (value === "") {
+      setHeight("")
+    }
+  }
+
+  const changeWeight = (value: string) => {
+    let res = parseInt(value).toString()
+    if (res !== "NaN") {
+      setWeight(res)
+    }
+    if (value === "") {
+      setWeight("")
+    }
+  }
 
   const [questions, setQuestions] = useState([
     { _id: "1", question: "Question 1", answer: "" },
@@ -47,6 +58,8 @@ export default function ProfilePage() {
     record["lastName"] = lastName;
     record["birthday"] = birthday;
     record["gender"] = gender;
+    record["height"] = height;
+    record["weight"] = weight;
 
     try {
       const response = await axios.post("http://localhost:8080/updatePatient", {
@@ -120,6 +133,8 @@ export default function ProfilePage() {
     setLastName(patient.lastName);
     setGender(patient.gender || "");
     setBirthday((patient.birthday as unknown as string) || "");
+    setHeight((patient.height as unknown as string || ""));
+    setWeight((patient.weight as unknown as string || ""));
   }, [patient]);
 
   return (
@@ -143,14 +158,22 @@ export default function ProfilePage() {
               <Input value={birthday} onValueChange={setBirthday} />
             </div>
 
-            <div> Address </div>
-            <div className="col-span-2">
-              <Input value={address} onValueChange={setAddress} />
-            </div>
-
             <div> Gender </div>
             <div className="col-span-2">
               <Input value={gender} onValueChange={setGender} />
+            </div>
+
+            <div> Height </div>
+            <div className="col-span-2">
+              <Input value={height} onValueChange={changeHeight} />
+            </div>
+
+            <div> Weight </div>
+            <div className="col-span-2">
+              <Input 
+                value={weight} 
+                onValueChange={changeWeight} 
+              />
             </div>
           </div>
 

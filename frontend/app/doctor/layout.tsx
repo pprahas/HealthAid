@@ -77,7 +77,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <PatientListContext.Provider value={[patientList, setPatientList]}>
       <DoctorContext.Provider value={[doctor, setDoctor]}>
         <SidebarContext.Provider value={[activeTabIndex, setActiveTabIndex]}>
-          <PatientContext.Provider value={[patient, setPatient]}>
             <div className="healthaid font-outfit min-h-screen flex flex-col bg-background">
               <header className="last:sticky flex top-0 h-15 items-center">
                 <aside className="w-full md:w-60 top-0 h-14 flex justify-center items-center">
@@ -93,7 +92,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <div className="flex-1 bg-white rounded-tl-3xl">{children}</div>
               </div>
             </div>
-          </PatientContext.Provider>
         </SidebarContext.Provider>
       </DoctorContext.Provider>
     </PatientListContext.Provider>

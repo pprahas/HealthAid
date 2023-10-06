@@ -35,6 +35,15 @@ export const PatientDefault: Patient = {
   doctors: [] as string[]
 }
 
+export const ClinicDefault: Clinic = {
+  name: "",
+  postalCode: "",
+  website: "",
+  phoneNumber: "",
+  specialties: "",
+  address: ""
+}
+
 // Patient
 export interface Patient extends User {
   birthday?: Date;
