@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@nextui-org/button";
 import axios, { AxiosError } from "axios";
+import { useRouter } from "next/navigation";
 
 const PatientQuestions = () => {
+  const router = useRouter()
+
   const questions = [
     {
       question: "Any allergies?",
@@ -116,7 +119,9 @@ const PatientQuestions = () => {
         const updateHealthInfoData = await updateHealthInfoResponse.data;
         console.log(updateHealthInfoData.patient);
         setLoading(false);
-        window.location.href = "/home";
+        
+        //window.location.href = "/home";
+        router.push('/home')
       } catch (error) {
         const axiosError = error as AxiosError;
         let errorText = axiosError.response?.data;
@@ -130,7 +135,7 @@ const PatientQuestions = () => {
     questions.forEach((question) => {
       setAnswers((prevAnswers) => ({
         ...prevAnswers,
-        [question.question]: " ",
+        [question.question]: "",
       }));
     });
   }, []);
@@ -149,7 +154,7 @@ const PatientQuestions = () => {
             <label className="block text-gray-700">{question.question}</label>
             <input
               type="text"
-              className="border rounded w-full py-2 px-3 mt-1"
+              className="p-4 shadow-sm rounded-xl bg-gray-100 hover:bg-gray-200 transition duration-200"
               placeholder={question.placeholder}
               value={answers[question.question] || ""}
               onChange={(e) =>
@@ -163,7 +168,8 @@ const PatientQuestions = () => {
             isLoading={loading}
             type="submit"
             onClick={handleRegister}
-            className="flex w-full justify-center rounded-md bg-indigo-600 px-2 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            color="success"
+            className="flex w-full justify-center rounded-md px-2 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-secondary-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
             Finished!
           </Button>

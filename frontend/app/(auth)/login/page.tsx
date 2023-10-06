@@ -1,6 +1,7 @@
 "use client";
 import { title } from "@/components/primitives";
 import { useState } from "react";
+import { Button } from "@nextui-org/button";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -56,7 +57,7 @@ export default function LoginPage() {
         <input
           type="text"
           placeholder="Email"
-          className="border p-2 rounded"
+          className="p-4 shadow-sm rounded-xl bg-gray-100 hover:bg-gray-200 transition duration-200"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
@@ -66,25 +67,26 @@ export default function LoginPage() {
         <input
           type="password"
           placeholder="Password"
-          className="border p-2 rounded"
+          className="p-4 shadow-sm rounded-xl bg-gray-100 hover:bg-gray-200 transition duration-200"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
 
       <div className="mb-1">
-        <button
-          className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 mr-4"
+        <Button
+          color="success"
+          className="text-white p-2 hover:bg-secondary-800 mr-4"
           onClick={handleLogin}
         >
           Login
-        </button>
-        <button
-          className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+        </Button>
+        <Button
+          className="bg-blue-500 text-white hover:bg-blue-600"
           onClick={handleRegister}
         >
           Register
-        </button>
+        </Button>
       </div>
       <div className="mb-0">
         <a href="/reset_password">Reset Password</a>

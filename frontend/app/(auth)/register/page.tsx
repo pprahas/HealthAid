@@ -226,10 +226,11 @@ export default function SignupPage() {
             <div>
               <Button
                 type="submit"
+                color="success"
                 onClick={async (e) => {
                   await handleGoToOnboard(e);
                 }}
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-2 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="flex w-full justify-center rounded-md px-2 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-secondary-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 Register
               </Button>
