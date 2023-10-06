@@ -24,10 +24,10 @@ export default function LoginPage() {
       });
 
       if (response.ok) {
-        window.location.href = "/home";
         let loginData = await response.json();
         // loginData.patient.type = "patient";
         localStorage.setItem("user", JSON.stringify(loginData.user));
+        window.location.href = "/home";
       } else {
         const data = await response.json();
         setError("Invalid email or password. Please try again.");

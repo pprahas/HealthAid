@@ -22,6 +22,7 @@ export async function getHealthInformation(
 ): Promise<Response> {
   try {
     const body = req.body;
+    console.log(body)
     const ids = body.healthInfoIds; // Assuming you have an array of IDs in 'ids'
 
     const healthInformationObjects = [];

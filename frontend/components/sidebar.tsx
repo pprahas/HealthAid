@@ -66,6 +66,7 @@ export function Sidebar() {
             firstName: "Chat",
             lastName: "GPT",
             email: "chatgpt@openai.com",
+            patients: Array(1).fill(PatientDefault)
           },
         ];
         const doctorDataDatabase = await Promise.all(

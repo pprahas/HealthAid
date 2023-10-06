@@ -21,6 +21,8 @@ export async function createHealthInformation(body) {
       throw HealthInformationError.unsuccessfulLogin;
     }
 
+    patientAccount.healthInfo = []
+    console.log(body)
     for (const key in information) {
       const value = information[key];
       const newHealthInfo: HealthInformation = {
