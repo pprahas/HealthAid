@@ -26,7 +26,7 @@ export const DoctorDefault: Doctor = {
   email: ""
 }
 
-export const PatientDefault: Patient ={
+export const PatientDefault: Patient = {
   _id: "",
   firstName: "",
   lastName: "",

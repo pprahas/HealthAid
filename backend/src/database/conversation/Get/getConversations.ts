@@ -18,7 +18,8 @@ export async function getConversations(patientId: String, doctorId: String) {
             console.log("Message:", currMessageDTO)
             return {
               senderType: currMessageDTO.senderType,
-              content: currMessageDTO.content
+              content: currMessageDTO.content,
+              date: currMessageDTO.createdAt,
             };
           })
         );
