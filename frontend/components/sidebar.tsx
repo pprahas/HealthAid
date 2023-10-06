@@ -1,7 +1,12 @@
 "use client";
 //import { Patient } from "../app/(main)/home/testList";
 import { SetStateAction, useContext, useEffect, useState } from "react";
-import { CurrentConvoContext, SidebarContext } from "@/app/(main)/layout";
+import {
+  ConvoListContext,
+  CurrentConvoContext,
+  SidebarContext,
+  ConvoLoadingContext,
+} from "@/app/(main)/layout";
 import { PatientContext } from "@/app/(main)/layout";
 import axios, { AxiosError } from "axios";
 import { Conversation, Doctor, Message, Patient } from "@/types";
@@ -21,12 +26,19 @@ export function Sidebar() {
     Patient,
     React.Dispatch<React.SetStateAction<Patient>>
   ];
-  const [doctorList, setDoctorList] = useState([DoctorDefault]);
+  const [doctorList, setDoctorList] = useState<Array<Doctor>>([]);
   const [convo, setConvo] = useContext(CurrentConvoContext) as [
     Conversation,
     React.Dispatch<React.SetStateAction<Conversation>>
   ];
-  const [loading, setLoading] = useState(false);
+  const [convoList, setConvoList] = useContext(ConvoListContext) as [
+    Array<Conversation>,
+    React.Dispatch<React.SetStateAction<Array<Conversation>>>
+  ];
+  const [convoLoading, setConvoLoading] = useContext(ConvoLoadingContext) as [
+    boolean,
+    React.Dispatch<React.SetStateAction<boolean>>
+  ];
 
   const getDoctors = async (doctorId: string) => {
     try {
@@ -66,6 +78,7 @@ export function Sidebar() {
   }
 
   const createNewConvo = async () => {
+    setConvoLoading(true);
     try {
       const createConvoResponse = await axios.post(
         "http://localhost:8080/conversation/createConversation",
@@ -87,11 +100,12 @@ export function Sidebar() {
         patient: "",
         messages: [newGPTMessage],
       };
-      setSidebarIndex(-1);
+      setConvoList([...convoList, newConversation]);
       setConvo(newConversation);
     } catch (error) {
       console.error("Error:", error);
     }
+    setConvoLoading(false);
   };
 
   useEffect(() => {
@@ -102,7 +116,7 @@ export function Sidebar() {
     <div className="flex flex-col content-center space-y-4 text-lg h-[calc(100vh-56px)] overflow-auto snap-y pr-4">
       <div
         className={`self-center text-center ${
-          loading ? "bg-secondary-400" : "bg-white"
+          convoLoading ? "bg-secondary-400" : "bg-white"
         } font-bold py-4 w-[60%] rounded-3xl cursor-pointer`}
         onClick={() => {
           createNewConvo();

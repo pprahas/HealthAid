@@ -45,11 +45,21 @@ export const ConvoListContext = createContext<ConvoListContextType | undefined>(
   undefined
 );
 
+type ConvoLoadingContextType = [
+  boolean,
+  React.Dispatch<React.SetStateAction<boolean>>
+];
+export const ConvoLoadingContext = createContext<
+  ConvoLoadingContextType | undefined
+>(undefined);
+
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const [patient, setPatient] = useState(PatientDefault);
   const [email, setEmail] = useState("safdl@garsd.com");
   const [currentConvo, setCurrentConvo] = useState(DefaultConversation);
+  const [convoList, setConvoList] = useState<Conversation[]>([]);
+  const [convoLoading, setConvoLoading] = useState(true);
 
   useEffect(() => {
     getPatient();
@@ -72,30 +82,37 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       } catch (error) {
         console.error("Error:", error);
       }
+      setConvoLoading(false);
     }
   };
 
   return (
-    <CurrentConvoContext.Provider value={[currentConvo, setCurrentConvo]}>
-      <SidebarContext.Provider value={[activeTabIndex, setActiveTabIndex]}>
-        <PatientContext.Provider value={[patient, setPatient]}>
-          <div className="healthaid font-outfit min-h-screen flex flex-col bg-background">
-            <header className="last:sticky flex top-0 h-15 items-center">
-              <aside className="w-full md:w-60 top-0 h-14 flex justify-center items-center">
-                <div className="text-3xl font-bold">HealthAid</div>
-              </aside>
-              <Navbar />
-            </header>
+    <ConvoLoadingContext.Provider value={[convoLoading, setConvoLoading]}>
+      <ConvoListContext.Provider value={[convoList, setConvoList]}>
+        <CurrentConvoContext.Provider value={[currentConvo, setCurrentConvo]}>
+          <SidebarContext.Provider value={[activeTabIndex, setActiveTabIndex]}>
+            <PatientContext.Provider value={[patient, setPatient]}>
+              <div className="healthaid font-outfit min-h-screen flex flex-col bg-background">
+                <header className="last:sticky flex top-0 h-15 items-center">
+                  <aside className="w-full md:w-60 top-0 h-14 flex justify-center items-center">
+                    <div className="text-3xl font-bold">HealthAid</div>
+                  </aside>
+                  <Navbar />
+                </header>
 
-            <div className="flex flex-col md:flex-row flex-1">
-              <aside className="w-full md:w-60 pr-2 h-[calc(100vh-56px)]">
-                <Sidebar />
-              </aside>
-              <div className="flex-1 bg-white rounded-tl-3xl">{children}</div>
-            </div>
-          </div>
-        </PatientContext.Provider>
-      </SidebarContext.Provider>
-    </CurrentConvoContext.Provider>
+                <div className="flex flex-col md:flex-row flex-1">
+                  <aside className="w-full md:w-60 pr-2 h-[calc(100vh-56px)]">
+                    <Sidebar />
+                  </aside>
+                  <div className="flex-1 bg-white rounded-tl-3xl">
+                    {children}
+                  </div>
+                </div>
+              </div>
+            </PatientContext.Provider>
+          </SidebarContext.Provider>
+        </CurrentConvoContext.Provider>
+      </ConvoListContext.Provider>
+    </ConvoLoadingContext.Provider>
   );
 }
