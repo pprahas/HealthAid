@@ -41,7 +41,6 @@ const DoctorQuestions = () => {
       placeholder: "Los Angeles, California",
       key: "address",
     },
-    
   ];
 
   const clinicInfoKeys = [
@@ -58,7 +57,6 @@ const DoctorQuestions = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-
   const handleInputChange = (index: number, value: string | string[]) => {
     const newAnswers = [...answers];
     newAnswers[index] = value;
@@ -73,9 +71,11 @@ const DoctorQuestions = () => {
 
         const clinicInfo = {} as { [key: string]: string };
 
-        clinicInfoKeys.forEach((key) => {
-          clinicInfo[key] = answers[key as keyof typeof answers];
+        clinicInfoKeys.forEach((key, index) => {
+          clinicInfo[key] = answers[index];
         });
+
+        console.log(clinicInfo);
 
         const postData = {
           email: currUserObject.email,
