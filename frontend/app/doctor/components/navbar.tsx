@@ -41,8 +41,8 @@ export const Navbar = () => {
           href: "",
         },
         {
-          label: `${firstName} ${lastName}`,
-          href: "/profile",
+          label: `Dr. ${firstName} ${lastName}`,
+          href: "/doctor/profile",
         }
       );
     }
