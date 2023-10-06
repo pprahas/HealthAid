@@ -144,7 +144,7 @@ export const ChatContainer = ({ messages }: chatProps) => {
         {
           diagnosis: "pending",
           conversationId: convo._id,
-          doctorEmail: "doctor@doctor.com",
+          doctorEmail: "d1@gmail.com",
         }
       );
       convo.diagnosis = "pending";
