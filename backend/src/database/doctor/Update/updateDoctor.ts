@@ -32,12 +32,26 @@ export async function updateDoctor(doctorId, fieldsToAdd, fieldsToRemove) {
         // }
         if (key === "clinic") {
           //   let clinicInfo = JSON.stringify(value);
-          const newClinic = new ClinicDTO(value);
-          await newClinic.save();
 
-          doctorAccount.clinic = newClinic._id;
+          const clinicInfo = await ClinicDTO.findById(doctorAccount.clinic);
+
+          // console.log("isnide clinic", value);
+
+          clinicInfo.name = value.name;
+          clinicInfo.postalCode = value.postalCode;
+          clinicInfo.website = value.website;
+          clinicInfo.phoneNumber = value.phoneNumber;
+          clinicInfo.specialties = value.specialties;
+          // console.log("new clinic", clinicInfo);
+
+          // const newClinic = new ClinicDTO(value);
+          await clinicInfo.save();
+
+          // doctorAccount.clinic = newClinic._id;
 
           // console.log("new clinic" + newClinic);
+        } else {
+          doctorAccount[key] = value;
         }
       }
     }
