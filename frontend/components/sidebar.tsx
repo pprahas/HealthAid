@@ -141,7 +141,7 @@ export function Sidebar() {
         doctor._id == doctorId;
       });
       let currDoctorList = [...doctorList];
-      currDoctorList.splice(doctorIndex - 1, 1);
+      currDoctorList.splice(doctorIndex, 1);
       setDoctorList(currDoctorList);
       setSidebarIndex(0);
       const updatePatientResponse = await axios.post(
