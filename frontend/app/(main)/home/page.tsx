@@ -14,7 +14,7 @@ import {
   DoctorListContext,
 } from "@/app/(main)/layout";
 import { SetStateAction, useContext, useState } from "react";
-import { Clinic, Patient } from "@/types";
+import { Clinic, Patient, PatientDefault } from "@/types";
 import {
   Doctor,
   DoctorDefault,
