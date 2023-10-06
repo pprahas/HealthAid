@@ -1,8 +1,10 @@
 import { Request, Response } from "express";
 import { PatientDTO } from "@models/Patient"; // Import the Patient model and document types
 import { pbkdf2Sync } from "crypto";
+import { DoctorDTO } from "@models/Doctor";
 
 export enum LoginPatientError {
+  invalidEmail = "No account associated with this email",
   unsuccessfulLogin = "Incorrect Email or Password. Try Again.",
 }
 
@@ -13,12 +15,15 @@ export async function resetPassword(req: Request, res: Response): Promise<Respon
     const oldPassword = req.body.password;
     const newPassword = req.body.newPassword
 
-    const patientAccount = await PatientDTO.findOne({ email: email });
+    let patientAccount = await PatientDTO.findOne({ email: email });
 
     if (!patientAccount) {
-      return res
-        .status(403)
-        .send({ message: LoginPatientError.unsuccessfulLogin });
+      patientAccount = await DoctorDTO.findOne({ email: email })
+      if (!patientAccount) {
+        return res
+          .status(403)
+          .send({ message: LoginPatientError.invalidEmail });
+      }
     }
     let hashedInputPassword = pbkdf2Sync(
       oldPassword,
