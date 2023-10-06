@@ -15,7 +15,7 @@ export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [submit, setSubmit] = useState(false);
   const [error, setError] = useState("");
-  const [role, setRole] = useState([""]);
+  const [role, setRole] = useState(["patient"]);
 
   const isFirstNameValid = React.useMemo(() => {
     if (firstName === "") return !submit;
