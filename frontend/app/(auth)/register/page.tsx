@@ -154,7 +154,7 @@ export default function SignupPage() {
                   isInvalid={!isEmailValid}
                   errorMessage={
                     (!isEmailValid && "Please enter a valid email") ||
-                    (error != "" && error)
+                    (error != "undefined" && error != "" && error)
                   }
                   color={isEmailValid ? "default" : "danger"}
                   onChange={(e) => {

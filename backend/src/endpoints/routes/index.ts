@@ -8,15 +8,17 @@ import patientHealthInformationRoutes from "./extraInformation/patientHealthInfo
 import doctorClinicInformationRoutes from "./extraInformation/doctorClinicInformation";
 import conversationRoutes from "./conversation/conversation";
 import updatePatientRoutes from "./updatePatient/updatePatient";
+import updateDoctorRoutes from "./updateDoctor/updateDoctor";
 export default class Routes {
   constructor(app: Application) {
     app.use("/register", registerRoutes);
     app.use("/login", loginRoutes);
-    app.use("/getPatientByEmail", getPatient)
-    app.use("/getDoctorFromId", getDoctorById)
+    app.use("/getPatientByEmail", getPatient);
+    app.use("/getDoctorFromId", getDoctorById);
     app.use("/patientHealthInformation", patientHealthInformationRoutes);
     app.use("/doctorClinicInformation", doctorClinicInformationRoutes);
     app.use("/conversation", conversationRoutes);
     app.use("/updatePatient", updatePatientRoutes);
+    app.use("/updateDoctor", updateDoctorRoutes);
   }
 }
