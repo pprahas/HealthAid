@@ -8,6 +8,7 @@ import axios, { AxiosError } from "axios";
 import {
   Conversation,
   DefaultConversation,
+  Doctor,
   Patient,
   PatientDefault,
 } from "@/types";
@@ -45,6 +46,14 @@ export const ConvoListContext = createContext<ConvoListContextType | undefined>(
   undefined
 );
 
+type DoctorListContextType = [
+  Doctor[],
+  React.Dispatch<React.SetStateAction<Doctor[]>>
+];
+export const DoctorListContext = createContext<
+  DoctorListContextType | undefined
+>(undefined);
+
 type ConvoLoadingContextType = [
   boolean,
   React.Dispatch<React.SetStateAction<boolean>>
@@ -60,6 +69,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const [currentConvo, setCurrentConvo] = useState(DefaultConversation);
   const [convoList, setConvoList] = useState<Conversation[]>([]);
   const [convoLoading, setConvoLoading] = useState(true);
+  const [doctorList, setDoctorList] = useState<Doctor[]>([]);
 
   useEffect(() => {
     getPatient();
@@ -87,32 +97,36 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <ConvoLoadingContext.Provider value={[convoLoading, setConvoLoading]}>
-      <ConvoListContext.Provider value={[convoList, setConvoList]}>
-        <CurrentConvoContext.Provider value={[currentConvo, setCurrentConvo]}>
-          <SidebarContext.Provider value={[activeTabIndex, setActiveTabIndex]}>
-            <PatientContext.Provider value={[patient, setPatient]}>
-              <div className="healthaid font-outfit min-h-screen flex flex-col bg-background">
-                <header className="last:sticky flex top-0 h-15 items-center">
-                  <aside className="w-full md:w-60 top-0 h-14 flex justify-center items-center">
-                    <div className="text-3xl font-bold">HealthAid</div>
-                  </aside>
-                  <Navbar />
-                </header>
+    <DoctorListContext.Provider value={[doctorList, setDoctorList]}>
+      <ConvoLoadingContext.Provider value={[convoLoading, setConvoLoading]}>
+        <ConvoListContext.Provider value={[convoList, setConvoList]}>
+          <CurrentConvoContext.Provider value={[currentConvo, setCurrentConvo]}>
+            <SidebarContext.Provider
+              value={[activeTabIndex, setActiveTabIndex]}
+            >
+              <PatientContext.Provider value={[patient, setPatient]}>
+                <div className="healthaid font-outfit min-h-screen flex flex-col bg-background">
+                  <header className="last:sticky flex top-0 h-15 items-center">
+                    <aside className="w-full md:w-60 top-0 h-14 flex justify-center items-center">
+                      <div className="text-3xl font-bold">HealthAid</div>
+                    </aside>
+                    <Navbar />
+                  </header>
 
-                <div className="flex flex-col md:flex-row flex-1">
-                  <aside className="w-full md:w-60 pr-2 h-[calc(100vh-56px)]">
-                    <Sidebar />
-                  </aside>
-                  <div className="flex-1 bg-white rounded-tl-3xl">
-                    {children}
+                  <div className="flex flex-col md:flex-row flex-1">
+                    <aside className="w-full md:w-60 pr-2 h-[calc(100vh-56px)]">
+                      <Sidebar />
+                    </aside>
+                    <div className="flex-1 bg-white rounded-tl-3xl">
+                      {children}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </PatientContext.Provider>
-          </SidebarContext.Provider>
-        </CurrentConvoContext.Provider>
-      </ConvoListContext.Provider>
-    </ConvoLoadingContext.Provider>
+              </PatientContext.Provider>
+            </SidebarContext.Provider>
+          </CurrentConvoContext.Provider>
+        </ConvoListContext.Provider>
+      </ConvoLoadingContext.Provider>
+    </DoctorListContext.Provider>
   );
 }

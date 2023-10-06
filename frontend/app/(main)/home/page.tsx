@@ -11,9 +11,10 @@ import {
   CurrentConvoContext,
   ConvoListContext,
   ConvoLoadingContext,
+  DoctorListContext,
 } from "@/app/(main)/layout";
 import { SetStateAction, useContext, useState } from "react";
-import { Patient, PatientDefault } from "@/types";
+import { Clinic, Patient } from "@/types";
 import {
   Doctor,
   DoctorDefault,
@@ -44,10 +45,15 @@ export default function PatientHome() {
     boolean,
     React.Dispatch<React.SetStateAction<boolean>>
   ];
+  const [doctorList, setDoctorList] = useContext(DoctorListContext) as [
+    Doctor[],
+    React.Dispatch<React.SetStateAction<Doctor[]>>
+  ];
   const [currentMessage, setCurrentMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [clinic, setClinic] = useState<Clinic>();
 
   const getDoctorInfo = async () => {
     if (sidebarIndex == 0) {
@@ -65,7 +71,7 @@ export default function PatientHome() {
         const response = await axios.post(
           "http://localhost:8080/getDoctorFromId",
           {
-            id: patient.doctors[sidebarIndex - 1],
+            id: doctorList[sidebarIndex],
           }
         );
 
@@ -78,6 +84,7 @@ export default function PatientHome() {
   };
 
   const getConversations = async (doctorId: string) => {
+    console.log("new convo");
     try {
       const response = await axios.post(
         "http://localhost:8080/conversation/getConversations",
@@ -140,13 +147,32 @@ export default function PatientHome() {
     setConvo(conversation);
   };
 
-  useEffect(() => {
+  const getClinicInformation = async (clinicId?: string) => {
     console.log("doctor:", doctor._id);
+    try {
+      const response = await axios.post("http://localhost:8080/getClinic", {
+        clinicId: clinicId,
+      });
+
+      const data = await response.data;
+      setClinic(data.clinic);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  useEffect(() => {
+    console.log("new doctor:", doctor._id);
     getConversations(doctor._id);
+    console.log("clinic id:", doctor.clinic);
+    if (doctor._id != "gpt") {
+      getClinicInformation(doctor.clinic);
+    }
   }, [doctor]);
 
   useEffect(() => {
-    console.log("index:", sidebarIndex);
+    console.log("new index:", sidebarIndex);
+    setConvo(DefaultConversation);
     getDoctorInfo();
   }, [sidebarIndex, patient]);
 
@@ -180,21 +206,28 @@ export default function PatientHome() {
   } else {
     return (
       <section className={`flex items-start h-[calc(100vh-60px)]`}>
-        <div className="flex-auto w-[40%] h-full pt-9 pl-10 pr-8 overflow-hidden">
-          <h1 className="font-bold text-4xl">
+        <div className="flex-auto w-[40%] h-full pt-9 pl-10 pr-8 overflow-scroll">
+          <h1
+            className={`${
+              sidebarIndex == 0 ? "hidden" : ""
+            } font-bold text-4xl`}
+          >
             Dr. {doctor.firstName} {doctor.lastName}
           </h1>
           <div className="overflow-auto h-full my-3">
-            <div className="grid grid-cols-2 gap-y-3 text-lg">
+            <div
+              className={`${
+                sidebarIndex == 0 ? "hidden" : ""
+              } grid grid-cols-2 gap-y-3 text-2xl`}
+            >
               <div>
-                <p className="font-bold">Clinic name</p>
-                <p>Address</p>
-                <p>City</p>
-                <p>Zip Code</p>
+                <p className="font-bold">{clinic?.name}</p>
+                <p>{clinic?.address}</p>
+                <p>{clinic?.postalCode}</p>
               </div>
               <div className="flex flex-col items-end">
-                <p>Phone number</p>
-                <p>Website</p>
+                <p>{clinic?.phoneNumber}</p>
+                <p>{clinic?.website}</p>
                 <p className="my-3">
                   <Button
                     size="lg"
@@ -207,36 +240,43 @@ export default function PatientHome() {
               </div>
             </div>
 
-            <h1 className="font-bold text-4xl pt-24">Your Conversations</h1>
+            <h1
+              className={`font-bold text-4xl ${
+                sidebarIndex == 0 ? "" : "pt-24"
+              }`}
+            >
+              Your Conversations
+            </h1>
             <div className="space-y-5 pt-5">
-              {convoList?.map((conversation, index: number) => (
-                <div
-                  key={index}
-                  className={`${
-                    convo == conversation
-                      ? "bg-background font-bold"
-                      : "cursor-pointer bg-slate-200 hover:bg-secondary-300 transition duration-500"
-                  } text-xl shadow-md rounded-3xl p-2 pr-3 pl-5 flex items-center justify-between`}
-                  onClick={() => {
-                    updateConvo(conversation);
-                  }}
-                >
-                  <div>
-                    {conversation.title
-                      ? conversation.title
-                      : `Conversation ${index + 1}`}
+              {convo &&
+                convoList?.map((conversation, index: number) => (
+                  <div
+                    key={index}
+                    className={`${
+                      convo._id == conversation._id
+                        ? "bg-background font-bold"
+                        : "cursor-pointer bg-slate-200 hover:bg-secondary-300 transition duration-500"
+                    } text-xl shadow-md rounded-3xl p-2 pr-3 pl-5 flex items-center justify-between`}
+                    onClick={() => {
+                      updateConvo(conversation);
+                    }}
+                  >
+                    <div>
+                      {conversation.title
+                        ? conversation.title
+                        : `Conversation ${index + 1}`}
+                    </div>
+                    <div>
+                      <RightArrow />
+                    </div>
                   </div>
-                  <div>
-                    <RightArrow />
-                  </div>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
         </div>
         <div className="flex-auto w-[60%] h-[calc(100vh-56px)] bg-slate-200 rounded-tl-3xl pt-8 pl-10 flex flex-col overflow-hidden">
           <div className="flex-grow overflow-y-auto snap-y">
-            <ChatContainer messages={convo.messages} />
+            {convo && <ChatContainer messages={convo.messages} />}
           </div>
           <div className="h-min my-1 place-items-center">
             <div className="flex flex-col text-[#ff0000] font-bold">

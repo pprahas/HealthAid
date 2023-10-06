@@ -27,7 +27,7 @@ export const DoctorDefault: Doctor = {
   patients: [] as string[]
 }
 
-export const PatientDefault: Patient ={
+export const PatientDefault: Patient = {
   _id: "",
   firstName: "",
   lastName: "",
@@ -57,17 +57,19 @@ export interface HealthInformation {
 // Doctor
 export interface Doctor extends User {
   birthday?: Date;
-  clinic?: Clinic;
+  clinic?: string;
   appointments?: [Appointment];
-  patients: string[];
+  patients?: string[];
 }
 
 // Clinic
 export interface Clinic {
   name: string;
-  address: string;
+  postalCode: string;
   website: string;
   phoneNumber: string;
+  specialties: string;
+  address: string;
 }
 
 

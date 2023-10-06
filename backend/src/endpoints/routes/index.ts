@@ -10,6 +10,8 @@ import patientHealthInformationRoutes from "./extraInformation/patientHealthInfo
 import doctorClinicInformationRoutes from "./extraInformation/doctorClinicInformation";
 import conversationRoutes from "./conversation/conversation";
 import updatePatientRoutes from "./updatePatient/updatePatient";
+import UpdateDoctorRoutes from "./updateDoctor/updateDoctor";
+import getClinic from "./extraInformation/getClinic";
 export default class Routes {
   constructor(app: Application) {
     app.use("/resetPassword", resetPasswordRoutes);
@@ -22,5 +24,7 @@ export default class Routes {
     app.use("/doctorClinicInformation", doctorClinicInformationRoutes);
     app.use("/conversation", conversationRoutes);
     app.use("/updatePatient", updatePatientRoutes);
+    app.use("/updateDoctor", UpdateDoctorRoutes);
+    app.use("/getClinic", getClinic);
   }
 }

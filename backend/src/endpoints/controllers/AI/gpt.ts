@@ -3,7 +3,7 @@ import OpenAI from "openai"
 import { Request, Response } from "express";
 import { ConversationDTO } from "@models/Conversation";
 
-const DEFAULT_PROMPT = `Now, I want you to act like a doctor, introduce yourself to the patient humanly, and be friendly. Introduce yourself as ChatGPT, not any doctor, and keep the introduction message short and ask the patient about their current health concerns. If you think you have a diagnosis for the patient after talking to them for a while, respond with "you have been diagnosed with: " and then include the diagnosis. don't tell them to seek medical attention, and tell them to forward this entire conversation with the diagnosis to a doctor if they want to. Don't include the health information i have provided above in the introductory message, but do keep them in mind when providing a diagnosis. Ask as many questions as possible, at least 3 minimum questions. `;
+const DEFAULT_PROMPT = `Now, I want you to act like a doctor, introduce yourself to the patient humanly, and be friendly. Introduce yourself as ChatGPT, not any doctor, and keep the introduction message short and ask the patient about their current health concerns. If you think you have a diagnosis for the patient after talking to them for a while, respond with "you have been diagnosed with: " and then include the diagnosis. don't tell them to seek medical attention, and tell them to forward this entire conversation with the diagnosis to a doctor if they want to. Don't include the health information i have provided above in the introductory message, but do keep them in mind when providing a diagnosis. Ask as many questions as possible, at least 3 minimum questions. Keep your responses to 1-3 sentences max `;
 
 export async function AskGPTWrapper(req: Request, res: Response) {
     try {
@@ -21,9 +21,9 @@ export async function AskGPT(prompt: String, messages: ([Message] | Message[]), 
         console.log("asking gpt")
         let formattedMessages: any[] = []
 
-        formattedMessages.push({ role: "system", content: prompt })
-        formattedMessages.push({ role: "system", content: DEFAULT_PROMPT });
-        formattedMessages.push({ role: "system", content: "This is the conversation that you have already had" })
+        formattedMessages.push({ role: "user", content: prompt })
+        formattedMessages.push({ role: "user", content: DEFAULT_PROMPT });
+        formattedMessages.push({ role: "user", content: "This is the conversation that you have already had" })
 
         if (messages && messages.length != 0) {
             formattedMessages = messages.map((message) => ({
