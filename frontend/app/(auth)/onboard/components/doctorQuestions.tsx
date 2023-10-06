@@ -6,7 +6,7 @@ import axios, { AxiosError } from "axios";
 const DoctorQuestions = () => {
   const questions = [
     {
-      question: "What is the name of your clinic",
+      question: "What is the name of your clinic?",
       placeholder: "HealthAid",
       key: "name",
     },
@@ -21,12 +21,12 @@ const DoctorQuestions = () => {
       key: "website",
     },
     {
-      question: "What is your clinic's phone number",
+      question: "What is your clinic's phone number?",
       placeholder: "+1 (501)-400-5001",
       key: "phoneNumber",
     },
     {
-      question: "What is your speciality (select all that apply)",
+      question: "What is your speciality? (select all that apply)",
       placeholder: [
         "Pediatrics",
         "Obstetrics and Gynecology (OB/GYN)",
@@ -111,7 +111,7 @@ const DoctorQuestions = () => {
         {questions.map((question, index) => (
           <div key={index} className="mb-4 w-1/2 px-5">
             {/* Add w-1/2 to make each element take half of the container's width */}
-            <label className="block text-2xl font-bold text-gray-700">
+            <label className="block text-lg text-gray-700">
               {question.question}
             </label>
             {Array.isArray(question.placeholder) ? ( // Check if it's an array
@@ -128,7 +128,7 @@ const DoctorQuestions = () => {
             ) : (
               <input
                 type="text"
-                className="border rounded w-full py-2 px-3 mt-1"
+                className="p-4 shadow-sm rounded-xl bg-gray-100 hover:bg-gray-200 transition duration-200"
                 placeholder={question.placeholder}
                 value={answers[index]}
                 onChange={(e) => handleInputChange(index, e.target.value)}
@@ -141,7 +141,8 @@ const DoctorQuestions = () => {
             isLoading={loading}
             type="button"
             onClick={handleRegister}
-            className="flex w-full justify-center rounded-md bg-indigo-600 px-2 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            color="success"
+            className="flex w-full justify-center font-semibold leading-6 text-white shadow-sm hover:bg-secondary-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
             Finished!
           </Button>

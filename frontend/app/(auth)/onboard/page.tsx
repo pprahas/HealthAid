@@ -24,8 +24,8 @@ export default function OnboardPage() {
   if (role != "") {
     return (
       <div>
-        <div className="flex flex-col items-center space-y-[3vh]">
-          <div className="text-4xl font-bold w-[100vw]">
+        <div className="flex flex-col items-center text-center ">
+          <div className="text-4xl font-bold pb-7">
             Welcome {firstName} {lastName}
           </div>
           {role == "patient" && <PatientQuestions />}
