@@ -85,7 +85,7 @@ export default function DoctorHome() {
       console.log("new pat:", patient._id);
       getConversations(patient._id);
     }
-  }, [patient, patientList]);
+  }, [patient, patientList, sidebarIndex]);
 
   return (
     <section className="columns-2 items-start h-[calc(100vh-60px)]">
