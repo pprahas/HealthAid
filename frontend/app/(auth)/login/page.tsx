@@ -25,9 +25,13 @@ export default function LoginPage() {
 
       if (response.ok) {
         let loginData = await response.json();
-        // loginData.patient.type = "patient";
-        localStorage.setItem("user", JSON.stringify(loginData.user));
-        window.location.href = "/home";
+        let user = loginData.user;
+        localStorage.setItem("user", JSON.stringify(user));
+        if (user.userType == "doctor") {
+          window.location.href = "/doctor/home";
+        } else {
+          window.location.href = "/home";
+        }
       } else {
         const data = await response.json();
         setError("Invalid email or password. Please try again.");
