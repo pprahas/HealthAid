@@ -8,9 +8,8 @@ export type Doctor = {
   lastName: string;
   email: string;
   password: string;
-  userType: String,
-  birthday?: Date;
-  clinic?: (typeof Schema.ObjectId | Clinic);
+  userType: String;
+  clinic?: typeof Schema.ObjectId | Clinic;
   appointments?: [Appointment];
   patients?: [Patient];
 };
@@ -37,10 +36,6 @@ const doctorSchema = new Schema(
       type: String,
       required: true,
     },
-    birthday: {
-      type: Date,
-      required: false,
-    },
     clinic: {
       type: Schema.ObjectId,
       ref: "Clinic",
@@ -52,7 +47,7 @@ const doctorSchema = new Schema(
     },
     patients: {
       type: [{ type: Schema.ObjectId, ref: "Patient" }],
-      required: false,
+      // required: false,
     },
   },
   { timestamps: true }
