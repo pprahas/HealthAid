@@ -23,6 +23,7 @@ export default function ProfilePage() {
   const [gender, setGender] = useState("");
   const [height, setHeight] = useState("");
   const [weight, setWeight] = useState("");
+  const [activeAccount, setActiveAccount] = useState(Boolean);
 
   const changeHeight = (value: string) => {
     let res = parseInt(value).toString()
@@ -76,16 +77,32 @@ export default function ProfilePage() {
       "Are you sure you want to deactivate your account?"
     );
     if (confirmed) {
-      let record: Record<string, Boolean> = {};
-      record["activeAccount"] = false;
-  
-      axios.post("http://localhost:8080/updatePatient", {
-        patientId: patient._id,
-        add: record
-      });
-  
-      localStorage.removeItem("user");
-      window.location.href = "/";
+      try {
+        axios.post("http://localhost:8080/updatePatient", {
+          patientId: patient._id,
+          add: { activeAccount: false },
+        });
+        setActiveAccount(false);
+      } catch (error) {
+        console.error("Error deactivating account:", error);
+      }
+    }
+  };
+
+  const handleActivate = () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to activate your account?"
+    );
+    if (confirmed) {
+      try {
+        axios.post("http://localhost:8080/updatePatient", {
+          patientId: patient._id,
+          add: { activeAccount: true },
+        });
+        setActiveAccount(true);
+      } catch (error) {
+        console.error("Error activating account:", error);
+      }
     }
   };
 
@@ -154,6 +171,7 @@ export default function ProfilePage() {
     setBirthday((patient.birthday as unknown as string) || "");
     setHeight((patient.height as unknown as string || ""));
     setWeight((patient.weight as unknown as string || ""));
+    setActiveAccount(patient.activeAccount)
   }, [patient]);
 
   return (
@@ -203,9 +221,20 @@ export default function ProfilePage() {
             <Button size="lg" onClick={handleReset}>
               Change password
             </Button>
-            <Button size="lg" color="danger" onClick={handleDeactivate}>
+            {/* <Button size="lg" color="danger" onClick={handleDeactivate}>
               Deactivate
+            </Button> */}
+            <Button
+              color={activeAccount ? "danger" : "success"}
+              // className="h-16"
+              size="lg"
+              onClick={activeAccount ? handleDeactivate : handleActivate}
+            >
+              <div>
+                {activeAccount ? "Deactivate" : "Activate"}
+              </div>
             </Button>
+
             <Button size="lg" color="danger" onClick={handleLogout}>
               Log out
             </Button>

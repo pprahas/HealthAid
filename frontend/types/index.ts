@@ -10,6 +10,7 @@ export interface User {
   firstName: string,
   lastName: string,
   email: string,
+  activeAccount: boolean,
 }
 
 export const UserDefualt: User = {
@@ -17,6 +18,7 @@ export const UserDefualt: User = {
   firstName: "",
   lastName: "",
   email: "",
+  activeAccount: true,
 }
 
 export const DoctorDefault: Doctor = {
@@ -24,7 +26,8 @@ export const DoctorDefault: Doctor = {
   firstName: "",
   lastName: "",
   email: "",
-  patients: [] as string[]
+  patients: [] as string[],
+  activeAccount: true,
 }
 
 export const PatientDefault: Patient = {
@@ -32,7 +35,8 @@ export const PatientDefault: Patient = {
   firstName: "",
   lastName: "",
   email: "",
-  doctors: [] as string[]
+  doctors: [] as string[],
+  activeAccount: true,
 }
 
 export const ClinicDefault: Clinic = {
