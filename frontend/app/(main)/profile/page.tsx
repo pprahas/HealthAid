@@ -71,6 +71,24 @@ export default function ProfilePage() {
     }
   };
 
+  const handleDeactivate = () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to deactivate your account?"
+    );
+    if (confirmed) {
+      let record: Record<string, Boolean> = {};
+      record["accountActivity"] = false;
+  
+      axios.post("http://localhost:8080/updatePatient", {
+        patientId: patient._id,
+        add: record
+      });
+  
+      localStorage.removeItem("user");
+      window.location.href = "/";
+    }
+  };
+
   const handleLogout = () => {
     localStorage.removeItem("user");
     window.location.href = "/";
@@ -184,6 +202,9 @@ export default function ProfilePage() {
             </Button>
             <Button size="lg" onClick={handleReset}>
               Change password
+            </Button>
+            <Button size="lg" color="danger" onClick={handleDeactivate}>
+              Deactivate
             </Button>
             <Button size="lg" color="danger" onClick={handleLogout}>
               Log out

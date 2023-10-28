@@ -66,6 +66,11 @@ export const patientSchema = new Schema(
     healthInfo: {
       type: [{ type: Schema.ObjectId, ref: "HealthInformation" }],
     },
+    activeAccount: {
+      type: Boolean,
+      default: true,    
+      required: true,
+  },
   },
   { timestamps: true }
 );

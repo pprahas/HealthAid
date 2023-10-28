@@ -49,6 +49,11 @@ const doctorSchema = new Schema(
       type: [{ type: Schema.ObjectId, ref: "Patient" }],
       // required: false,
     },
+    activeAccount: {
+      type: Boolean,
+      default: true,    
+      required: true,
+  },
   },
   { timestamps: true }
 );
