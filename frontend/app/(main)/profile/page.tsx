@@ -77,7 +77,7 @@ export default function ProfilePage() {
     );
     if (confirmed) {
       let record: Record<string, Boolean> = {};
-      record["accountActivity"] = false;
+      record["activeAccount"] = false;
   
       axios.post("http://localhost:8080/updatePatient", {
         patientId: patient._id,
