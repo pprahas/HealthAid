@@ -41,6 +41,7 @@ export async function deleteAppointment(patientId, doctorId, appointmentId) {
       throw AppointmentError.doctorAppointmentNotFound;
     }
 
+    await AppointmentDTO.deleteOne({ _id: appointmentId });
     await patientAccount.save();
     await doctorAccount.save();
   } catch (error) {
