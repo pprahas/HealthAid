@@ -4,8 +4,6 @@ Scrum Documents - https://drive.google.com/drive/folders/1VJJGyzOLFHTnZvSQiZsNlK
 
 ## Frontend
 
-## Frontend
-
 1. **Install Dependencies**: Run `npm install` to download project dependencies.
 
 2. **Application Launch**: To start the frontend of your application, execute `npm start`.
