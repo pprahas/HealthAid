@@ -4,11 +4,15 @@ Scrum Documents - https://drive.google.com/drive/folders/1VJJGyzOLFHTnZvSQiZsNlK
 
 ## Frontend
 
-Start the application by running `npm run dev` in the `frontend` directory. Then go to http://localhost:3000/ to view the frontend.
+## Frontend
+
+1. **Install Dependencies**: Run `npm install` to download project dependencies.
+
+2. **Application Launch**: To start the frontend of your application, execute `npm start`.
+
+3. **View the Frontend**: Open your web browser and navigate to http://localhost:3000/ to view the frontend of your application.
 
 ## Backend
-
-### Starting the Node Server:
 
 1. **Install Dependencies**: Run `npm install` to download project dependencies.
 

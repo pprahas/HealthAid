@@ -5,8 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "start1": "next start",
+    "lint": "next lint",
+    "start": "next dev"
   },
   "dependencies": {
     "@nextui-org/button": "2.0.18",
