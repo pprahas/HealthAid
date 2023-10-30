@@ -12,7 +12,7 @@ export async function createAppointment(
     const title = body.title;
     const time = body.time;
     await createAppo(patientId, doctorId, time, title);
-    return res.status(200).send({ message: "success" });
+    return res.status(200).send({ message: "appointment created" });
   } catch (error) {
     return res.status(400).send(error);
   }

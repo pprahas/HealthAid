@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { createAppointment } from "@endpoints/controllers/appointment/createAppointment";
+import { deleteAppointment } from "@endpoints/controllers/appointment/deleteAppointment";
 
 class AppointmentRoutes {
   router = Router();
@@ -10,7 +11,7 @@ class AppointmentRoutes {
 
   initializeRoutes() {
     this.router.post("/create", createAppointment);
-    // this.router.post("/create", createAppointment);
+    this.router.post("/delete", deleteAppointment);
   }
 }
 

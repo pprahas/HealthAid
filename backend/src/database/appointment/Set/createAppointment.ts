@@ -3,19 +3,20 @@ import { DoctorDTO } from "@models/Doctor";
 import { PatientDTO } from "@models/Patient";
 
 export enum AppointmentError {
-  accountNotFound = "An account with the given ID does not exist",
+  patientAccountNotFound = "Patient account with the given ID does not exist",
+  doctorAccountNotFound = "Doctor account with the given ID does not exist",
 }
 
 export async function createAppointment(patientId, doctorId, time, title) {
   try {
     const patientAccount = await PatientDTO.findById(patientId);
     if (!patientAccount) {
-      throw AppointmentError.accountNotFound;
+      throw AppointmentError.patientAccountNotFound;
     }
 
     const doctorAccount = await DoctorDTO.findById(doctorId);
     if (!doctorAccount) {
-      throw AppointmentError.accountNotFound;
+      throw AppointmentError.doctorAccountNotFound;
     }
 
     const newAppointment = new AppointmentDTO({
