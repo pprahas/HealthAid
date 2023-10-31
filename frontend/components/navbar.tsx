@@ -37,6 +37,10 @@ export const Navbar = () => {
     if (index == undefined) {
       siteConfig.navItems.push(
         {
+          label: "Calendar",
+          href: "/calendar",
+        },
+        {
           label: "|",
           href: "",
         },

@@ -3,26 +3,26 @@ import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/sass/styles.scss";
 import { useState, useEffect, useContext } from "react";
-import { PatientContext } from "../layout";
-import { Patient } from "@/types";
+import { DoctorContext } from "../layout";
+import { Doctor } from "@/types";
 
 const localizer = momentLocalizer(moment);
 
 export default function BlogPage() {
-  const [patient, setPatient] = useContext(PatientContext) as [
-    Patient,
-    React.SetStateAction<Patient>
+  const [doctor, setDoctor] = useContext(DoctorContext) as [
+    Doctor,
+    React.SetStateAction<Doctor>
   ];
   const [events, setEvents] = useState<
     [{ start?: Date; end?: Date; title?: string }]
   >([{}]);
 
   const getAppointments = async () => {
-    console.log(patient._id);
-    if (patient._id) {
+    console.log(doctor._id);
+    if (doctor._id) {
       try {
         const requestBody = {
-          id: patient._id,
+          id: doctor._id,
         };
 
         const response = await fetch("http://localhost:8080/appointment/get", {
@@ -49,8 +49,8 @@ export default function BlogPage() {
           );
           setEvents(newEvents);
         } else {
-          console.log(patient._id);
-          console.log(`invalid response for ${patient._id}`);
+          console.log(doctor._id);
+          console.log(`invalid response for ${doctor._id}`);
         }
       } catch (error) {
         console.log(error);
@@ -60,7 +60,7 @@ export default function BlogPage() {
 
   useEffect(() => {
     getAppointments();
-  }, [patient]);
+  }, [doctor]);
 
   return (
     <div>
