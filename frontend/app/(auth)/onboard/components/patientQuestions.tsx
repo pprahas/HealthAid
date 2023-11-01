@@ -4,7 +4,7 @@ import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 
 const PatientQuestions = () => {
-  const router = useRouter()
+  const router = useRouter();
 
   const questions = [
     {
@@ -89,6 +89,21 @@ const PatientQuestions = () => {
         "Have you ever had any surgeries on your eyes or vision-related procedures?",
       placeholder: "Had LASIK surgery in March 2023",
     },
+    {
+      question: "Which insurance are you currently using?",
+      options: [
+        "UnitedHealth Group",
+        "Elevance Health (formerly Anthem)",
+        "Centene",
+        "Kaiser Permanente",
+        "Humana",
+        "CVS Health",
+        "HCSC (Health Care Service Corporation)",
+        "Cigna",
+        "Molina Healthcare",
+        "GuideWell",
+      ],
+    },
   ];
 
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -119,9 +134,9 @@ const PatientQuestions = () => {
         const updateHealthInfoData = await updateHealthInfoResponse.data;
         console.log(updateHealthInfoData.patient);
         setLoading(false);
-        
+
         //window.location.href = "/home";
-        router.push('/home')
+        router.push("/home");
       } catch (error) {
         const axiosError = error as AxiosError;
         let errorText = axiosError.response?.data;
@@ -149,9 +164,10 @@ const PatientQuestions = () => {
   return (
     <div className="flex-grow">
       <form className="flex flex-wrap w-[50vw] items-center justify-center">
-        {questions.map((question, index) => (
+        {/* {questions.map((question, index) => (
           <div key={index} className="mb-4 w-1/2 px-5">
             <label className="block text-gray-700">{question.question}</label>
+
             <input
               type="text"
               className="p-4 shadow-sm rounded-xl bg-gray-100 hover:bg-gray-200 transition duration-200"
@@ -162,7 +178,39 @@ const PatientQuestions = () => {
               }
             />
           </div>
+        ))} */}
+        {questions.map((question, index) => (
+          <div key={index} className="mb-4 w-1/2 px-5">
+            <label className="block text-gray-700">{question.question}</label>
+            {Array.isArray(question.options) ? (
+              <select
+                value={answers[question.question] || ""}
+                onChange={(e) =>
+                  handleInputChange(question.question, e.target.value)
+                }
+                className="p-4 shadow-sm rounded-xl bg-gray-100 hover:bg-gray-200 transition duration-200"
+              >
+                <option value="">Select an option</option>
+                {question.options.map((option, optionIndex) => (
+                  <option key={optionIndex} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <input
+                type="text"
+                className="p-4 shadow-sm rounded-xl bg-gray-100 hover-bg-gray-200 transition duration-200"
+                placeholder={question.placeholder}
+                value={answers[question.question] || ""}
+                onChange={(e) =>
+                  handleInputChange(question.question, e.target.value)
+                }
+              />
+            )}
+          </div>
         ))}
+
         <div className="pt-[3vh]">
           <Button
             isLoading={loading}

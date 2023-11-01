@@ -26,7 +26,7 @@ const DoctorQuestions = () => {
       key: "phoneNumber",
     },
     {
-      question: "What is your speciality? (select all that apply)",
+      question: "What is your specialty? (select all that apply)",
       placeholder: [
         "Pediatrics",
         "Obstetrics and Gynecology (OB/GYN)",
@@ -41,6 +41,23 @@ const DoctorQuestions = () => {
       placeholder: "Los Angeles, California",
       key: "address",
     },
+    {
+      question:
+        "Which insurance network(s) is your clinic affiliated with? (select all that apply)",
+      placeholder: [
+        "UnitedHealth Group",
+        "Elevance Health",
+        "Centene",
+        "Kaiser Permanente",
+        "Humana",
+        "CVS Health",
+        "HCSC",
+        "Cigna",
+        "Molina Healthcare",
+        "GuideWell",
+      ],
+      key: "network",
+    },
   ];
 
   const clinicInfoKeys = [
@@ -50,6 +67,7 @@ const DoctorQuestions = () => {
     "phoneNumber",
     "specialties",
     "address",
+    "network",
   ];
 
   const [answers, setAnswers] = useState(Array(questions.length).fill(""));
