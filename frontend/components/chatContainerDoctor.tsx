@@ -209,7 +209,7 @@ export const ChatContainerDoctor = ({ messages }: chatProps) => {
       )}
       {messages &&
         messages.map((message: Message, index: number) => (
-          <div>
+          <div key={index}>
             {message.senderType == "gpt" && (
               <div>
                 <div className="py-2 flex flex-row items-end justify-start">

@@ -122,6 +122,7 @@ export const ChatContainer = ({ messages }: chatProps) => {
             lastName: "GPT",
             email: "chatgpt@openai.com",
             patients: Array(1).fill(PatientDefault),
+            activeAccount: true,
           },
         ];
         const doctorDataDatabase = await Promise.all(
@@ -203,8 +204,8 @@ export const ChatContainer = ({ messages }: chatProps) => {
       </div>
       {messages &&
         messages.map((message: Message, index: number) => (
-          <div>
-            {message.senderType == "gpt" && (
+          <div key={index}>
+            {message.senderType === "gpt" && (
               <div>
                 <div className="py-2 flex flex-row items-end justify-start">
                   <div className="">
