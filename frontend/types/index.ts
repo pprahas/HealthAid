@@ -69,6 +69,7 @@ export interface Doctor extends User {
   clinic?: string;
   appointments?: [Appointment];
   patients: string[];
+  bio?: string;
 }
 
 // Clinic

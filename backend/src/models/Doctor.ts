@@ -12,6 +12,7 @@ export type Doctor = {
   clinic?: typeof Schema.ObjectId | Clinic;
   appointments?: [Appointment];
   patients?: [Patient];
+  bio?: string;
 };
 
 const doctorSchema = new Schema(
@@ -48,6 +49,9 @@ const doctorSchema = new Schema(
     patients: {
       type: [{ type: Schema.ObjectId, ref: "Patient" }],
       // required: false,
+    },
+    bio: {
+      type: String,
     },
   },
   { timestamps: true }
