@@ -20,10 +20,14 @@ export async function updatePatient(patientId, fieldsToAdd, fieldsToRemove) {
         console.log(key, value);
         if (key === "doctors") {
           // console.log("doctors detected");
-          patientAccount.doctors.push(value);
+          if (patientAccount.doctors.findIndex(value) == -1) {
+            patientAccount.doctors.push(value);
+          }
           const doctorAccount = await DoctorDTO.findById(value);
-          doctorAccount.patients.push(patientId);
-          await doctorAccount.save();
+          if (doctorAccount.patients.findIndex(patientId) == -1) {
+            doctorAccount.patients.push(patientId);
+            await doctorAccount.save();
+          }
         } else {
           // console.log("other stuff detected");
           patientAccount[key] = value;

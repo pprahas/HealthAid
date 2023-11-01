@@ -75,9 +75,9 @@ export function Sidebar() {
   };
 
   return (
-    <div className="content-center space-y-4 text-lg h-[calc(100vh-56px)] overflow-auto snap-y pr-4">
+    <div>
       {patientList?.map((patient, index: number) => (
-        <div key={index} className="text-center snap-start">
+        <div key={index} className="text-center snap-start relative group">
           <div
             className={`${
               sidebarIndex == index
@@ -89,9 +89,10 @@ export function Sidebar() {
             }}
           >
             <div>
-              {patient.firstName} {patient.lastName}
+              Dr. {patient.firstName} {patient.lastName}
             </div>
           </div>
+
           <div
             className="absolute right-4 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition duration-300 cursor-pointer"
             onClick={() => {

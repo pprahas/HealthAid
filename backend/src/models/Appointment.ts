@@ -4,7 +4,8 @@ export type Appointment = {
   doctorName: string;
   patientName: string;
   date: Date;
-}
+  title: String;
+};
 
 const appointmentSchema = new Schema(
   {
@@ -16,8 +17,12 @@ const appointmentSchema = new Schema(
       type: String,
       required: true,
     },
-    date: {
+    time: {
       type: Date,
+      required: true,
+    },
+    title: {
+      type: String,
       required: true,
     },
   },

@@ -13,6 +13,7 @@ import updatePatientRoutes from "./updatePatient/updatePatient";
 import UpdateDoctorRoutes from "./updateDoctor/updateDoctor";
 import getClinic from "./extraInformation/getClinic";
 import diagnosisRoutes from "./doctor/updateDiagnosis";
+import appointmentRoutes from "./appointment/appointment";
 export default class Routes {
   constructor(app: Application) {
     app.use("/resetPassword", resetPasswordRoutes);
@@ -28,5 +29,6 @@ export default class Routes {
     app.use("/updateDoctor", UpdateDoctorRoutes);
     app.use("/getClinic", getClinic);
     app.use("/updateDiagnosis", diagnosisRoutes);
+    app.use("/appointment", appointmentRoutes);
   }
 }
