@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { getDoctorByIdController } from "@endpoints/controllers/doctor/getDoctorById";
+import { getDoctors } from "@endpoints/controllers/doctor/getDoctors";
 
 class getDoctorFromId {
   router = Router();
@@ -10,6 +11,7 @@ class getDoctorFromId {
 
   initializeRoutes() {
     this.router.post("/", getDoctorByIdController);
+    this.router.post("/all", getDoctors);
   }
 }
 
