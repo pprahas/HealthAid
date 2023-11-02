@@ -35,6 +35,7 @@ const appointmentSchema = new Schema(
       ref: "Patient",
       required: true,
     },
+  },
   { timestamps: true }
 );
 
