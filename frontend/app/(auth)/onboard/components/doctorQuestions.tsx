@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Checkbox, CheckboxGroup } from "@nextui-org/react";
 import { Button } from "@nextui-org/button";
 import axios, { AxiosError } from "axios";
+import { Input } from "@nextui-org/input";
 
 const DoctorQuestions = () => {
   const questions = [
@@ -28,11 +29,6 @@ const DoctorQuestions = () => {
     {
       question: "What is your address?",
       placeholder: "Los Angeles, California",
-      key: "address",
-    },
-    {
-      question: "What is your NPI number?",
-      placeholder: "0123456789",
       key: "address",
     },
     {
@@ -63,6 +59,8 @@ const DoctorQuestions = () => {
   const [error, setError] = useState("");
 
   const [buffer, setBuffer] = useState<Buffer | null>(null);
+  const [npi, setNpi] = useState("");
+
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -112,12 +110,11 @@ const DoctorQuestions = () => {
 
         try {
           const response = await axios.post(
-            "http://localhost:8080/updateDoctor",
+            "http://localhost:8080/createRequest",
             {
-              doctorId: currUserObject._id,
-              add: {
-                diploma: buffer,
-              }
+              doctorEmail: currUserObject.email,
+              diploma: buffer,
+              npi: npi,
             }
           );
           console.log("response update" + response);
@@ -184,6 +181,17 @@ const DoctorQuestions = () => {
             accept=".pdf"
             onChange={handleFileChange}
             className="p-4 shadow-sm rounded-xl bg-gray-100 hover:bg-gray-200 transition duration-200"
+          />
+        </div>
+        <div>
+          <Input
+            isRequired
+            type="text"
+            label="NPI"
+            defaultValue=""
+            onChange={(e) => {
+              setNpi(e.target.value);
+            }}
           />
         </div>
         

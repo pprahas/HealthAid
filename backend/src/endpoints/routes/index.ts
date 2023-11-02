@@ -13,6 +13,10 @@ import updatePatientRoutes from "./updatePatient/updatePatient";
 import UpdateDoctorRoutes from "./updateDoctor/updateDoctor";
 import getClinic from "./extraInformation/getClinic";
 import diagnosisRoutes from "./doctor/updateDiagnosis";
+import createRequest from "./doctorRequest/createRequest";
+import reviewRequest from "./doctorRequest/reviewRequest";
+import getRequest from "./doctorRequest/getRequest";
+
 export default class Routes {
   constructor(app: Application) {
     app.use("/resetPassword", resetPasswordRoutes);
@@ -28,5 +32,8 @@ export default class Routes {
     app.use("/updateDoctor", UpdateDoctorRoutes);
     app.use("/getClinic", getClinic);
     app.use("/updateDiagnosis", diagnosisRoutes);
+    app.use("/createRequest", createRequest);
+    app.use("/reviewRequest", reviewRequest);
+    app.use("/getRequest", getRequest);
   }
 }

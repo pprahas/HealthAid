@@ -2,7 +2,7 @@ import { Schema, model } from "mongoose";
 
 // Local Model
 export interface DoctorRequest {
-  doctor: typeof Schema.ObjectId;
+  doctorEmail: String;
   diploma: Buffer;
   npi: string;
 };
