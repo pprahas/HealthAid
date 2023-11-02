@@ -2,6 +2,7 @@
 import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
 import { Textarea } from "@nextui-org/input";
+import { Skeleton } from "@nextui-org/skeleton";
 import axios, { AxiosError } from "axios";
 import { PatientContext } from "../layout";
 import { Patient } from "@/types";
@@ -36,28 +37,33 @@ export default function ProfilePage() {
   const [gender, setGender] = useState("");
   const [height, setHeight] = useState("");
   const [weight, setWeight] = useState("");
+  const [bio, setBio] = useState("");
+  const [insurance, setInsurance] = useState("");
+
+  const [personalInfoLoaded, setIsLoaded] = useState(false);
+  const [healthInfoLoaded, setHealthInfoLoaded] = useState(false);
   const [activeAccount, setActiveAccount] = useState(Boolean);
 
 
   const changeHeight = (value: string) => {
-    let res = parseInt(value).toString()
+    let res = parseInt(value).toString();
     if (res !== "NaN") {
-      setHeight(res)
+      setHeight(res);
     }
     if (value === "") {
-      setHeight("")
+      setHeight("");
     }
-  }
+  };
 
   const changeWeight = (value: string) => {
-    let res = parseInt(value).toString()
+    let res = parseInt(value).toString();
     if (res !== "NaN") {
-      setWeight(res)
+      setWeight(res);
     }
     if (value === "") {
-      setWeight("")
+      setWeight("");
     }
-  }
+  };
 
   const [questions, setQuestions] = useState([
     { _id: "1", question: "Question 1", answer: "" },
@@ -75,6 +81,8 @@ export default function ProfilePage() {
     record["gender"] = gender;
     record["height"] = height;
     record["weight"] = weight;
+    record["bio"] = bio;
+    record["insurance"] = insurance;
 
     try {
       const response = await axios.post("http://localhost:8080/updatePatient", {
@@ -168,6 +176,7 @@ export default function ProfilePage() {
 
       const data = await response.data;
       setQuestions(data.healthInformationObjects);
+      setHealthInfoLoaded(true);
     } catch (error) {
       console.error("Error:", error);
     }
@@ -183,8 +192,11 @@ export default function ProfilePage() {
     setLastName(patient.lastName);
     setGender(patient.gender || "");
     setBirthday((patient.birthday as unknown as string) || "");
-    setHeight((patient.height as unknown as string || ""));
-    setWeight((patient.weight as unknown as string || ""));
+    setHeight((patient.height as unknown as string) || "");
+    setWeight((patient.weight as unknown as string) || "");
+    setBio((patient.bio as unknown as string) || "");
+    setInsurance((patient.insurance as unknown as string) || "");
+    setIsLoaded(true);
     setActiveAccount(patient.activeAccount)
   }, [patient]);
 
@@ -196,35 +208,93 @@ export default function ProfilePage() {
           <div className="grid grid-cols-3 gap-4 items-center text-xl font-bold pt-3 px-2">
             <div> First Name </div>
             <div className="col-span-2">
-              <Input value={firstName} onValueChange={setFirstName} />
+              <Skeleton
+                isLoaded={personalInfoLoaded}
+                classNames={{ base: "dark:bg-transparent" }}
+                className="rounded-xl"
+              >
+                <Input value={firstName} onValueChange={setFirstName} />
+              </Skeleton>
             </div>
 
             <div> Last Name </div>
             <div className="col-span-2">
-              <Input value={lastName} onValueChange={setLastName} />
+              <Skeleton
+                isLoaded={personalInfoLoaded}
+                classNames={{ base: "dark:bg-transparent" }}
+                className="rounded-xl"
+              >
+                <Input value={lastName} onValueChange={setLastName} />
+              </Skeleton>
             </div>
 
             <div> Birthday </div>
             <div className="col-span-2">
-              <Input value={birthday} onValueChange={setBirthday} />
+              <Skeleton
+                isLoaded={personalInfoLoaded}
+                classNames={{ base: "dark:bg-transparent" }}
+                className="rounded-xl"
+              >
+                <Input value={birthday} onValueChange={setBirthday} />
+              </Skeleton>
             </div>
 
             <div> Gender </div>
             <div className="col-span-2">
-              <Input value={gender} onValueChange={setGender} />
+              <Skeleton
+                isLoaded={personalInfoLoaded}
+                classNames={{ base: "dark:bg-transparent" }}
+                className="rounded-xl"
+              >
+                <Input value={gender} onValueChange={setGender} />
+              </Skeleton>
             </div>
 
             <div> Height </div>
             <div className="col-span-2">
-              <Input value={height} onValueChange={changeHeight} />
+              <Skeleton
+                isLoaded={personalInfoLoaded}
+                classNames={{ base: "dark:bg-transparent" }}
+                className="rounded-xl"
+              >
+                <Input value={height} onValueChange={changeHeight} />
+              </Skeleton>
             </div>
 
             <div> Weight </div>
             <div className="col-span-2">
-              <Input 
-                value={weight} 
-                onValueChange={changeWeight} 
-              />
+              <Skeleton
+                isLoaded={personalInfoLoaded}
+                classNames={{ base: "dark:bg-transparent" }}
+                className="rounded-xl"
+              >
+                <Input value={weight} onValueChange={changeWeight} />
+              </Skeleton>
+            </div>
+
+            <div> Bio </div>
+            <div className="col-span-2">
+              <Skeleton
+                isLoaded={personalInfoLoaded}
+                classNames={{ base: "dark:bg-transparent" }}
+                className="rounded-xl"
+              >
+                <Textarea value={bio} maxRows={3} onValueChange={setBio} />
+              </Skeleton>
+            </div>
+            <div> Insurance Network </div>
+            <div className="col-span-2">
+              <Skeleton
+                isLoaded={personalInfoLoaded}
+                classNames={{ base: "dark:bg-transparent" }}
+                className="rounded-xl"
+              >
+                <Textarea
+                  value={insurance}
+                  maxRows={3}
+                  onValueChange={setInsurance}
+                />
+              </Skeleton>
             </div>
           </div>
 
@@ -261,13 +331,27 @@ export default function ProfilePage() {
           {questions.map((q, index: number) => (
             <div className="mb-4" key={index}>
               <div>
-                <label>{q.question}</label>
+                <Skeleton
+                  isLoaded={healthInfoLoaded}
+                  classNames={{ base: "dark:bg-transparent" }}
+                  className="rounded-xl"
+                >
+                  <label>{q.question}</label>
+                </Skeleton>
               </div>
-              <Textarea
-                placeholder=""
-                value={q.answer}
-                onChange={(e) => handleQuestionChange(e, q._id)}
-              />
+              <Skeleton
+                isLoaded={healthInfoLoaded}
+                classNames={{
+                  base: "dark:bg-transparent",
+                }}
+                className="rounded-xl mb-4"
+              >
+                <Textarea
+                  placeholder=""
+                  value={q.answer}
+                  onChange={(e) => handleQuestionChange(e, q._id)}
+                />
+              </Skeleton>
             </div>
           ))}
         </div>

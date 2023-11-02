@@ -26,7 +26,7 @@ const DoctorQuestions = () => {
       key: "phoneNumber",
     },
     {
-      question: "What is your speciality (select all that apply)",
+      question: "What is your specialty (select all that apply)",
       placeholder: [
         "Pediatrics",
         "Obstetrics and Gynecology (OB/GYN)",

@@ -139,23 +139,25 @@ export function Sidebar() {
   const deleteDoctor = async (doctorId: String) => {
     try {
       let doctorIndex = doctorList.findIndex((doctor) => {
-        doctor._id == doctorId;
+        return doctor._id === doctorId;
       });
-      let currDoctorList = [...doctorList];
-      currDoctorList.splice(doctorIndex - 1, 1);
-      setDoctorList(currDoctorList);
-      setSidebarIndex(0);
-      const updatePatientResponse = await axios.post(
-        "http://localhost:8080/updatePatient",
-        {
-          patientId: patient._id,
-          remove: {
-            doctors: doctorId,
-          },
-        }
-      );
-      const data = await updatePatientResponse.data;
-      console.log(data);
+      if (doctorIndex != -1) {
+        let currDoctorList = [...doctorList];
+        currDoctorList.splice(doctorIndex, 1);
+        setDoctorList(currDoctorList);
+        setSidebarIndex(0);
+        const updatePatientResponse = await axios.post(
+          "http://localhost:8080/updatePatient",
+          {
+            patientId: patient._id,
+            remove: {
+              doctors: doctorId,
+            },
+          }
+        );
+        const data = await updatePatientResponse.data;
+        console.log(data);
+      }
     } catch (error) {
       console.error("Error:", error);
     }

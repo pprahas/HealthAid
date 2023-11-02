@@ -13,7 +13,7 @@ import {
   SidebarContext,
 } from "@/app/doctor/layout";
 import { SetStateAction, useContext, useState } from "react";
-import { Patient, PatientDefault } from "@/types";
+import { DefaultConversation, Patient, PatientDefault } from "@/types";
 import { Doctor, DoctorDefault, Conversation } from "@/types";
 import { RightArrow } from "@/components/rightArrow";
 import { ChatContainerDoctor } from "@/components/chatContainerDoctor";
@@ -85,7 +85,8 @@ export default function DoctorHome() {
       console.log("new pat:", patient._id);
       getConversations(patient._id);
     }
-  }, [patient, patientList]);
+    setCurrentConvo(DefaultConversation);
+  }, [patient, patientList, sidebarIndex]);
 
   return (
     <section className="columns-2 items-start h-[calc(100vh-60px)]">

@@ -11,10 +11,12 @@ export type Patient = {
   password: string;
   userType: String;
   birthday?: Date;
+  network?: string;
   gender?: string;
   weight?: Number;
   height?: Number;
   bio?: string;
+  insurance?: string;
   doctors?: [Doctor];
   appointments?: [Appointment];
   healthInfo?: [HealthInformation];
@@ -55,6 +57,12 @@ export const patientSchema = new Schema(
       type: Number,
     },
     bio: {
+      type: String,
+    },
+    network: {
+      type: String,
+    },
+    insurance: {
       type: String,
     },
     doctors: {

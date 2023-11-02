@@ -6,6 +6,7 @@ export type Clinic = {
   website: string;
   phoneNumber: string;
   specialties: string;
+  network: string;
 };
 
 const clinicSchema = new Schema(
@@ -30,6 +31,9 @@ const clinicSchema = new Schema(
       type: String,
     },
     address: {
+      type: String,
+    },
+    network: {
       type: String,
     },
   },

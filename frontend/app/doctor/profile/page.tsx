@@ -2,6 +2,8 @@
 import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
 import { Textarea } from "@nextui-org/input";
+import { Skeleton } from "@nextui-org/skeleton";
+
 import axios, { AxiosError } from "axios";
 import { DoctorContext } from "../layout";
 import { Doctor } from "@/types";
@@ -20,27 +22,23 @@ export default function ProfilePage() {
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [clinic, setClinic] = useState(ClinicDefault);
-  const [clinicName, setClinicName] = useState("")
-  const [clinicPostCode, setClinicPostCode] = useState("")
-  const [clinicWebsite, setClinicWebsite] = useState("")
-  const [clinicPhone, setClinicPhone] = useState("")
-  const [clinicAddress, setClinicAddress] = useState("")
-  const [clinicSpecialties, setClinicSpecialites] = useState("")
+  const [bio, setBio] = useState("");
+  const [clinicName, setClinicName] = useState("");
+  const [clinicPostCode, setClinicPostCode] = useState("");
+  const [clinicWebsite, setClinicWebsite] = useState("");
+  const [clinicPhone, setClinicPhone] = useState("");
+  const [clinicAddress, setClinicAddress] = useState("");
+  const [clinicSpecialties, setClinicSpecialites] = useState("");
+  const [clinicNetworks, setClinicNetworks] = useState("");
 
-
-  const [questions, setQuestions] = useState([
-    { _id: "1", question: "Question 1", answer: "" },
-    { _id: "2", question: "Question 2", answer: "" },
-    { _id: "3", question: "Question 3", answer: "" },
-    { _id: "4", question: "Question 4", answer: "" },
-    { _id: "5", question: "Question 5", answer: "" },
-  ]);
+  const [personalInfoLoaded, setIsLoaded] = useState(false);
+  const [clinicInfoLoaded, setClinicInfoLoaded] = useState(false);
 
   const handleSave = async () => {
     let record: Record<string, string> = {};
     record["firstName"] = firstName;
     record["lastName"] = lastName;
+    record["bio"] = bio;
 
     try {
       const response = await axios.post("http://localhost:8080/updateDoctor", {
@@ -57,52 +55,47 @@ export default function ProfilePage() {
     window.location.href = "/";
   };
 
-
   const getClinicInformation = async () => {
     if (typeof doctor.clinic === undefined) return;
     try {
-      const response = await axios.post(
-        "http://localhost:8080/getClinic",
-        {
-          clinicId: doctor.clinic,
-        }
-      );
+      const response = await axios.post("http://localhost:8080/getClinic", {
+        clinicId: doctor.clinic,
+      });
 
       const clinic = await response.data.clinic;
-      //setClinic(data.clinic); 
-      
-      setClinicName(clinic.name)
-      setClinicPostCode(clinic.postalCode)
-      setClinicWebsite(clinic.website)
-      setClinicAddress(clinic.address)
-      setClinicSpecialites(clinic.specialties)
-      setClinicPhone(clinic.phoneNumber)
+      //setClinic(data.clinic);
+
+      setClinicName(clinic.name);
+      setClinicPostCode(clinic.postalCode);
+      setClinicWebsite(clinic.website);
+      setClinicAddress(clinic.address);
+      setClinicSpecialites(clinic.specialties);
+      setClinicPhone(clinic.phoneNumber);
+      setClinicNetworks(clinic.network);
+      setClinicInfoLoaded(true);
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
   const updateClinicInfo = async () => {
-
-    const newClinic : Clinic = {
+    const newClinic: Clinic = {
       name: clinicName,
       phoneNumber: clinicPhone,
       address: clinicAddress,
       website: clinicWebsite,
       postalCode: clinicPostCode,
-      specialties: clinicSpecialties
-    }
+      specialties: clinicSpecialties,
+      network: clinicNetworks,
+    };
 
     try {
-      const response = await axios.post(
-        "http://localhost:8080/updateDoctor",
-        {
-          doctorId: doctor._id,
-          add: {
-            clinic: newClinic
-          }
-        }
-      );
+      const response = await axios.post("http://localhost:8080/updateDoctor", {
+        doctorId: doctor._id,
+        add: {
+          clinic: newClinic,
+        },
+      });
     } catch (error) {
       console.error("Error:", error);
     }
@@ -116,6 +109,8 @@ export default function ProfilePage() {
     getClinicInformation();
     setFirstName(doctor.firstName);
     setLastName(doctor.lastName);
+    setBio(doctor.bio as unknown as string | "");
+    setIsLoaded(true);
   }, [doctor]);
 
   return (
@@ -126,12 +121,35 @@ export default function ProfilePage() {
           <div className="grid grid-cols-3 gap-4 items-center text-xl font-bold pt-3 px-2">
             <div> First Name </div>
             <div className="col-span-2">
-              <Input value={firstName} onValueChange={setFirstName} />
+              <Skeleton
+                isLoaded={personalInfoLoaded}
+                classNames={{ base: "dark:bg-transparent" }}
+                className="rounded-xl"
+              >
+                <Input value={firstName} onValueChange={setFirstName} />
+              </Skeleton>
             </div>
 
             <div> Last Name </div>
             <div className="col-span-2">
-              <Input value={lastName} onValueChange={setLastName} />
+              <Skeleton
+                isLoaded={personalInfoLoaded}
+                classNames={{ base: "dark:bg-transparent" }}
+                className="rounded-xl"
+              >
+                <Input value={lastName} onValueChange={setLastName} />
+              </Skeleton>
+            </div>
+
+            <div> Bio </div>
+            <div className="col-span-2">
+              <Skeleton
+                isLoaded={personalInfoLoaded}
+                classNames={{ base: "dark:bg-transparent" }}
+                className="rounded-xl"
+              >
+                <Textarea value={bio} onValueChange={setBio} />
+              </Skeleton>
             </div>
           </div>
 
@@ -154,32 +172,87 @@ export default function ProfilePage() {
           <div className="grid grid-cols-3 gap-4 items-center text-xl font-bold pt-3 px-2">
             <div> Name </div>
             <div className="col-span-2">
-              <Input value={clinicName} onValueChange={setClinicName} />
+              <Skeleton
+                isLoaded={clinicInfoLoaded}
+                classNames={{ base: "dark:bg-transparent" }}
+                className="rounded-xl"
+              >
+                <Input value={clinicName} onValueChange={setClinicName} />
+              </Skeleton>
             </div>
 
             <div> Phone Number </div>
             <div className="col-span-2">
-              <Input value={clinicPhone} onValueChange={setClinicPhone} />
+              <Skeleton
+                isLoaded={clinicInfoLoaded}
+                classNames={{ base: "dark:bg-transparent" }}
+                className="rounded-xl"
+              >
+                <Input value={clinicPhone} onValueChange={setClinicPhone} />
+              </Skeleton>
             </div>
 
             <div> Website </div>
             <div className="col-span-2">
-              <Input value={clinicWebsite} onValueChange={setClinicWebsite} />
+              <Skeleton
+                isLoaded={clinicInfoLoaded}
+                classNames={{ base: "dark:bg-transparent" }}
+                className="rounded-xl"
+              >
+                <Input value={clinicWebsite} onValueChange={setClinicWebsite} />
+              </Skeleton>
             </div>
 
             <div> Address </div>
             <div className="col-span-2">
-              <Input value={clinicAddress} onValueChange={setClinicAddress} />
+              <Skeleton
+                isLoaded={clinicInfoLoaded}
+                classNames={{ base: "dark:bg-transparent" }}
+                className="rounded-xl"
+              >
+                <Input value={clinicAddress} onValueChange={setClinicAddress} />
+              </Skeleton>
             </div>
 
             <div> Zip Code </div>
             <div className="col-span-2">
-              <Input value={clinicPostCode} onValueChange={setClinicPostCode} />
+              <Skeleton
+                isLoaded={clinicInfoLoaded}
+                classNames={{ base: "dark:bg-transparent" }}
+                className="rounded-xl"
+              >
+                <Input
+                  value={clinicPostCode}
+                  onValueChange={setClinicPostCode}
+                />
+              </Skeleton>
             </div>
 
             <div> Specialties </div>
             <div className="col-span-2">
-              <Input value={clinicSpecialties} onValueChange={setClinicSpecialites} />
+              <Skeleton
+                isLoaded={clinicInfoLoaded}
+                classNames={{ base: "dark:bg-transparent" }}
+                className="rounded-xl"
+              >
+                <Input
+                  value={clinicSpecialties}
+                  onValueChange={setClinicSpecialites}
+                />
+              </Skeleton>
+            </div>
+            <div> Insurance Network(s) </div>
+            <div className="col-span-2">
+              <Skeleton
+                isLoaded={clinicInfoLoaded}
+                classNames={{ base: "dark:bg-transparent" }}
+                className="rounded-xl"
+              >
+                <Input
+                  value={clinicNetworks}
+                  onValueChange={setClinicNetworks}
+                />
+              </Skeleton>
             </div>
           </div>
         </div>

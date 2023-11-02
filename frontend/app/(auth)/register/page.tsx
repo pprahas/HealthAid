@@ -55,7 +55,8 @@ export default function SignupPage() {
       isLastNameValid &&
       isEmailValid &&
       isPasswordValid &&
-      isConfirmPasswordValid
+      isConfirmPasswordValid &&
+      password == confirmPassword
     ) {
       e.preventDefault();
       try {
