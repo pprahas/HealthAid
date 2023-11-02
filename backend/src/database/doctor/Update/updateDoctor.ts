@@ -42,6 +42,7 @@ export async function updateDoctor(doctorId, fieldsToAdd, fieldsToRemove) {
           clinicInfo.website = value.website;
           clinicInfo.phoneNumber = value.phoneNumber;
           clinicInfo.specialties = value.specialties;
+          clinicInfo.network = value.network;
           // console.log("new clinic", clinicInfo);
 
           // const newClinic = new ClinicDTO(value);
