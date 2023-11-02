@@ -10,8 +10,6 @@ import { Button } from "@nextui-org/button";
 import { PatientContext } from "@/app/(main)/layout";
 
 
-
-
 export function DoctorSearch() {
     const [searchQuery, setSearchQuery] = useState("")
     const emptyList = [] as Doctor[]
@@ -50,7 +48,6 @@ export function DoctorSearch() {
                     newDoctorList.push(doctorList[i])
                 }
             }
-            
         }
         
         setAllDoctors(newDoctorList);
@@ -96,7 +93,7 @@ export function DoctorSearch() {
         return (
             <div className="flex h-full place-content-center">
                     <CircularProgress label="Loading..." />
-                </div>
+            </div>
         )
     } else {
         return(

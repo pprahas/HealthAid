@@ -12,8 +12,11 @@ import {
   DoctorListContext,
   PatientContext,
 } from "@/app/(main)/layout";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState, useMemo } from "react";
 import axios from "axios";
+import { Button } from "@nextui-org/button";
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem } from "@nextui-org/dropdown";
+
 
 interface chatProps {
   messages: Message[];
@@ -37,6 +40,14 @@ export const ChatContainer = ({ messages }: chatProps) => {
     Doctor[],
     React.Dispatch<React.SetStateAction<Doctor[]>>
   ];
+
+  const [selectedKey, setSelectedKey] = useState(new Set(["Automatically Choose"]));
+  const [selectedName, setSelectedName] = useState("Automatically Choose")
+  const [allDoctors, setAllDoctors] = useState([] as Doctor[])
+  const [autoDoctor, setAutoDoctor] = useState("")
+  const [isAuto, setIsAuto] = useState(true);
+
+
   const formatDate = (dateTimeStr: string) => {
     // Convert UTC date-time string to local Date object
     const date = new Date(dateTimeStr);
@@ -92,8 +103,9 @@ export const ChatContainer = ({ messages }: chatProps) => {
   };
 
   useEffect(() => {
-    console.log("Curr convo:", convo);
-  }, [convo]);
+    //console.log("Curr convo:", convo);
+    getDoctorsInNetwork();
+  }, []);
 
   const getDoctors = async (doctorId: string) => {
     try {
@@ -111,10 +123,68 @@ export const ChatContainer = ({ messages }: chatProps) => {
     }
   };
 
+  const getDoctorsInNetwork = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/getDoctorFromId/all",
+        {
+        }
+      );
+
+      const data = await response.data;
+
+      filterByInsurance(data);
+
+    } catch (error) {
+      console.error("Error:", error);
+      return;
+    }
+  }
+
+  const doctorInsurance = async (id: string) => {
+    try {
+      const response = await axios.post("http://localhost:8080/getClinic", {
+        clinicId: id,
+      });
+
+      const data = await response.data;
+      return data.clinic.network;
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
+  const filterByInsurance = async (doctorList: Doctor[]) => {
+    let newDoctorList = [] as Doctor[]
+
+    const defaultDoctor = {
+      _id: "Automatically Choose",
+      firstName: "Automatically",
+      lastName: "Choose",
+      patients: [],
+      email: "Automatically Choose"
+    }
+    newDoctorList.push(defaultDoctor)
+
+    for (let i = 0; i < doctorList.length; i++) {
+      if (doctorList[i].clinic != undefined) {
+        let insurance = await doctorInsurance(doctorList[i].clinic as string)
+        if (insurance === undefined) continue;
+        if (insurance.localeCompare(patient.insurance) == 0) {
+          doctorList[i].firstName = "Dr. " + doctorList[i].firstName
+          newDoctorList.push(doctorList[i])
+        }
+      }
+
+    }
+
+    setAllDoctors(newDoctorList);
+  }
+
   async function getAllDoctors() {
     if (patient && patient.doctors != undefined) {
       try {
-        console.log("Doctors:", patient.doctors);
+        //console.log("Doctors:", patient.doctors);
         const allDoctorData: Doctor[] = [
           {
             _id: "gpt",
@@ -138,16 +208,23 @@ export const ChatContainer = ({ messages }: chatProps) => {
   }
 
   const handleSendToDoctor = async () => {
+    let email = selectedKey.values().next().value;
+    if (email === "Automatically Choose") {
+      email = allDoctors[1].email
+    } else {
+      setIsAuto(false)
+    }
     try {
       const updateDiagnosisResponse = await axios.post(
         "http://localhost:8080/updateDiagnosis",
         {
           diagnosis: "pending",
           conversationId: convo._id,
-          doctorEmail: "d1@gmail.com",
+          doctorEmail: email,
         }
       );
       convo.diagnosis = "pending";
+      setAutoDoctor(allDoctors[1].firstName + " " + allDoctors[1].lastName)
       await getAllDoctors();
       const data = await updateDiagnosisResponse.data;
       const updateDoctorsResponse = await axios.post(
@@ -175,7 +252,7 @@ export const ChatContainer = ({ messages }: chatProps) => {
 
   const diagnosisStatusMessage: Map<String, String> = new Map([
     ["none", "Send to Doctor"],
-    ["pending", "Pending approval from doctor"],
+    ["pending", "Pending approval"],
     ["approved", "Approved"],
     ["denied", "Denied"],
   ]);
@@ -189,18 +266,85 @@ export const ChatContainer = ({ messages }: chatProps) => {
 
   return (
     <div className="h-full mr-10">
-      <div
-        onClick={async () => {
-          if (convo.diagnosis == "none") {
-            await handleSendToDoctor();
+      <div className="bg-gray-300 rounded-2xl px-3 py-2 flow-root">
+        <div className="float-left flex flex-row items-center">
+          {convo.diagnosis === "none" &&
+
+            <div>
+              Send to:
+              <Dropdown
+                classNames={{
+                  base: "bg-white"
+                }}
+              >
+                <DropdownTrigger>
+                  <Button
+                    radius="lg"
+                    color="primary"
+                    variant="flat"
+                    className="ml-2 text-md"
+                  >
+                    {selectedName}
+                  </Button>
+                </DropdownTrigger>
+                <DropdownMenu
+                  aria-label="Doctor selection"
+                  variant="solid"
+                  color="primary"
+                  disallowEmptySelection
+                  selectionMode="single"
+                  selectedKeys={selectedKey}
+                  onSelectionChange={setSelectedKey}
+                  onAction={(key) => {
+                    let selectedDoctor = allDoctors.find(i => i.email === key)
+                    if (selectedDoctor !== undefined) {
+                      setSelectedName(selectedDoctor.firstName + " " + selectedDoctor.lastName)
+                    }
+                  }
+                  }
+                  items={allDoctors}
+                >
+                  {(item) => (
+                    <DropdownItem key={item.email}>
+                      {item.firstName} {item.lastName}
+                    </DropdownItem>
+                  )}
+                </DropdownMenu>
+              </Dropdown>
+
+            </div>
           }
-        }}
-        className={`py-3 px-5 text-center border-white border-2 hover:border-black ${
-          convo.diagnosis == "none" ? "cursor-pointer" : ""
-        } ${diagnosisStatusColor.get(convo.diagnosis)} rounded-2xl w-[10vw]`}
-      >
-        {diagnosisStatusMessage.get(convo.diagnosis)}
+          {autoDoctor !== "" &&
+          
+            <>{isAuto ? 
+              <div className="text-md mt-2">
+                Automatically sent to {autoDoctor}
+              </div>
+              :
+              <div className="text-md mt-2">
+                Sent to {autoDoctor}
+              </div>
+            }</>
+          }
+        </div>
+
+        <div className="float-right">
+          <Button
+            radius="lg"
+            disabled={convo.diagnosis != "none"}
+            onClick={async () => {
+              if (convo.diagnosis == "none") {
+                await handleSendToDoctor();
+              }
+            }}
+            className={`text-md ${diagnosisStatusColor.get(convo.diagnosis)} w-[10vw]`}
+          >
+            {diagnosisStatusMessage.get(convo.diagnosis)}
+          </Button>
+        </div>
+
       </div>
+
       {messages &&
         messages.map((message: Message, index: number) => (
           <div>
