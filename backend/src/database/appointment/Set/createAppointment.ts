@@ -24,6 +24,8 @@ export async function createAppointment(patientId, doctorId, time, title) {
       doctorName: doctorAccount.firstName + " " + doctorAccount.lastName,
       time: time,
       title: title,
+      patientId: patientId,
+      doctorId: doctorId,
     });
 
     patientAccount.appointments.push(newAppointment._id);
