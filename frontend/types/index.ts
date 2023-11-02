@@ -51,6 +51,7 @@ export interface Patient extends User {
   weight?: Number;
   height?: Number;
   bio?: string;
+  insurance?: string;
   doctors: string[];
   appointments?: [Appointment];
   healthInfo?: [HealthInformation];
@@ -80,6 +81,7 @@ export interface Clinic {
   phoneNumber: string;
   specialties: string;
   address: string;
+  network?: string;
 }
 
 
