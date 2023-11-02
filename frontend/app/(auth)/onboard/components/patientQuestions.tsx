@@ -121,7 +121,11 @@ const PatientQuestions = () => {
         setLoading(false);
         
         //window.location.href = "/home";
-        router.push('/home')
+        if (currUserObject.email === "admin@healthaid.com") {
+          router.push('/adminHome')
+        } else {
+          router.push('/home')
+        }
       } catch (error) {
         const axiosError = error as AxiosError;
         let errorText = axiosError.response?.data;

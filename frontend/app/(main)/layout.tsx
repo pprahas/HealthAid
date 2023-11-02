@@ -108,6 +108,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <div className="healthaid font-outfit min-h-screen flex flex-col bg-background">
                   <header className="last:sticky flex top-0 h-15 items-center">
                     <aside className="w-full md:w-60 top-0 h-14 flex justify-center items-center">
+                    {patient.email === "admin@healthaid.com" ? (
+                      <div
+                        onClick={() => {
+                          window.location.href = "/adminHome";
+                        }}
+                        className="cursor-pointer text-3xl font-bold"
+                      >
+                        HealthAid
+                      </div>
+                    ) : (
                       <div
                         onClick={() => {
                           window.location.href = "/home";
@@ -116,17 +126,26 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       >
                         HealthAid
                       </div>
+                    )}
                     </aside>
                     <Navbar />
                   </header>
 
-                  <div className="flex flex-col md:flex-row flex-1">
+                  {/* <div className="flex flex-col md:flex-row flex-1">
                     <aside className="w-full md:w-60 pr-2 h-[calc(100vh-56px)]">
                       <Sidebar />
                     </aside>
                     <div className="flex-1 bg-white rounded-tl-3xl">
                       {children}
                     </div>
+                  </div> */}
+                  <div className="flex flex-col md:flex-row flex-1">
+                    {patient.email !== "admin@healthaid.com" && ( // Highlighted change: Conditionally render the Sidebar
+                      <aside className="w-full md:w-60 pr-2 h-[calc(100vh-56px)]">
+                        <Sidebar />
+                      </aside>
+                    )}
+                    <div className="flex-1 bg-white rounded-tl-3xl">{children}</div>
                   </div>
                 </div>
               </PatientContext.Provider>

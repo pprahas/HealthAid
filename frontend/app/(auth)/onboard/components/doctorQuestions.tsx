@@ -26,6 +26,16 @@ const DoctorQuestions = () => {
       key: "phoneNumber",
     },
     {
+      question: "What is your address?",
+      placeholder: "Los Angeles, California",
+      key: "address",
+    },
+    {
+      question: "What is your NPI number?",
+      placeholder: "0123456789",
+      key: "address",
+    },
+    {
       question: "What is your speciality? (select all that apply)",
       placeholder: [
         "Pediatrics",
@@ -35,11 +45,6 @@ const DoctorQuestions = () => {
         "Infectious Disease",
       ],
       key: "specialties",
-    },
-    {
-      question: "What is your address?",
-      placeholder: "Los Angeles, California",
-      key: "address",
     },
   ];
 
@@ -56,6 +61,24 @@ const DoctorQuestions = () => {
   const [specialities, setSpecialities] = useState([]); // State for selected specialities
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const [buffer, setBuffer] = useState<Buffer | null>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const uploadedFile = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          const arrayBuffer = event.target.result as ArrayBuffer;
+          const buffer = Buffer.from(arrayBuffer);
+          setBuffer(buffer);
+          console.log("converted buffer:", buffer);
+        }
+      };
+      reader.readAsArrayBuffer(uploadedFile);
+    }
+  };
 
   const handleInputChange = (index: number, value: string | string[]) => {
     const newAnswers = [...answers];
@@ -86,6 +109,22 @@ const DoctorQuestions = () => {
           "http://localhost:8080/doctorClinicInformation",
           postData
         );
+
+        try {
+          const response = await axios.post(
+            "http://localhost:8080/updateDoctor",
+            {
+              doctorId: currUserObject._id,
+              add: {
+                diploma: buffer,
+              }
+            }
+          );
+          console.log("response update" + response);
+        } catch (error) {
+          console.error("Error:", error);
+        }
+
         const updateClinicInfo = await updateClinicInfoResponse.data;
         console.log(updateClinicInfo);
         setLoading(false);
@@ -136,18 +175,33 @@ const DoctorQuestions = () => {
             )}
           </div>
         ))}
-        <div className="pt-[3vh]">
+        <div key="diploma" className="mb-4 w-1/2 px-5">
+          <label className="block text-lg text-gray-700">
+            Upload your diploma (PDF file)
+          </label>
+          <input
+            type="file"
+            accept=".pdf"
+            onChange={handleFileChange}
+            className="p-4 shadow-sm rounded-xl bg-gray-100 hover:bg-gray-200 transition duration-200"
+          />
+        </div>
+        
+
+      </form>
+      <div className="pt-[3vh] flex justify-center">
+
           <Button
             isLoading={loading}
             type="button"
             onClick={handleRegister}
             color="success"
+            style={{ maxWidth: '200px' }}
             className="flex w-full justify-center font-semibold leading-6 text-white shadow-sm hover:bg-secondary-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
             Finished!
           </Button>
         </div>
-      </form>
     </div>
   );
 };

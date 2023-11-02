@@ -25,6 +25,7 @@ export default function ProfilePage() {
   const [weight, setWeight] = useState("");
   const [activeAccount, setActiveAccount] = useState(Boolean);
 
+
   const changeHeight = (value: string) => {
     let res = parseInt(value).toString()
     if (res !== "NaN") {

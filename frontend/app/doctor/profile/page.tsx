@@ -69,7 +69,7 @@ export default function ProfilePage() {
       );
 
       const clinic = await response.data.clinic;
-      //setClinic(data.clinic);
+      //setClinic(data.clinic); 
       
       setClinicName(clinic.name)
       setClinicPostCode(clinic.postalCode)
@@ -116,7 +116,6 @@ export default function ProfilePage() {
     getClinicInformation();
     setFirstName(doctor.firstName);
     setLastName(doctor.lastName);
-    
   }, [doctor]);
 
   return (

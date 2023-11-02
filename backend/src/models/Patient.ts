@@ -70,7 +70,7 @@ export const patientSchema = new Schema(
       type: Boolean,
       default: true,    
       required: true,
-  },
+    },
   },
   { timestamps: true }
 );

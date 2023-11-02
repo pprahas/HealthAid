@@ -51,9 +51,9 @@ const doctorSchema = new Schema(
     },
     activeAccount: {
       type: Boolean,
-      default: true,    
+      default: false,    
       required: true,
-  },
+    },
   },
   { timestamps: true }
 );

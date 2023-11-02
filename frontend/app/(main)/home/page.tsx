@@ -63,7 +63,7 @@ export default function PatientHome() {
         lastName: "GPT",
         email: "chatgpt@openai.com",
         patients: Array(1).fill(PatientDefault),
-        activeAccount: true
+        activeAccount: true,
       };
       setDoctor(gptDoctor);
     } else {
