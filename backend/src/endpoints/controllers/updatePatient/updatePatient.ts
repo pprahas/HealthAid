@@ -10,8 +10,12 @@ export async function updatePatient(
     const patientId = body.patientId;
     const fieldsToAdd = body.add;
     const fieldsToRemove = body.remove;
-    await updatePat(patientId, fieldsToAdd, fieldsToRemove);
-    return res.json({ message: "Patient Information Updated!" });
+    const responseMessages = await updatePat(
+      patientId,
+      fieldsToAdd,
+      fieldsToRemove
+    );
+    return res.status(200).send(responseMessages);
   } catch (error) {
     return res.status(400).send(error);
   }
