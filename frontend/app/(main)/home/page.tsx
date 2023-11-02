@@ -24,7 +24,7 @@ import {
 import { ConversationList } from "./conversation";
 import { RightArrow } from "@/components/rightArrow";
 import { Message } from "@/types";
-import {Spinner} from "@nextui-org/spinner";
+import { Spinner } from "@nextui-org/spinner";
 
 export default function PatientHome() {
   const [sidebarIndex, setSidebarIndex] = useContext(SidebarContext) as any[];
@@ -54,6 +54,9 @@ export default function PatientHome() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [clinic, setClinic] = useState<Clinic>();
+  const [creatingAppointment, setCreatingAppointment] = useState(false);
+  const [apptTitle, setApptTitle] = useState("");
+  const [apptDate, setApptDate] = useState(new Date());
 
   const getDoctorInfo = async () => {
     if (sidebarIndex == 0) {
@@ -62,7 +65,7 @@ export default function PatientHome() {
         firstName: "Chat",
         lastName: "GPT",
         email: "chatgpt@openai.com",
-        patients: Array(1).fill(PatientDefault)
+        patients: Array(1).fill(PatientDefault),
       };
       setDoctor(gptDoctor);
     } else {
@@ -176,13 +179,50 @@ export default function PatientHome() {
     getDoctorInfo();
   }, [sidebarIndex, patient]);
 
+  const handleInputChange = (field: string, value: string | Date) => {
+    if (field == "title" && typeof value == "string") {
+      setApptTitle(value);
+    }
+    if (field == "start" && value instanceof Date) {
+      setApptDate(value);
+    }
+  };
+
+  async function createAppointment(
+    doctorId: string,
+    patientId: string,
+    time: Date,
+    title: string
+  ) {
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/appointment/create",
+        {
+          doctorId: doctorId,
+          patientId: patientId,
+          time: time,
+          title: title,
+        }
+      );
+
+      const data = await response.data;
+    } catch (error) {}
+    setApptTitle("");
+    setApptDate(new Date());
+  }
+
+  function toLocalISOString(date: Date) {
+    const off = date.getTimezoneOffset();
+    const adjustedDate = new Date(date.getTime() - off * 60 * 1000);
+    return adjustedDate.toISOString().slice(0, -1);
+  }
+
   if (convoLoading) {
     return (
       <section
         className={`flex items-center justify-center h-[calc(100vh-60px)]`}
       >
         <div role="status">
-
           <svg
             aria-hidden="true"
             className="w-[15vw] h-[15vw] mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-green-500"
@@ -233,11 +273,62 @@ export default function PatientHome() {
                     size="lg"
                     color="success"
                     className="text-xl shadow-md"
+                    isDisabled={creatingAppointment}
+                    onClick={(e) => {
+                      setCreatingAppointment(true);
+                    }}
                   >
-                    Book appointment
+                    Schedule Appointment
                   </Button>
                 </p>
               </div>
+              {creatingAppointment && (
+                <div className="flex flex-col w-[100vw] space-y-[1vw] overflow-visible text-[1vw]">
+                  <div className="flex space-x-2">
+                    <div>{"Title: "}</div>
+                    <input
+                      className="bg-white border-b-[0.1vw] border-black"
+                      type="text"
+                      value={apptTitle}
+                      onChange={(e) =>
+                        handleInputChange("title", e.target.value)
+                      }
+                    />
+                  </div>
+                  <div className="flex space-x-2">
+                    <div>{"Start Time: "}</div>
+                    <input
+                      className="bg-white border-b-[0.1vw] border-black"
+                      type="datetime-local"
+                      value={apptDate ? toLocalISOString(apptDate) : ""}
+                      onChange={(e) =>
+                        handleInputChange("start", new Date(e.target.value))
+                      }
+                    />
+                  </div>
+                  <div className="w-full">
+                    <Button
+                      size="lg"
+                      color="success"
+                      className="text-xl shadow-md"
+                      isDisabled={apptTitle == ""}
+                      onClick={(e) => {
+                        if (creatingAppointment) {
+                          createAppointment(
+                            doctor._id,
+                            patient._id,
+                            apptDate,
+                            apptTitle
+                          );
+                        }
+                        setCreatingAppointment(false);
+                      }}
+                    >
+                      Save Appointment
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
 
             <h1

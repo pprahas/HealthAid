@@ -8,7 +8,7 @@ import { Doctor } from "@/types";
 
 const localizer = momentLocalizer(moment);
 
-export default function BlogPage() {
+export default function DoctorCalendar() {
   const [doctor, setDoctor] = useContext(DoctorContext) as [
     Doctor,
     React.SetStateAction<Doctor>

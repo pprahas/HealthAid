@@ -6,3 +6,10 @@
     font-family: "Outfit";
     src: url("./Outfit-VariableFont_wght.ttf");
 }
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+    outline: none;
+}

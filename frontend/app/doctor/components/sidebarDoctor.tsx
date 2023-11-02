@@ -89,7 +89,7 @@ export function Sidebar() {
             }}
           >
             <div>
-              Dr. {patient.firstName} {patient.lastName}
+              {patient.firstName} {patient.lastName}
             </div>
           </div>
 
