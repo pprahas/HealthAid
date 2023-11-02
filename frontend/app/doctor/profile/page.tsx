@@ -71,6 +71,7 @@ export default function ProfilePage() {
       setClinicAddress(clinic.address);
       setClinicSpecialites(clinic.specialties);
       setClinicPhone(clinic.phoneNumber);
+      setClinicNetworks(clinic.network);
       setClinicInfoLoaded(true);
     } catch (error) {
       console.error("Error:", error);
@@ -85,6 +86,7 @@ export default function ProfilePage() {
       website: clinicWebsite,
       postalCode: clinicPostCode,
       specialties: clinicSpecialties,
+      network: clinicNetworks,
     };
 
     try {
@@ -247,8 +249,8 @@ export default function ProfilePage() {
                 className="rounded-xl"
               >
                 <Input
-                  value={clinicSpecialties}
-                  onValueChange={setClinicSpecialites}
+                  value={clinicNetworks}
+                  onValueChange={setClinicNetworks}
                 />
               </Skeleton>
             </div>
