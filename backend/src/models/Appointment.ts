@@ -25,7 +25,16 @@ const appointmentSchema = new Schema(
       type: String,
       required: true,
     },
-  },
+    doctorId: {
+      type: Schema.ObjectId,
+      ref: "Doctor",
+      required: true,
+    },
+    patientId: {
+      type: Schema.ObjectId,
+      ref: "Patient",
+      required: true,
+    },
   { timestamps: true }
 );
 
