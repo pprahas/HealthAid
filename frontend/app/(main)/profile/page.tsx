@@ -11,6 +11,19 @@ interface FormData {
   [key: string]: string;
 }
 
+function fetchUserData() {
+  let userObjectString = localStorage.getItem("user") ?? "";
+  let userObject = JSON.parse(userObjectString);
+  return userObject;
+}
+
+const user = fetchUserData();
+
+// Check if the user is a doctor and redirect to /doctor/profile
+if (user.userType === "doctor") {
+  window.location.href = "/doctor/profile";
+}
+
 export default function ProfilePage() {
   const [patient, setPatient] = useContext(PatientContext) as [
     Patient,

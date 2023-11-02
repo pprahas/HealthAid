@@ -88,6 +88,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       const data = await response.data;
       console.log("data:", data);
       setDoctor(data.doctor);
+
+      // Checks if account is deactivated
+      //
+      if(data.doctor.hasOwnProperty('activeAccount') && data.doctor.activeAccount === false && window.location.pathname !== '/doctor/profile'
+      ) {
+        window.alert("Account is waiting for approval");
+        window.location.href = "/doctor/profile";
+      }
+      // 
+
       //console.log(data.patient)
     } catch (error) {
       console.error("Error:", error);

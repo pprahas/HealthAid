@@ -75,6 +75,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     getPatient();
   }, []);
 
+  const checkDeactivated = async () => {
+    console.log("found " + patient.hasOwnProperty('activeAccount') + " " + patient.activeAccount + " " + patient.email)
+    
+    if(patient.hasOwnProperty('activeAccount') && patient.activeAccount === false) {
+      console.log("NOT ACTIVE")
+      window.location.href = "/profile";
+    }
+  }
+
   const getPatient = async () => {
     let localUserObjectString = localStorage.getItem("user") ?? "";
     if (localUserObjectString != "") {
@@ -89,11 +98,22 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
         const data = await response.data;
         setPatient(data.patient);
+        
+        // Checks if account is deactivated
+        //
+        if(data.patient.hasOwnProperty('activeAccount') && data.patient.activeAccount === false && window.location.pathname !== '/profile'
+        ) {
+          console.log("Account not active")
+          window.location.href = "/profile";
+        }
+        // 
+
       } catch (error) {
         console.error("Error:", error);
       }
       setConvoLoading(false);
     }
+    // checkDeactivated();
   };
 
   return (
