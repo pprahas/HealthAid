@@ -89,25 +89,26 @@ const PatientQuestions = () => {
         "Have you ever had any surgeries on your eyes or vision-related procedures?",
       placeholder: "Had LASIK surgery in March 2023",
     },
-    {
-      question: "Which insurance are you currently using?",
-      options: [
-        "UnitedHealth Group",
-        "Elevance Health (formerly Anthem)",
-        "Centene",
-        "Kaiser Permanente",
-        "Humana",
-        "CVS Health",
-        "HCSC (Health Care Service Corporation)",
-        "Cigna",
-        "Molina Healthcare",
-        "GuideWell",
-      ],
-    },
+    // {
+    //   question: "Which insurance are you currently using?",
+    //   options: [
+    //     "UnitedHealth Group",
+    //     "Elevance Health (formerly Anthem)",
+    //     "Centene",
+    //     "Kaiser Permanente",
+    //     "Humana",
+    //     "CVS Health",
+    //     "HCSC (Health Care Service Corporation)",
+    //     "Cigna",
+    //     "Molina Healthcare",
+    //     "GuideWell",
+    //   ],
+    // },
   ];
 
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const [insurance, setInsurance] = useState("");
   const [error, setError] = useState("");
 
   const handleInputChange = (question: string, value: string): void => {
@@ -119,6 +120,7 @@ const PatientQuestions = () => {
 
   async function handleRegister() {
     if (answers != undefined) {
+      console.log("insurance is", insurance);
       try {
         setLoading(true);
         let currUserObject = fetchUserData();
@@ -127,6 +129,17 @@ const PatientQuestions = () => {
           {
             email: currUserObject.email,
             information: answers,
+          }
+        );
+
+        let record: Record<string, string> = {};
+        record["insurance"] = insurance;
+
+        const response = await axios.post(
+          "http://localhost:8080/updatePatient",
+          {
+            patientId: currUserObject._id,
+            add: record,
           }
         );
 
@@ -164,7 +177,7 @@ const PatientQuestions = () => {
   return (
     <div className="flex-grow">
       <form className="flex flex-wrap w-[50vw] items-center justify-center">
-        {/* {questions.map((question, index) => (
+        {questions.map((question, index) => (
           <div key={index} className="mb-4 w-1/2 px-5">
             <label className="block text-gray-700">{question.question}</label>
 
@@ -178,8 +191,53 @@ const PatientQuestions = () => {
               }
             />
           </div>
-        ))} */}
-        {questions.map((question, index) => (
+        ))}
+
+        {/* <div className="mb-4 w-1/2 px-5">
+          <label className="block text-gray-700">Insurance</label>
+
+          <input
+            type="text"
+            className="p-4 shadow-sm rounded-xl bg-gray-100 hover:bg-gray-200 transition duration-200"
+            placeholder="insurance"
+            value="insurance"
+            // onChange={(e) =>
+            //   handleInputChange(question.question, e.target.value)
+            // }
+            <option value="">Select an insurance</option>
+  <option value="option1">Option 1</option>
+  <option value="option2">Option 2</option>
+  <option value="option3">Option 3</option>
+
+          />
+        </div> */}
+
+        <div className="mb-4 w-1/2 px-5">
+          <label className="block text-gray-700">Insurance</label>
+          <select
+            className="p-4 shadow-sm rounded-xl bg-gray-100 hover:bg-gray-200 transition duration-200"
+            value={insurance}
+            // onChange={(e) => handleInputChange("Insurance", e.target.value)}
+            onChange={(e) => setInsurance(e.target.value)}
+          >
+            <option value="UnitedHealth Group">UnitedHealth Group</option>
+            <option value="Elevance Health (formerly Anthem)">
+              Elevance Health (formerly Anthem)
+            </option>
+            <option value="Centene">Centene</option>
+            <option value="Kaiser Permanente">Kaiser Permanente</option>
+            <option value="Humana">Humana</option>
+            <option value="CVS Health">CVS Health</option>
+            <option value="HCSC (Health Care Service Corporation)">
+              HCSC (Health Care Service Corporation)
+            </option>
+            <option value="Cigna">Cigna</option>
+            <option value="Molina Healthcare">Molina Healthcare</option>
+            <option value="GuideWell">GuideWell</option>
+          </select>
+        </div>
+
+        {/* {questions.map((question, index) => (
           <div key={index} className="mb-4 w-1/2 px-5">
             <label className="block text-gray-700">{question.question}</label>
             {Array.isArray(question.options) ? (
@@ -209,7 +267,7 @@ const PatientQuestions = () => {
               />
             )}
           </div>
-        ))}
+        ))} */}
 
         <div className="pt-[3vh]">
           <Button
