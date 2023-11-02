@@ -19,10 +19,12 @@ export default function EventPopup({
   event,
   onClose,
   onSave,
+  onDelete,
 }: {
   event: EventProps | null;
   onClose: () => void;
   onSave: (id: string, title: string, date: Date) => void;
+  onDelete: (id: string) => void;
 }) {
   const popupRef = useRef<HTMLDivElement>(null);
   const [editing, setEditing] = useState(false);
@@ -64,6 +66,8 @@ export default function EventPopup({
     patientId?: string
   ) {
     if (id && doctorId && patientId) {
+      onClose();
+      onDelete(id);
       try {
         const requestBody = {
           appointmentId: id,
@@ -180,7 +184,7 @@ export default function EventPopup({
           <div
             className="h-[24px] w-[24px] opacity-100 transition duration-300 cursor-pointer"
             onClick={() => {
-              deleteAppointment(event.doctorId, event.patientId, event._id);
+              deleteAppointment(event._id, event.doctorId, event.patientId);
             }}
           >
             <svg
@@ -195,7 +199,7 @@ export default function EventPopup({
             </svg>
           </div>
         </div>
-        <h3 className="pb-3">
+        <h3 className="pb-0 text-lg">
           {editing ? (
             <>
               {"Title: "}
@@ -210,6 +214,9 @@ export default function EventPopup({
             title.toUpperCase()
           )}
         </h3>
+        <div className="font-bold pb-3">
+          {event.patientName} - {event.doctorName}
+        </div>
         <p>
           {editing ? (
             <>

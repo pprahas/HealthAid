@@ -25,6 +25,7 @@ import { ConversationList } from "./conversation";
 import { RightArrow } from "@/components/rightArrow";
 import { Message } from "@/types";
 import { Spinner } from "@nextui-org/spinner";
+import { after } from "node:test";
 
 export default function PatientHome() {
   const [sidebarIndex, setSidebarIndex] = useContext(SidebarContext) as any[];
@@ -206,9 +207,11 @@ export default function PatientHome() {
       );
 
       const data = await response.data;
-    } catch (error) {}
-    setApptTitle("");
-    setApptDate(new Date());
+    } catch (error) {
+    } finally {
+      setApptTitle("");
+      setApptDate(new Date());
+    }
   }
 
   function toLocalISOString(date: Date) {

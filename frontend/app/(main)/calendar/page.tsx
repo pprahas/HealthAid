@@ -32,26 +32,6 @@ export default function PatientCalendar() {
   ];
   const [events, setEvents] = useState<[EventProps]>([{}]);
 
-  const handleEventUpdate = (
-    id?: string,
-    newTitle?: string,
-    newTime?: Date
-  ) => {
-    let currEvents = [...events];
-    currEvents.forEach((event) => {
-      if (event._id == id) {
-        if (!newTitle) {
-          newTitle = event.title;
-        }
-        if (!newTime) {
-          newTime = event.start;
-        }
-        event.title = newTitle;
-        event.start = newTime;
-      }
-    });
-  };
-
   const getAppointments = async () => {
     console.log(patient._id);
     if (patient._id) {
@@ -74,7 +54,7 @@ export default function PatientCalendar() {
           console.log(appointmentsData);
           let newEvents: [EventProps] = [...events];
           appointmentsData.forEach((appointmentData: any) => {
-            let startTime = new Date(appointmentData.createdAt);
+            let startTime = new Date(appointmentData.time);
             let endTime = new Date(startTime.getTime() + 60 * 60 * 1000);
             newEvents.push({
               _id: appointmentData._id,
@@ -149,6 +129,17 @@ export default function PatientCalendar() {
     setEvents(currEvents);
   }
 
+  function onDelete(id: string) {
+    let currEvents: [EventProps] = [...events];
+    let allEvents: EventProps[] = [];
+    currEvents.forEach((event) => {
+      if (event._id != id) {
+        allEvents.push(event);
+      }
+    });
+    setEvents((allEvents as [EventProps]) ?? [{}]);
+  }
+
   return (
     <div>
       <Calendar
@@ -175,6 +166,7 @@ export default function PatientCalendar() {
           event={currentEvent}
           onClose={handleClosePopup}
           onSave={onSave}
+          onDelete={onDelete}
         />
       )}
     </div>
