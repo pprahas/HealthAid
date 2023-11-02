@@ -57,8 +57,7 @@ export default function PatientCalendar() {
     if (patient._id) {
       try {
         const requestBody = {
-          // id: patient._id,
-          id: "6520750157a49751b1efafb6",
+          id: patient._id,
         };
 
         const response = await fetch("http://localhost:8080/appointment/get", {

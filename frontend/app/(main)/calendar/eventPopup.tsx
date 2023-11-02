@@ -195,27 +195,34 @@ export default function EventPopup({
             </svg>
           </div>
         </div>
-        <h3>
+        <h3 className="pb-3">
           {editing ? (
-            <input
-              className=""
-              type="text"
-              value={title}
-              onChange={(e) => handleInputChange("title", e.target.value)}
-            />
+            <>
+              {"Title: "}
+              <input
+                className="bg-white border-b-2 border-black"
+                type="text"
+                value={title}
+                onChange={(e) => handleInputChange("title", e.target.value)}
+              />
+            </>
           ) : (
             title.toUpperCase()
           )}
         </h3>
         <p>
           {editing ? (
-            <input
-              type="datetime-local"
-              value={startTime?.toISOString().slice(0, -1)}
-              onChange={(e) =>
-                handleInputChange("start", new Date(e.target.value))
-              }
-            />
+            <>
+              {"Start Time: "}
+              <input
+                className="bg-white border-b-2 border-black"
+                type="datetime-local"
+                value={startTime?.toISOString().slice(0, -1)}
+                onChange={(e) =>
+                  handleInputChange("start", new Date(e.target.value))
+                }
+              />
+            </>
           ) : (
             formatDate(startTime)
           )}
