@@ -2,27 +2,41 @@
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/sass/styles.scss";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import { PatientContext } from "../layout";
 import { Patient } from "@/types";
+import EventPopup from "./eventPopup";
 
 const localizer = momentLocalizer(moment);
 
-export default function BlogPage() {
+interface EventProps {
+  _id?: string;
+  start?: Date;
+  end?: Date;
+  title?: string;
+  doctorName?: string;
+  patientName?: string;
+}
+
+export default function PatientCalendar() {
+  const [calendarView, setCalendarView] = useState<
+    "day" | "month" | "week" | "work_week" | "agenda"
+  >("month");
+  const [calendarDate, setCalendarDate] = useState(new Date());
+  const [currentEvent, setCurrentEvent] = useState<EventProps>({});
   const [patient, setPatient] = useContext(PatientContext) as [
     Patient,
     React.SetStateAction<Patient>
   ];
-  const [events, setEvents] = useState<
-    [{ start?: Date; end?: Date; title?: string }]
-  >([{}]);
+  const [events, setEvents] = useState<[EventProps]>([{}]);
 
   const getAppointments = async () => {
     console.log(patient._id);
     if (patient._id) {
       try {
         const requestBody = {
-          id: patient._id,
+          // id: patient._id,
+          id: "6520750157a49751b1efafb6",
         };
 
         const response = await fetch("http://localhost:8080/appointment/get", {
@@ -37,16 +51,19 @@ export default function BlogPage() {
         if (response.ok) {
           let appointmentsData = await response.json();
           console.log(appointmentsData);
-          let newEvents: [{ start?: Date; end?: Date; title?: string }] = [
-            ...events,
-          ];
-          appointmentsData.forEach((appointmentData: any) =>
+          let newEvents: [EventProps] = [...events];
+          appointmentsData.forEach((appointmentData: any) => {
+            let startTime = new Date(appointmentData.createdAt);
+            let endTime = new Date(startTime.getTime() + 60 * 60 * 1000);
             newEvents.push({
-              start: new Date(appointmentData.createdAt),
-              end: new Date(appointmentData.createdAt),
+              _id: appointmentData._id,
+              start: startTime,
+              end: endTime,
               title: appointmentData.title,
-            })
-          );
+              patientName: appointmentData.patientName,
+              doctorName: appointmentData.doctorName,
+            });
+          });
           setEvents(newEvents);
         } else {
           console.log(patient._id);
@@ -62,15 +79,64 @@ export default function BlogPage() {
     getAppointments();
   }, [patient]);
 
+  type Delta = "month" | "week" | "day" | "work_week" | "agenda";
+
+  function addToDate(date: Date, number: number, delta: Delta): Date {
+    const result = new Date(date);
+    switch (delta) {
+      case "month":
+        const desiredMonth = result.getMonth() + number;
+        result.setMonth(desiredMonth);
+        // Check for month rollover
+        if (result.getMonth() !== ((desiredMonth % 12) + 12) % 12) {
+          result.setDate(0); // Sets the date to the last day of the previous month
+        }
+        break;
+      case "week":
+      case "work_week":
+      case "agenda":
+        result.setDate(result.getDate() + number * 7);
+        break;
+      case "day":
+        result.setDate(result.getDate() + number);
+        break;
+      default:
+        throw new Error("Invalid delta value");
+    }
+
+    return result;
+  }
+
+  const handleSelectEvent = (event: EventProps) => {
+    setCurrentEvent(event);
+  };
+
+  const handleClosePopup = () => {
+    setCurrentEvent({});
+  };
+
   return (
     <div>
       <Calendar
         localizer={localizer}
         events={events}
-        defaultDate={new Date()}
-        defaultView="month"
+        date={calendarDate}
+        views={["month", "week", "day"]}
+        view={calendarView}
+        onView={setCalendarView}
+        onNavigate={(_, view, action) => {
+          if (action == "NEXT") {
+            let newDate = addToDate(calendarDate, 1, view);
+            setCalendarDate(newDate);
+          } else if (action == "PREV") {
+            let newDate = addToDate(calendarDate, -1, view);
+            setCalendarDate(newDate);
+          }
+        }}
+        onSelectEvent={handleSelectEvent}
         style={{ height: "100vh", padding: "20px" }}
       />
+      <EventPopup event={currentEvent} onClose={handleClosePopup} />
     </div>
   );
 }
