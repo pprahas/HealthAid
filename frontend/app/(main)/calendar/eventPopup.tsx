@@ -2,6 +2,7 @@
 import { useRef, useEffect, useState } from "react";
 import moment from "moment";
 import "../calendar/event.css";
+import { start } from "repl";
 
 interface EventProps {
   _id?: string;
@@ -10,23 +11,31 @@ interface EventProps {
   title?: string;
   doctorName?: string;
   patientName?: string;
+  doctorId?: string;
+  patientId?: string;
 }
 
 export default function EventPopup({
   event,
   onClose,
+  onSave,
 }: {
   event: EventProps | null;
   onClose: () => void;
+  onSave: (id: string, title: string, date: Date) => void;
 }) {
   const popupRef = useRef<HTMLDivElement>(null);
   const [editing, setEditing] = useState(false);
 
   // Step 1: Update the State
-  const [editableEvent, setEditableEvent] = useState<EventProps>({});
-  const [initialEvent, setInitialEvent] = useState<EventProps>({});
+  const [title, setTitle] = useState<string>(event?.title ?? "");
+  const [startTime, setStartTime] = useState<Date>(event?.start ?? new Date());
 
   async function updateAppointment(id: string, title: string, date: Date) {
+    if (event?._id == id) {
+      event.title = title;
+      event.start = date;
+    }
     try {
       const requestBody = {
         appointmentId: id,
@@ -49,12 +58,35 @@ export default function EventPopup({
     }
   }
 
-  useEffect(() => {
-    if (event) {
-      setEditableEvent({ ...event });
-      setInitialEvent({ ...event });
+  async function deleteAppointment(
+    id?: string,
+    doctorId?: string,
+    patientId?: string
+  ) {
+    if (id && doctorId && patientId) {
+      try {
+        const requestBody = {
+          appointmentId: id,
+          doctorId: doctorId,
+          patientId: patientId,
+        };
+
+        const response = await fetch(
+          "http://localhost:8080/appointment/delete",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestBody),
+            mode: "cors",
+          }
+        );
+      } catch (error) {
+        console.log(error);
+      }
     }
-  }, [event]);
+  }
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -73,6 +105,11 @@ export default function EventPopup({
     };
   }, [onClose]);
 
+  useEffect(() => {
+    setTitle(event?.title ?? "");
+    setStartTime(event?.start ?? new Date());
+  }, [event]);
+
   const formatDate = (date?: Date) => {
     return date ? moment(date).format("dddd, MMMM D") : "";
   };
@@ -85,25 +122,19 @@ export default function EventPopup({
   };
 
   const handleInputChange = (field: keyof EventProps, value: string | Date) => {
-    setEditableEvent((prev) => ({ ...prev, [field]: value }));
+    if (field == "title" && typeof value == "string") {
+      setTitle(value);
+    }
+    if (field == "start" && value instanceof Date) {
+      setStartTime(value);
+    }
   };
 
   const handleSave = () => {
-    const changedFields: string[] = [];
-    for (const key in initialEvent) {
-      if (
-        editableEvent[key as keyof EventProps] !==
-        initialEvent[key as keyof EventProps]
-      ) {
-        changedFields.push(key);
-      }
+    if (event?._id) {
+      onSave(event?._id, title, startTime);
+      updateAppointment(event._id, title, startTime);
     }
-
-    if (changedFields.length > 0) {
-      console.log("Changed Fields:", changedFields);
-    }
-
-    setEditing(false);
   };
 
   const formatTimeRange = (start?: Date, end?: Date) => {
@@ -149,7 +180,7 @@ export default function EventPopup({
           <div
             className="h-[24px] w-[24px] opacity-100 transition duration-300 cursor-pointer"
             onClick={() => {
-              // deletePatient(patient._id);
+              deleteAppointment(event.doctorId, event.patientId, event._id);
             }}
           >
             <svg
@@ -169,27 +200,34 @@ export default function EventPopup({
             <input
               className=""
               type="text"
-              value={editableEvent.title}
+              value={title}
               onChange={(e) => handleInputChange("title", e.target.value)}
             />
           ) : (
-            event.title.toUpperCase()
+            title.toUpperCase()
           )}
         </h3>
         <p>
           {editing ? (
             <input
               type="datetime-local"
-              value={editableEvent.start?.toISOString().slice(0, -1)}
+              value={startTime?.toISOString().slice(0, -1)}
               onChange={(e) =>
                 handleInputChange("start", new Date(e.target.value))
               }
             />
           ) : (
-            formatDate(event.start)
+            formatDate(startTime)
           )}
           <span>&#8901;</span>
-          {editing ? <></> : formatTimeRange(event.start, event.end)}
+          {editing ? (
+            <></>
+          ) : (
+            formatTimeRange(
+              startTime,
+              new Date(startTime.getTime() + 60 * 60 * 1000)
+            )
+          )}
         </p>
       </div>
     </div>

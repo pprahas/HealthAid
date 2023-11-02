@@ -16,6 +16,8 @@ interface EventProps {
   title?: string;
   doctorName?: string;
   patientName?: string;
+  doctorId?: string;
+  patientId?: string;
 }
 
 export default function PatientCalendar() {
@@ -29,6 +31,26 @@ export default function PatientCalendar() {
     React.SetStateAction<Patient>
   ];
   const [events, setEvents] = useState<[EventProps]>([{}]);
+
+  const handleEventUpdate = (
+    id?: string,
+    newTitle?: string,
+    newTime?: Date
+  ) => {
+    let currEvents = [...events];
+    currEvents.forEach((event) => {
+      if (event._id == id) {
+        if (!newTitle) {
+          newTitle = event.title;
+        }
+        if (!newTime) {
+          newTime = event.start;
+        }
+        event.title = newTitle;
+        event.start = newTime;
+      }
+    });
+  };
 
   const getAppointments = async () => {
     console.log(patient._id);
@@ -62,6 +84,8 @@ export default function PatientCalendar() {
               title: appointmentData.title,
               patientName: appointmentData.patientName,
               doctorName: appointmentData.doctorName,
+              doctorId: appointmentData.doctorId,
+              patientId: appointmentData.patientId,
             });
           });
           setEvents(newEvents);
@@ -115,6 +139,17 @@ export default function PatientCalendar() {
     setCurrentEvent({});
   };
 
+  function onSave(id: string, title: string, date: Date) {
+    let currEvents: [EventProps] = [...events];
+    currEvents.forEach((event) => {
+      if (event._id == id) {
+        event.title = title;
+        event.start = date;
+      }
+    });
+    setEvents(currEvents);
+  }
+
   return (
     <div>
       <Calendar
@@ -136,7 +171,13 @@ export default function PatientCalendar() {
         onSelectEvent={handleSelectEvent}
         style={{ height: "100vh", padding: "20px" }}
       />
-      <EventPopup event={currentEvent} onClose={handleClosePopup} />
+      {currentEvent && (
+        <EventPopup
+          event={currentEvent}
+          onClose={handleClosePopup}
+          onSave={onSave}
+        />
+      )}
     </div>
   );
 }
