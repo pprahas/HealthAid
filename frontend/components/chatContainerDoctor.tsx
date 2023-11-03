@@ -91,9 +91,7 @@ export const ChatContainerDoctor = ({ messages }: chatProps) => {
     }
   };
 
-  useEffect(() => {
-    console.log("Curr convo:", convo);
-  }, [convo]);
+  useEffect(() => {}, [convo]);
 
   const getDoctors = async (doctorId: string) => {
     try {
@@ -139,7 +137,6 @@ export const ChatContainerDoctor = ({ messages }: chatProps) => {
       convoCopy.diagnosis = "approved";
       setConvo(convoCopy);
       const data = await updateDiagnosisResponse.data;
-      console.log("data:", data);
       return data.doctor;
     } catch (error) {
       console.error("Error:", error);
@@ -160,7 +157,6 @@ export const ChatContainerDoctor = ({ messages }: chatProps) => {
       convoCopy.diagnosis = "denied";
       setConvo(convoCopy);
       const data = await updateDiagnosisResponse.data;
-      console.log("data:", data);
       return data.doctor;
     } catch (error) {
       console.error("Error:", error);

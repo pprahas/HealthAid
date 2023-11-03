@@ -18,7 +18,6 @@ export default function DoctorCalendar() {
   >([{}]);
 
   const getAppointments = async () => {
-    console.log(doctor._id);
     if (doctor._id) {
       try {
         const requestBody = {
@@ -36,7 +35,6 @@ export default function DoctorCalendar() {
 
         if (response.ok) {
           let appointmentsData = await response.json();
-          console.log(appointmentsData);
           let newEvents: [{ start?: Date; end?: Date; title?: string }] = [
             ...events,
           ];
@@ -49,12 +47,8 @@ export default function DoctorCalendar() {
           );
           setEvents(newEvents);
         } else {
-          console.log(doctor._id);
-          console.log(`invalid response for ${doctor._id}`);
         }
-      } catch (error) {
-        console.log(error);
-      }
+      } catch (error) {}
     }
   };
 

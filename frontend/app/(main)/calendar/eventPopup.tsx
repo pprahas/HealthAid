@@ -19,10 +19,12 @@ export default function EventPopup({
   event,
   onClose,
   onSave,
+  onDelete,
 }: {
   event: EventProps | null;
   onClose: () => void;
   onSave: (id: string, title: string, date: Date) => void;
+  onDelete: (id: string) => void;
 }) {
   const popupRef = useRef<HTMLDivElement>(null);
   const [editing, setEditing] = useState(false);
@@ -53,9 +55,7 @@ export default function EventPopup({
         body: JSON.stringify(requestBody),
         mode: "cors",
       });
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   }
 
   async function deleteAppointment(
@@ -64,6 +64,8 @@ export default function EventPopup({
     patientId?: string
   ) {
     if (id && doctorId && patientId) {
+      onClose();
+      onDelete(id);
       try {
         const requestBody = {
           appointmentId: id,
@@ -82,9 +84,7 @@ export default function EventPopup({
             mode: "cors",
           }
         );
-      } catch (error) {
-        console.log(error);
-      }
+      } catch (error) {}
     }
   }
 
@@ -180,7 +180,7 @@ export default function EventPopup({
           <div
             className="h-[24px] w-[24px] opacity-100 transition duration-300 cursor-pointer"
             onClick={() => {
-              deleteAppointment(event.doctorId, event.patientId, event._id);
+              deleteAppointment(event._id, event.doctorId, event.patientId);
             }}
           >
             <svg
@@ -195,27 +195,37 @@ export default function EventPopup({
             </svg>
           </div>
         </div>
-        <h3>
+        <h3 className="pb-0 text-lg">
           {editing ? (
-            <input
-              className=""
-              type="text"
-              value={title}
-              onChange={(e) => handleInputChange("title", e.target.value)}
-            />
+            <>
+              {"Title: "}
+              <input
+                className="bg-white border-b-2 border-black"
+                type="text"
+                value={title}
+                onChange={(e) => handleInputChange("title", e.target.value)}
+              />
+            </>
           ) : (
             title.toUpperCase()
           )}
         </h3>
+        <div className="font-bold pb-3">
+          {event.patientName} - {event.doctorName}
+        </div>
         <p>
           {editing ? (
-            <input
-              type="datetime-local"
-              value={startTime?.toISOString().slice(0, -1)}
-              onChange={(e) =>
-                handleInputChange("start", new Date(e.target.value))
-              }
-            />
+            <>
+              {"Start Time: "}
+              <input
+                className="bg-white border-b-2 border-black"
+                type="datetime-local"
+                value={startTime?.toISOString().slice(0, -1)}
+                onChange={(e) =>
+                  handleInputChange("start", new Date(e.target.value))
+                }
+              />
+            </>
           ) : (
             formatDate(startTime)
           )}

@@ -70,7 +70,6 @@ export function Sidebar() {
   async function getAllDoctors() {
     if (patient && patient.doctors != undefined) {
       try {
-        console.log("Doctors:", patient.doctors);
         const allDoctorData: Doctor[] = [
           {
             _id: "gpt",
@@ -86,16 +85,13 @@ export function Sidebar() {
         );
         allDoctorData.push(...doctorDataDatabase);
         setDoctorList(allDoctorData);
-      } catch (error) {
-        console.log(error);
-      }
+      } catch (error) {}
     } else {
       setDoctorList([]);
     }
   }
 
   const getGptConvos = async () => {
-    console.log("new convo");
     try {
       const response = await axios.post(
         "http://localhost:8080/conversation/getConversations",
@@ -106,7 +102,6 @@ export function Sidebar() {
       );
 
       const data = await response.data;
-      console.log("Data:", data);
       setConvoList(data);
       setConvoLoading(false);
     } catch (error) {
@@ -129,7 +124,7 @@ export function Sidebar() {
         }
       );
       const data = await createConvoResponse.data;
-      console.log(data);
+      data;
       await getGptConvos();
     } catch (error) {
       console.error("Error:", error);
@@ -156,7 +151,6 @@ export function Sidebar() {
           }
         );
         const data = await updatePatientResponse.data;
-        console.log(data);
       }
     } catch (error) {
       console.error("Error:", error);

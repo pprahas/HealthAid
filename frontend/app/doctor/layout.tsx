@@ -76,7 +76,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const getDoctor = async () => {
     let userObjectString = localStorage.getItem("user") ?? "";
     let userObject = JSON.parse(userObjectString);
-    console.log("user id:", userObject._id);
     try {
       const response = await axios.post(
         "http://localhost:8080/getDoctorFromId",
@@ -86,9 +85,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       );
 
       const data = await response.data;
-      console.log("data:", data);
       setDoctor(data.doctor);
-      //console.log(data.patient)
     } catch (error) {
       console.error("Error:", error);
     }

@@ -96,7 +96,6 @@ export default function SignupPage() {
       } catch (error) {
         const axiosError = error as AxiosError;
         let errorText = axiosError.response?.data;
-        console.log(errorText);
         setError("" + errorText);
       }
     }
@@ -131,7 +130,6 @@ export default function SignupPage() {
                   }}
                   onFocusChange={(focus) => {
                     if (!focus) {
-                      console.log("Lost focus");
                       setIsEmailValid(emailCheck());
                     }
                   }}
