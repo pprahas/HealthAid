@@ -27,7 +27,7 @@ const DoctorQuestions = () => {
       key: "phoneNumber",
     },
     {
-      question: "What is your speciality? (select all that apply)",
+      question: "What is your specialty? (select all that apply)",
       placeholder: [
         "Pediatrics",
         "Obstetrics and Gynecology (OB/GYN)",
@@ -36,6 +36,11 @@ const DoctorQuestions = () => {
         "Infectious Disease",
       ],
       key: "specialties",
+    },
+    {
+      question: "What is your address?",
+      placeholder: "Los Angeles, California",
+      key: "address",
     },
     {
       question:
@@ -138,7 +143,7 @@ const DoctorQuestions = () => {
         const updateClinicInfo = await updateClinicInfoResponse.data;
         console.log(updateClinicInfo);
         setLoading(false);
-        window.location.href = "/home";
+        window.location.href = "/doctor/home";
       } catch (error) {
         const axiosError = error as AxiosError;
         let errorText = axiosError.response?.data;

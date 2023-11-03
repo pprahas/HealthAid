@@ -12,18 +12,18 @@ interface FormData {
   [key: string]: string;
 }
 
-function fetchUserData() {
-  let userObjectString = localStorage.getItem("user") ?? "";
-  let userObject = JSON.parse(userObjectString);
-  return userObject;
-}
+// function fetchUserData() {
+//   let userObjectString = localStorage.getItem("user") ?? "";
+//   let userObject = JSON.parse(userObjectString);
+//   return userObject;
+// }
 
-const user = fetchUserData();
+// const user = fetchUserData();
 
 // Check if the user is a doctor and redirect to /doctor/profile
-if (user.userType === "doctor") {
-  window.location.href = "/doctor/profile";
-}
+// if (user.userType === "doctor") {
+  // window.location.href = "/doctor/profile";
+// }
 
 export default function ProfilePage() {
   const [patient, setPatient] = useContext(PatientContext) as [
@@ -305,9 +305,7 @@ export default function ProfilePage() {
             <Button size="lg" onClick={handleReset}>
               Change password
             </Button>
-            {/* <Button size="lg" color="danger" onClick={handleDeactivate}>
-              Deactivate
-            </Button> */}
+            
             <Button
               color={activeAccount ? "danger" : "success"}
               // className="h-16"

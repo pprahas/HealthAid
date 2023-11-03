@@ -33,6 +33,7 @@ export default function ProfilePage() {
 
   const [personalInfoLoaded, setIsLoaded] = useState(false);
   const [clinicInfoLoaded, setClinicInfoLoaded] = useState(false);
+  const [activeAccount, setActiveAccount] = useState(Boolean);
 
   const handleSave = async () => {
     let record: Record<string, string> = {};
@@ -53,6 +54,40 @@ export default function ProfilePage() {
   const handleLogout = () => {
     localStorage.removeItem("user");
     window.location.href = "/";
+  };
+
+  const handleDeactivate = () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to deactivate your account?"
+    );
+    if (confirmed) {
+      try {
+        axios.post("http://localhost:8080/updatePatient", {
+          patientId: doctor._id,
+          add: { activeAccount: false },
+        });
+        setActiveAccount(false);
+      } catch (error) {
+        console.error("Error deactivating account:", error);
+      }
+    }
+  };
+
+  const handleActivate = () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to activate your account?"
+    );
+    if (confirmed) {
+      try {
+        axios.post("http://localhost:8080/updatePatient", {
+          patientId: doctor._id,
+          add: { activeAccount: true },
+        });
+        setActiveAccount(true);
+      } catch (error) {
+        console.error("Error activating account:", error);
+      }
+    }
   };
 
   const getClinicInformation = async () => {
@@ -111,6 +146,7 @@ export default function ProfilePage() {
     setLastName(doctor.lastName);
     setBio(doctor.bio as unknown as string | "");
     setIsLoaded(true);
+    setActiveAccount(doctor.activeAccount)
   }, [doctor]);
 
   return (
@@ -160,6 +196,16 @@ export default function ProfilePage() {
             <Button size="lg" onClick={handleReset}>
               Change password
             </Button>
+            {/* <Button
+              color={activeAccount ? "danger" : "success"}
+              // className="h-16"
+              size="lg"
+              onClick={activeAccount ? handleDeactivate : handleActivate}
+            >
+              <div>
+                {activeAccount ? "Deactivate" : "Activate"}
+              </div>
+            </Button> */}
             <Button size="lg" color="danger" onClick={handleLogout}>
               Log out
             </Button>

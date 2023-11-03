@@ -99,7 +99,15 @@ export default function PatientCalendar() {
     }
   };
 
-  useEffect(() => {
+  const checkDeactivated = () => {    
+    if(patient.hasOwnProperty('activeAccount') && patient.activeAccount === false && window.location.pathname !== '/profile') {
+      console.log("Account not active")
+      window.location.href = "/profile";
+      }
+  }
+
+  useEffect(() => {    
+    checkDeactivated();
     getAppointments();
   }, [patient]);
 
