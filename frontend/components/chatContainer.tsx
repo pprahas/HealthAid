@@ -233,7 +233,7 @@ export const ChatContainer = ({ messages }: chatProps) => {
       convo.diagnosis = "pending";
       setAutoDoctor(allDoctors[1].firstName + " " + allDoctors[1].lastName);
       await getAllDoctors();
-      const data = await updateDiagnosisResponse.data;
+      const data = (await updateDiagnosisResponse.data) as string;
       const updateDoctorsResponse = await axios.post(
         "http://localhost:8080/updatePatient",
         {

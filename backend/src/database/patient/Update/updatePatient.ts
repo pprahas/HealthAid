@@ -8,6 +8,7 @@ export enum UpdatePatientError {
 }
 
 export async function updatePatient(patientId, fieldsToAdd, fieldsToRemove) {
+  console.log("updating pat")
   let responseMessages = [];
   try {
     const patientAccount = await PatientDTO.findById(patientId);
@@ -23,18 +24,27 @@ export async function updatePatient(patientId, fieldsToAdd, fieldsToRemove) {
         if (key === "doctors") {
           responseMessages.push("Doctor added to patient");
           console.log("doctors detected");
-          // console.log("doctors are", patientAccount.doctors);
+          let docIndex = patientAccount.doctors.findIndex((val) => {
+            return val == value
+          })
+          console.log(docIndex)
           if (
             patientAccount.doctors.length == 0 ||
-            patientAccount.doctors.findIndex(value) == -1
+            docIndex == -1
           ) {
-            // console.log("doctor does not exist");
+            console.log("doctor does not exist");
             patientAccount.doctors.push(value);
+          } else {
+            console.log("doctor already exists");
           }
           const doctorAccount = await DoctorDTO.findById(value);
+          console.log("got doctor")
+          let patIndex = doctorAccount.patients.findIndex((pat) => {
+            return pat == patientId
+          })
           if (
             doctorAccount.patients.length == 0 ||
-            doctorAccount.patients.findIndex(patientId) == -1
+            patIndex == -1
           ) {
             doctorAccount.patients.push(patientId);
             await doctorAccount.save();
