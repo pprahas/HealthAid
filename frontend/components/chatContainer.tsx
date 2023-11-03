@@ -142,7 +142,7 @@ export const ChatContainer = ({ messages }: chatProps) => {
 
       const data = await response.data;
 
-      filterByInsurance(data);
+      await filterByInsurance(data);
     } catch (error) {
       console.error("Error:", error);
       return;
@@ -163,6 +163,7 @@ export const ChatContainer = ({ messages }: chatProps) => {
   };
 
   const filterByInsurance = async (doctorList: Doctor[]) => {
+    console.log("All docs: ", doctorList);
     let newDoctorList = [] as Doctor[];
 
     const defaultDoctor = {
@@ -171,6 +172,7 @@ export const ChatContainer = ({ messages }: chatProps) => {
       lastName: "Choose",
       patients: [],
       email: "Automatically Choose",
+      activeAccount: true,
     };
     newDoctorList.push(defaultDoctor);
 
@@ -274,28 +276,7 @@ export const ChatContainer = ({ messages }: chatProps) => {
     ["denied", "bg-[#d2222d]"],
   ]);
 
-  useEffect(() => {
-    console.log("count: ", messages.length);
-    let lastMessage = messages[messages.length - 1];
-    console.log("last message: ", lastMessage);
-    if (lastMessage) {
-      if (lastMessage.content.toLowerCase().includes("diagnosis: ")) {
-        if (convo.diagnosis == "none") {
-          console.log("auto send to doctor");
-          if (allDoctors.length > 0) {
-            const send = async () => {
-              if (!sentToDoctor) {
-                setSentToDoctor(true);
-                await handleSendToDoctor();
-              }
-            };
-            send();
-          }
-        }
-        setSentToDoctor(true);
-      }
-    }
-  }, [messages, allDoctors]);
+  useEffect(() => {}, [messages, allDoctors]);
 
   return (
     <div className="h-full mr-10">

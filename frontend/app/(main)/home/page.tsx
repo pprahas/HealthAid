@@ -31,7 +31,7 @@ export default function PatientHome() {
   const [sidebarIndex, setSidebarIndex] = useContext(SidebarContext) as any[];
   const [patient, setPatient] = useContext(PatientContext) as [
     Patient,
-    SetStateAction<Patient>
+    React.Dispatch<React.SetStateAction<Patient>>
   ];
   const [doctor, setDoctor] = useState(DoctorDefault);
   const [convo, setConvo] = useContext(CurrentConvoContext) as [
@@ -58,6 +58,7 @@ export default function PatientHome() {
   const [creatingAppointment, setCreatingAppointment] = useState(false);
   const [apptTitle, setApptTitle] = useState("");
   const [apptDate, setApptDate] = useState(new Date());
+  const [allDoctors, setAllDoctors] = useState([] as Doctor[]);
 
   const getDoctorInfo = async () => {
     if (sidebarIndex == 0) {
@@ -104,6 +105,163 @@ export default function PatientHome() {
     }
   };
 
+  async function getAllDoctors() {
+    if (patient && patient.doctors != undefined) {
+      try {
+        const allDoctorData: Doctor[] = [
+          {
+            _id: "gpt",
+            firstName: "Chat",
+            lastName: "GPT",
+            email: "chatgpt@openai.com",
+            patients: Array(1).fill(PatientDefault),
+            activeAccount: true,
+          },
+        ];
+        const doctorDataDatabase = await Promise.all(
+          patient.doctors.map(getDoctors)
+        );
+        allDoctorData.push(...doctorDataDatabase);
+        setDoctorList(allDoctorData);
+      } catch (error) {}
+    } else {
+      setDoctorList([]);
+    }
+  }
+
+  const getDoctors = async (doctorId: string) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/getDoctorFromId",
+        {
+          id: doctorId,
+        }
+      );
+
+      const data = await response.data;
+      return data.doctor;
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  useEffect(() => {
+    getDoctorsInNetwork();
+  }, [patient]);
+
+  const getDoctorsInNetwork = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/getDoctorFromId/all",
+        {}
+      );
+
+      const data = await response.data;
+
+      filterByInsurance(data);
+    } catch (error) {
+      console.error("Error:", error);
+      return;
+    }
+  };
+
+  const doctorInsurance = async (id: string) => {
+    try {
+      const response = await axios.post("http://localhost:8080/getClinic", {
+        clinicId: id,
+      });
+
+      const data = await response.data;
+      return data.clinic.network;
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const filterByInsurance = async (doctorList: Doctor[]) => {
+    let newDoctorList = [] as Doctor[];
+
+    const defaultDoctor = {
+      _id: "Automatically Choose",
+      firstName: "Automatically",
+      lastName: "Choose",
+      patients: [],
+      email: "Automatically Choose",
+      activeAccount: false,
+    };
+    newDoctorList.push(defaultDoctor);
+
+    for (let i = 0; i < doctorList.length; i++) {
+      if (doctorList[i].clinic != undefined) {
+        let insurance = await doctorInsurance(doctorList[i].clinic as string);
+        if (insurance === undefined) continue;
+        if (insurance.includes(patient.insurance, 0)) {
+          console.log(`adding ${doctorList[i].firstName} to list`);
+          doctorList[i].firstName = "Dr. " + doctorList[i].firstName;
+          newDoctorList.push(doctorList[i]);
+        }
+      }
+    }
+
+    setAllDoctors(newDoctorList);
+  };
+
+  async function handleSendToDoctor() {
+    console.log("doctors", allDoctors);
+    console.log("first doc", allDoctors[1]);
+    try {
+      const updateDiagnosisResponse = await axios.post(
+        "http://localhost:8080/updateDiagnosis",
+        {
+          diagnosis: "pending",
+          conversationId: convo._id,
+          doctorEmail: allDoctors[1].email,
+        }
+      );
+      convo.diagnosis = "pending";
+      await getAllDoctors();
+      const data = (await updateDiagnosisResponse.data) as string;
+      let currPatient = Object.assign({}, patient) as Patient;
+
+      const updateDoctorsResponse = await axios.post(
+        "http://localhost:8080/updatePatient",
+        {
+          patientId: patient._id,
+          add: {
+            doctors: `${data}`,
+          },
+        }
+      );
+      let docIndex = doctorList.findIndex((doctor) => {
+        doctor._id == data;
+      });
+      if (currPatient.doctors && docIndex != -1) {
+        currPatient.doctors.push(`${data}`);
+      } else if (docIndex != -1) {
+        currPatient.doctors = [`${data}`];
+      }
+      setPatient(currPatient);
+      return data;
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
+  async function handleConvoUpdate(lastMessage: string) {
+    if (lastMessage.toLowerCase().includes("diagnosis: ")) {
+      if (convo.diagnosis == "none") {
+        console.log("auto send to doctor");
+        if (doctorList.length > 0) {
+          const send = async () => {
+            convo.diagnosis = "pending";
+            await handleSendToDoctor();
+          };
+          await send();
+        }
+      }
+    }
+  }
+
   const sendMessage = async (message: string) => {
     setLoading(true);
     let date = new Date();
@@ -128,11 +286,13 @@ export default function PatientHome() {
         }
       );
       const data = await sendMessageResponse.data;
+
       let newGPTMessage: Message = {
         senderType: data.senderType,
         content: data.content,
         date: new Date(),
       };
+      await handleConvoUpdate(data.content);
       let currentConvo = convo;
       currentConvo.messages.push(newGPTMessage);
       setConvo(currentConvo);
