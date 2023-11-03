@@ -178,7 +178,7 @@ export const ChatContainer = ({ messages }: chatProps) => {
       if (doctorList[i].clinic != undefined) {
         let insurance = await doctorInsurance(doctorList[i].clinic as string);
         if (insurance === undefined) continue;
-        if (insurance.localeCompare(patient.insurance) == 0) {
+        if (insurance.includes(patient.insurance, 0)) {
           doctorList[i].firstName = "Dr. " + doctorList[i].firstName;
           newDoctorList.push(doctorList[i]);
         }
