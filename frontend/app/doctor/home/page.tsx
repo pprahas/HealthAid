@@ -86,7 +86,11 @@ export default function DoctorHome() {
       <div className="w-full h-full pt-9 pl-10 pr-8 overflow-hidden">
         <h1 className="font-bold text-4xl">
           {patientList[sidebarIndex]?.firstName}{" "}
-          {patientList[sidebarIndex]?.lastName}
+          {patientList[sidebarIndex]?.lastName}<br></br>
+        </h1>
+        <h1 className= "text-2xl">
+          {"Email: "}{patientList[sidebarIndex]?.email}<br></br>
+          {"Bio: "}{patientList[sidebarIndex]?.bio}
         </h1>
         <div className="space-y-5 pt-5">
           {currentConvo &&
