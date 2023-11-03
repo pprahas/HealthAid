@@ -72,14 +72,20 @@ export default function PatientCalendar() {
     }
   };
 
-  const checkDeactivated = () => {    
-    if(patient.hasOwnProperty('activeAccount') && patient.activeAccount === false && window.location.pathname !== '/profile') {
-      window.alert("Your Account has been deactivated. Please Re-Activate to use.");
+  const checkDeactivated = () => {
+    if (
+      patient.hasOwnProperty("activeAccount") &&
+      patient.activeAccount === false &&
+      window.location.pathname !== "/profile"
+    ) {
+      window.alert(
+        "Your Account has been deactivated. Please Re-Activate to use."
+      );
       window.location.href = "/profile";
-      }
-  }
+    }
+  };
 
-  useEffect(() => {    
+  useEffect(() => {
     checkDeactivated();
     getAppointments();
   }, [patient]);
@@ -126,6 +132,7 @@ export default function PatientCalendar() {
       if (event._id == id) {
         event.title = title;
         event.start = date;
+        event.end = new Date(date.getTime() + 60 * 60 * 1000);
       }
     });
     setEvents(currEvents);
