@@ -245,14 +245,16 @@ export const ChatContainer = ({ messages }: chatProps) => {
           },
         }
       );
-      let currPatient = Object.assign({}, data) as Patient;
-      if (currPatient.doctors) {
-        currPatient.doctors.push(`${data}`);
+      let docIndex = doctorList.findIndex((doctor) => {
+        doctor._id == data;
+      });
+      if (docIndex != -1) {
+        patient.doctors.push(`${data}`);
       } else {
-        currPatient.doctors = [`${data}`];
+        patient.doctors = [`${data}`];
       }
-      setPatient(currPatient);
-      return data.doctor;
+      setPatient(patient);
+      return data;
     } catch (error) {
       console.error("Error:", error);
     }
