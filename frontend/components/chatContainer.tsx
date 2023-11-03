@@ -235,6 +235,7 @@ export const ChatContainer = ({ messages }: chatProps) => {
       setAutoDoctor(allDoctors[1].firstName + " " + allDoctors[1].lastName);
       await getAllDoctors();
       const data = (await updateDiagnosisResponse.data) as string;
+
       const updateDoctorsResponse = await axios.post(
         "http://localhost:8080/updatePatient",
         {
@@ -281,7 +282,10 @@ export const ChatContainer = ({ messages }: chatProps) => {
           console.log("auto send to doctor");
           if (allDoctors.length > 0) {
             const send = async () => {
-              await handleSendToDoctor();
+              if (!sentToDoctor) {
+                setSentToDoctor(true);
+                await handleSendToDoctor();
+              }
             };
             send();
           }
