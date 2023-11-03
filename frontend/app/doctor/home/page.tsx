@@ -84,14 +84,21 @@ export default function DoctorHome() {
   return (
     <section className="columns-2 items-start h-[calc(100vh-60px)]">
       <div className="w-full h-full pt-9 pl-10 pr-8 overflow-hidden">
-        <h1 className="font-bold text-4xl">
-          {patientList[sidebarIndex]?.firstName}{" "}
-          {patientList[sidebarIndex]?.lastName}<br></br>
+      <h1 className="font-bold text-4xl">
+        {patientList[sidebarIndex]?.firstName}{" "}
+        {patientList[sidebarIndex]?.lastName}
+        <br />
+      </h1>
+      {patientList[sidebarIndex]?.email && (
+        <h1 className="text-2xl">
+          {"Email: "}{patientList[sidebarIndex]?.email}<br />
         </h1>
-        <h1 className= "text-2xl">
-          {"Email: "}{patientList[sidebarIndex]?.email}<br></br>
+      )}
+      {patientList[sidebarIndex]?.bio && (
+        <h1 className="text-2xl">
           {"Bio: "}{patientList[sidebarIndex]?.bio}
         </h1>
+      )}
         <div className="space-y-5 pt-5">
           {currentConvo &&
             convoList?.map((conversation, index: number) => (

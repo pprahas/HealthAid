@@ -86,7 +86,7 @@ const DoctorQuestions = () => {
         );
         const updateClinicInfo = await updateClinicInfoResponse.data;
         setLoading(false);
-        window.location.href = "/home";
+        window.location.href = "/doctor/home";
       } catch (error) {
         const axiosError = error as AxiosError;
         let errorText = axiosError.response?.data;
