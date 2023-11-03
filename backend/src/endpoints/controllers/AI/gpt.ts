@@ -56,7 +56,7 @@ export async function AskGPT(
 
     const chatCompletion = await openai.chat.completions.create({
       messages: formattedMessages,
-      model: "gpt-4",
+      model: "gpt-3.5-turbo",
     });
     console.log(formattedMessages);
     console.log(chatCompletion);
