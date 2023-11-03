@@ -93,8 +93,6 @@ const DoctorQuestions = () => {
           clinicInfo[key] = answers[index];
         });
 
-        console.log(clinicInfo);
-
         const postData = {
           email: currUserObject.email,
           clinicInfo: clinicInfo,
@@ -105,13 +103,11 @@ const DoctorQuestions = () => {
           postData
         );
         const updateClinicInfo = await updateClinicInfoResponse.data;
-        console.log(updateClinicInfo);
         setLoading(false);
         window.location.href = "/home";
       } catch (error) {
         const axiosError = error as AxiosError;
         let errorText = axiosError.response?.data;
-        console.log(errorText);
         setError("" + errorText);
       }
     }

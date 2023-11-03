@@ -72,9 +72,7 @@ export default function SignupPage() {
             }
           );
 
-          console.log("Register response:", registerResponse.data);
           const registerData = await registerResponse.data;
-          console.log(registerData.doctor);
           localStorage.setItem("user", JSON.stringify(registerData.doctor));
           window.location.href = "/onboard";
         } else {
@@ -88,16 +86,13 @@ export default function SignupPage() {
             }
           );
 
-          console.log("Register response:", registerResponse.data);
           const registerData = await registerResponse.data;
-          console.log(registerData.patient);
           localStorage.setItem("user", JSON.stringify(registerData.patient));
           window.location.href = "/onboard";
         }
       } catch (error) {
         const axiosError = error as AxiosError;
         let errorText = axiosError.response?.data;
-        console.log(errorText);
         setError("" + errorText);
       }
     }
@@ -165,7 +160,6 @@ export default function SignupPage() {
                   }}
                   onFocusChange={(focus) => {
                     if (!focus) {
-                      console.log("Lost focus");
                       setIsEmailValid(emailCheck());
                     }
                   }}
@@ -215,7 +209,6 @@ export default function SignupPage() {
               value={role}
               defaultValue={["patient"]}
               onValueChange={(value) => {
-                console.log(value);
                 let last = value[value.length - 1];
                 value = [last];
                 setRole([last]);

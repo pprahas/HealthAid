@@ -33,7 +33,6 @@ export default function PatientCalendar() {
   const [events, setEvents] = useState<[EventProps]>([{}]);
 
   const getAppointments = async () => {
-    console.log(patient._id);
     if (patient._id) {
       try {
         const requestBody = {
@@ -51,7 +50,6 @@ export default function PatientCalendar() {
 
         if (response.ok) {
           let appointmentsData = await response.json();
-          console.log(appointmentsData);
           let newEvents: [EventProps] = [...events];
           appointmentsData.forEach((appointmentData: any) => {
             let startTime = new Date(appointmentData.time);
@@ -69,12 +67,8 @@ export default function PatientCalendar() {
           });
           setEvents(newEvents);
         } else {
-          console.log(patient._id);
-          console.log(`invalid response for ${patient._id}`);
         }
-      } catch (error) {
-        console.log(error);
-      }
+      } catch (error) {}
     }
   };
 
@@ -149,13 +143,17 @@ export default function PatientCalendar() {
         views={["month", "week", "day"]}
         view={calendarView}
         onView={setCalendarView}
-        onNavigate={(_, view, action) => {
+        onNavigate={(date, view, action) => {
           if (action == "NEXT") {
             let newDate = addToDate(calendarDate, 1, view);
             setCalendarDate(newDate);
           } else if (action == "PREV") {
             let newDate = addToDate(calendarDate, -1, view);
             setCalendarDate(newDate);
+          } else if (action == "TODAY") {
+            setCalendarDate(new Date());
+          } else if (action == "DATE") {
+            setCalendarDate(date);
           }
         }}
         onSelectEvent={handleSelectEvent}

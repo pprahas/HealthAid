@@ -49,12 +49,9 @@ export default function DoctorHome() {
     SetStateAction<Doctor>
   ];
 
-  useEffect(() => {
-    console.log("Curr pat:", patientList[sidebarIndex]);
-  }, []);
+  useEffect(() => {}, []);
 
   const getConversations = async (patientId: string) => {
-    console.log("new convo for", patientId, "and", doctor._id);
     try {
       const response = await axios.post(
         "http://localhost:8080/conversation/getConversations",
@@ -65,7 +62,6 @@ export default function DoctorHome() {
       );
 
       const data = await response.data;
-      console.log(data);
       setConvoList(data);
     } catch (error) {
       console.error("Error:", error);
@@ -73,16 +69,13 @@ export default function DoctorHome() {
   };
 
   const updateConvo = (conversation: Conversation) => {
-    console.log(conversation);
     setCurrentConvo(conversation);
   };
 
   useEffect(() => {
     if (patient._id == "" && patientList[sidebarIndex]) {
-      console.log("new pat:", patientList[sidebarIndex]._id);
       getConversations(patientList[sidebarIndex]._id);
     } else {
-      console.log("new pat:", patient._id);
       getConversations(patient._id);
     }
     setCurrentConvo(DefaultConversation);

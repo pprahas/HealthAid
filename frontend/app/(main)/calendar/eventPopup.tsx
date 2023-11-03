@@ -55,9 +55,7 @@ export default function EventPopup({
         body: JSON.stringify(requestBody),
         mode: "cors",
       });
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   }
 
   async function deleteAppointment(
@@ -86,9 +84,7 @@ export default function EventPopup({
             mode: "cors",
           }
         );
-      } catch (error) {
-        console.log(error);
-      }
+      } catch (error) {}
     }
   }
 

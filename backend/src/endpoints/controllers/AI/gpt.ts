@@ -3,8 +3,7 @@ import OpenAI from "openai";
 import { Request, Response } from "express";
 import { ConversationDTO } from "@models/Conversation";
 
-const DEFAULT_PROMPT = `Now, I want you to act like a doctor, introduce yourself to the patient humanly, and be friendly. Introduce yourself as ChatGPT, not any doctor, and keep the introduction message short and ask the patient about their current health concerns. If you think you have a diagnosis for the patient after talking to them for a while, respond with "you have been diagnosed with: " and then include the diagnosis. don't tell them to seek medical attention, and tell them to forward this entire conversation with the diagnosis to a doctor if they want to. Don't include the health information i have provided above in the introductory message, but do keep them in mind when providing a diagnosis. Ask as many questions as possible, at least 3 minimum questions. Keep your responses to 1-3 sentences max. Once you have a diagnosis that we can send to a real doctor, return it in this format "**Diagnosis**:{Diagnosis}"`;
-// const DEFAULT_PROMPT = `I want you to act like a doctor, introduce yourself to the patient humanly, and be friendly. Introduce yourself as ChatGPT, not any doctor, and keep the introduction message short and ask the patient about their current health concerns.`;
+const DEFAULT_PROMPT = "You are an AI doctor that will come up with an inital AI diagnosis"
 
 export async function AskGPTWrapper(req: Request, res: Response) {
   try {
@@ -43,21 +42,32 @@ export async function AskGPT(
     formattedMessages.push({
       role: "system",
       content:
-        "What will your next response be? Only respond with questions on symptoms. If you come up with a diagnosis and are ready for us to send it to a real doctor, i want you to say 'Ready for Review' at which point, a real human will look over your messages. If a user says 'Give me the diagnosis', give a diagnosis with all the information you know and say 'Ready for Review' at the end",
+        "What will your next response be? Format your response in a user friendly way.\n" +
+        "List extra questions you might have in an ordered list\n" +
+        "If you come up with an inital AI diagnosis and are ready for us to send it to a real doctor for approval, " +
+        "I want you to reply with 'Diagnosis: {3 sentence summary of the diagnosis}'.\n" +
+        "If you have sent more than 5 messages and still cannot figure out an initial AI diagnosis, I want you to reply with 'Diagnois: Could get get, sending to doctor for further review'\n" +
+        "Your response should be less than 3 sentences" +
+        "Use **nn** if you want to use a new line character" +
+        "You should wait atleast for atleast 1 message from the user before responding with the diagnosis"
     });
 
     const openai = new OpenAI({ apiKey: `${process.env.OPENAI_API_KEY}` });
 
     const chatCompletion = await openai.chat.completions.create({
       messages: formattedMessages,
-      model: "gpt-3.5-turbo",
+      model: "gpt-4",
     });
     console.log(formattedMessages);
     console.log(chatCompletion);
 
+    let messageText = chatCompletion.choices[0].message.content;
+    messageText = messageText.replace(/\n/g, "**nn**");
+
+
     let message: Message = {
       senderType: "gpt",
-      content: chatCompletion.choices[0].message.content,
+      content: messageText,
     };
     // 1. Create and save the new message
     const newMessage = new MessageDTO(message);

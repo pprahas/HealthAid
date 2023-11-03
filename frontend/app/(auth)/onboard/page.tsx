@@ -18,7 +18,6 @@ export default function OnboardPage() {
     setRole(role);
     setFirstName(firstName);
     setLastName(lastName);
-    console.log("set the requirements ");
   }, []);
 
   if (role != "") {

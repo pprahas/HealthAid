@@ -41,12 +41,10 @@ export function Sidebar() {
     const patientData = await Promise.all(doctor.patients.map(getPatients));
     setPatientList(patientData);
     setSidebarIndex(0);
-    console.log("pats:", patientData);
   }
 
   useEffect(() => {
     getAllPatients();
-    console.log(patientList);
   }, [doctor]);
 
   const deletePatient = async (patientId: String) => {
@@ -68,7 +66,6 @@ export function Sidebar() {
         }
       );
       const data = await updatePatientResponse.data;
-      console.log(data);
     } catch (error) {
       console.error("Error:", error);
     }

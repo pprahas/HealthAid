@@ -15,8 +15,13 @@ import {
 import { useContext, useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { Button } from "@nextui-org/button";
-import { Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem } from "@nextui-org/dropdown";
-
+import {
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownSection,
+  DropdownItem,
+} from "@nextui-org/dropdown";
 
 interface chatProps {
   messages: Message[];
@@ -41,12 +46,14 @@ export const ChatContainer = ({ messages }: chatProps) => {
     React.Dispatch<React.SetStateAction<Doctor[]>>
   ];
 
-  const [selectedKey, setSelectedKey] = useState(new Set(["Automatically Choose"]));
-  const [selectedName, setSelectedName] = useState("Automatically Choose")
-  const [allDoctors, setAllDoctors] = useState([] as Doctor[])
-  const [autoDoctor, setAutoDoctor] = useState("")
+  const [selectedKey, setSelectedKey] = useState(
+    new Set(["Automatically Choose"])
+  );
+  const [selectedName, setSelectedName] = useState("Automatically Choose");
+  const [allDoctors, setAllDoctors] = useState([] as Doctor[]);
+  const [autoDoctor, setAutoDoctor] = useState("");
   const [isAuto, setIsAuto] = useState(true);
-
+  const [sentToDoctor, setSentToDoctor] = useState(false);
 
   const formatDate = (dateTimeStr: string) => {
     // Convert UTC date-time string to local Date object
@@ -103,9 +110,12 @@ export const ChatContainer = ({ messages }: chatProps) => {
   };
 
   useEffect(() => {
-    //console.log("Curr convo:", convo);
     getDoctorsInNetwork();
   }, []);
+
+  useEffect(() => {
+    setAutoDoctor("");
+  });
 
   const getDoctors = async (doctorId: string) => {
     try {
@@ -127,19 +137,17 @@ export const ChatContainer = ({ messages }: chatProps) => {
     try {
       const response = await axios.post(
         "http://localhost:8080/getDoctorFromId/all",
-        {
-        }
+        {}
       );
 
       const data = await response.data;
 
       filterByInsurance(data);
-
     } catch (error) {
       console.error("Error:", error);
       return;
     }
-  }
+  };
 
   const doctorInsurance = async (id: string) => {
     try {
@@ -152,39 +160,37 @@ export const ChatContainer = ({ messages }: chatProps) => {
     } catch (error) {
       console.error("Error:", error);
     }
-  }
+  };
 
   const filterByInsurance = async (doctorList: Doctor[]) => {
-    let newDoctorList = [] as Doctor[]
+    let newDoctorList = [] as Doctor[];
 
     const defaultDoctor = {
       _id: "Automatically Choose",
       firstName: "Automatically",
       lastName: "Choose",
       patients: [],
-      email: "Automatically Choose"
-    }
-    newDoctorList.push(defaultDoctor)
+      email: "Automatically Choose",
+    };
+    newDoctorList.push(defaultDoctor);
 
     for (let i = 0; i < doctorList.length; i++) {
       if (doctorList[i].clinic != undefined) {
-        let insurance = await doctorInsurance(doctorList[i].clinic as string)
+        let insurance = await doctorInsurance(doctorList[i].clinic as string);
         if (insurance === undefined) continue;
         if (insurance.localeCompare(patient.insurance) == 0) {
-          doctorList[i].firstName = "Dr. " + doctorList[i].firstName
-          newDoctorList.push(doctorList[i])
+          doctorList[i].firstName = "Dr. " + doctorList[i].firstName;
+          newDoctorList.push(doctorList[i]);
         }
       }
-
     }
 
     setAllDoctors(newDoctorList);
-  }
+  };
 
   async function getAllDoctors() {
     if (patient && patient.doctors != undefined) {
       try {
-        //console.log("Doctors:", patient.doctors);
         const allDoctorData: Doctor[] = [
           {
             _id: "gpt",
@@ -199,20 +205,21 @@ export const ChatContainer = ({ messages }: chatProps) => {
         );
         allDoctorData.push(...doctorDataDatabase);
         setDoctorList(allDoctorData);
-      } catch (error) {
-        console.log(error);
-      }
+      } catch (error) {}
     } else {
       setDoctorList([]);
     }
   }
 
   const handleSendToDoctor = async () => {
+    setSentToDoctor(true);
     let email = selectedKey.values().next().value;
+    console.log("1: ", allDoctors[0].email);
+    console.log("2: ", allDoctors[1].email);
     if (email === "Automatically Choose") {
-      email = allDoctors[1].email
+      email = allDoctors[1].email;
     } else {
-      setIsAuto(false)
+      setIsAuto(false);
     }
     try {
       const updateDiagnosisResponse = await axios.post(
@@ -224,7 +231,7 @@ export const ChatContainer = ({ messages }: chatProps) => {
         }
       );
       convo.diagnosis = "pending";
-      setAutoDoctor(allDoctors[1].firstName + " " + allDoctors[1].lastName)
+      setAutoDoctor(allDoctors[1].firstName + " " + allDoctors[1].lastName);
       await getAllDoctors();
       const data = await updateDiagnosisResponse.data;
       const updateDoctorsResponse = await axios.post(
@@ -236,7 +243,6 @@ export const ChatContainer = ({ messages }: chatProps) => {
           },
         }
       );
-      console.log("data:", data);
       let currPatient = Object.assign({}, data) as Patient;
       if (currPatient.doctors) {
         currPatient.doctors.push(`${data}`);
@@ -264,17 +270,33 @@ export const ChatContainer = ({ messages }: chatProps) => {
     ["denied", "bg-[#d2222d]"],
   ]);
 
+  useEffect(() => {
+    console.log("count: ", messages.length);
+    let lastMessage = messages[messages.length - 1];
+    console.log("last message: ", lastMessage);
+    if (lastMessage) {
+      if (lastMessage.content.toLowerCase().includes("diagnosis: ")) {
+        if (convo.diagnosis == "none") {
+          console.log("auto send to doctor");
+          if (allDoctors.length > 0) {
+            handleSendToDoctor();
+          }
+        }
+        setSentToDoctor(true);
+      }
+    }
+  }, [messages, allDoctors]);
+
   return (
     <div className="h-full mr-10">
       <div className="bg-gray-300 rounded-2xl px-3 py-2 flow-root">
         <div className="float-left flex flex-row items-center">
-          {convo.diagnosis === "none" &&
-
+          {convo.diagnosis === "none" && (
             <div>
               Send to:
               <Dropdown
                 classNames={{
-                  base: "bg-white"
+                  base: "bg-white",
                 }}
               >
                 <DropdownTrigger>
@@ -296,12 +318,15 @@ export const ChatContainer = ({ messages }: chatProps) => {
                   selectedKeys={selectedKey}
                   onSelectionChange={setSelectedKey}
                   onAction={(key) => {
-                    let selectedDoctor = allDoctors.find(i => i.email === key)
+                    let selectedDoctor = allDoctors.find(
+                      (i) => i.email === key
+                    );
                     if (selectedDoctor !== undefined) {
-                      setSelectedName(selectedDoctor.firstName + " " + selectedDoctor.lastName)
+                      setSelectedName(
+                        selectedDoctor.firstName + " " + selectedDoctor.lastName
+                      );
                     }
-                  }
-                  }
+                  }}
                   items={allDoctors}
                 >
                   {(item) => (
@@ -311,21 +336,19 @@ export const ChatContainer = ({ messages }: chatProps) => {
                   )}
                 </DropdownMenu>
               </Dropdown>
-
             </div>
-          }
-          {autoDoctor !== "" &&
-          
-            <>{isAuto ? 
-              <div className="text-md mt-2">
-                Automatically sent to {autoDoctor}
-              </div>
-              :
-              <div className="text-md mt-2">
-                Sent to {autoDoctor}
-              </div>
-            }</>
-          }
+          )}
+          {autoDoctor !== "" && (
+            <>
+              {isAuto ? (
+                <div className="text-md mt-2">
+                  {/* Automatically sent to {autoDoctor} */}
+                </div>
+              ) : (
+                <div className="text-md mt-2">Sent to {autoDoctor}</div>
+              )}
+            </>
+          )}
         </div>
 
         <div className="float-right">
@@ -337,12 +360,13 @@ export const ChatContainer = ({ messages }: chatProps) => {
                 await handleSendToDoctor();
               }
             }}
-            className={`text-md ${diagnosisStatusColor.get(convo.diagnosis)} w-[10vw]`}
+            className={`text-md ${diagnosisStatusColor.get(
+              convo.diagnosis
+            )} w-[10vw]`}
           >
             {diagnosisStatusMessage.get(convo.diagnosis)}
           </Button>
         </div>
-
       </div>
 
       {messages &&
@@ -355,20 +379,34 @@ export const ChatContainer = ({ messages }: chatProps) => {
                     <Avatar sender={message.senderType} />
                   </div>
                   <div className="flex flex-col ">
-                    <div className="px-2 max-w-[calc(100%-20%)] py-2 flex flex-col rounded-2xl text-white shadow-md ml-2 bg-gradient-to-r from-blue-800 to-indigo-800">
-                      <span className="text-md">{message.content}</span>
+                    <div
+                      style={{ whiteSpace: "pre-wrap" }}
+                      className="px-2 max-w-[calc(100%-20%)] py-2 flex flex-col rounded-2xl text-white shadow-md ml-2 bg-gradient-to-r from-blue-800 to-indigo-800"
+                    >
+                      <span className="text-md">
+                        {message.content
+                          .replaceAll("**nn**", "\n")
+                          .replaceAll("*", "")}
+                      </span>
                     </div>
                     <div className="ml-2">{formatDate(`${message.date}`)}</div>
                   </div>
                 </div>
               </div>
             )}
-            {message.senderType != "gpt" && (
+            {message.senderType !== "gpt" && (
               <div>
                 <div className="py-2 flex flex-row items-end justify-end">
-                  <div className="flex flex-col ">
-                    <div className="px-2 max-w-[calc(100%-20%)] py-2 flex flex-col rounded-2xl text-white shadow-md mr-2 bg-gradient-to-l from-gray-500 to-slate-700">
-                      <span className="text-md">{message.content}</span>
+                  <div className="flex flex-col">
+                    <div
+                      style={{ whiteSpace: "pre-wrap" }}
+                      className="px-2 max-w-[calc(100%-20%)] py-2 flex flex-col rounded-2xl text-white shadow-md mr-2 bg-gradient-to-l from-gray-500 to-slate-700"
+                    >
+                      <div className="text-md">
+                        {message.content
+                          .replaceAll("**nn**", "\n")
+                          .replaceAll("*", "")}
+                      </div>
                     </div>
                     <div className="ml-2">{formatDate(`${message.date}`)}</div>
                   </div>

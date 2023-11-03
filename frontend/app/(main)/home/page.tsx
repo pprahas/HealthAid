@@ -70,7 +70,6 @@ export default function PatientHome() {
       };
       setDoctor(gptDoctor);
     } else {
-      console.log("doctor:", doctor._id);
       try {
         const response = await axios.post(
           "http://localhost:8080/getDoctorFromId",
@@ -88,7 +87,6 @@ export default function PatientHome() {
   };
 
   const getConversations = async (doctorId: string) => {
-    console.log("new convo");
     try {
       const response = await axios.post(
         "http://localhost:8080/conversation/getConversations",
@@ -99,7 +97,6 @@ export default function PatientHome() {
       );
 
       const data = await response.data;
-      console.log(data);
       setConvoList(data);
     } catch (error) {
       console.error("Error:", error);
@@ -130,7 +127,6 @@ export default function PatientHome() {
         }
       );
       const data = await sendMessageResponse.data;
-      console.log(data);
       let newGPTMessage: Message = {
         senderType: data.senderType,
         content: data.content,
@@ -147,12 +143,10 @@ export default function PatientHome() {
   };
 
   const updateConvo = (conversation: Conversation) => {
-    console.log(conversation);
     setConvo(conversation);
   };
 
   const getClinicInformation = async (clinicId?: string) => {
-    console.log("doctor:", doctor._id);
     try {
       const response = await axios.post("http://localhost:8080/getClinic", {
         clinicId: clinicId,
@@ -166,16 +160,13 @@ export default function PatientHome() {
   };
 
   useEffect(() => {
-    console.log("new doctor:", doctor._id);
     getConversations(doctor._id);
-    console.log("clinic id:", doctor.clinic);
     if (doctor._id != "gpt") {
       getClinicInformation(doctor.clinic);
     }
   }, [doctor]);
 
   useEffect(() => {
-    console.log("new index:", sidebarIndex);
     setConvo(DefaultConversation);
     getDoctorInfo();
   }, [sidebarIndex, patient]);

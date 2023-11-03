@@ -120,7 +120,6 @@ const PatientQuestions = () => {
 
   async function handleRegister() {
     if (answers != undefined) {
-      console.log("insurance is", insurance);
       try {
         setLoading(true);
         let currUserObject = fetchUserData();
@@ -143,9 +142,7 @@ const PatientQuestions = () => {
           }
         );
 
-        console.log("Update health response:", updateHealthInfoResponse.data);
         const updateHealthInfoData = await updateHealthInfoResponse.data;
-        console.log(updateHealthInfoData.patient);
         setLoading(false);
 
         //window.location.href = "/home";
@@ -153,7 +150,6 @@ const PatientQuestions = () => {
       } catch (error) {
         const axiosError = error as AxiosError;
         let errorText = axiosError.response?.data;
-        console.log(errorText);
         setError("" + errorText);
       }
     }
