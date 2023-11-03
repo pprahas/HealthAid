@@ -245,6 +245,7 @@ export const ChatContainer = ({ messages }: chatProps) => {
           },
         }
       );
+      window.alert("Initial Diagnosis has been sent!");
       let docIndex = doctorList.findIndex((doctor) => {
         doctor._id == data;
       });
