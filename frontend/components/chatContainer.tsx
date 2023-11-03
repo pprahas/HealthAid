@@ -280,7 +280,10 @@ export const ChatContainer = ({ messages }: chatProps) => {
         if (convo.diagnosis == "none") {
           console.log("auto send to doctor");
           if (allDoctors.length > 0) {
-            handleSendToDoctor();
+            const send = async () => {
+              await handleSendToDoctor();
+            };
+            send();
           }
         }
         setSentToDoctor(true);
