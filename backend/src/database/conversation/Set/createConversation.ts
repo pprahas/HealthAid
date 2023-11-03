@@ -1,10 +1,12 @@
-export enum ConversationError {}
+export enum ConversationError { }
 
-import { HealthInformationDTO } from "@models/HealthInformation";
+// import { HealthInformationDTO } from "@models/HealthInformation";
 
-import { PatientDTO } from "@models/Patient";
-import { AskGPT } from "@endpoints/controllers/AI/gpt";
+// import { PatientDTO } from "@models/Patient";
+// import { AskGPT } from "@endpoints/controllers/AI/gpt";
 import { Conversation, ConversationDTO } from "@models/Conversation";
+import { Message, MessageDTO } from "@models/Message";
+import { PatientDTO } from "@models/Patient";
 
 export async function createConversation(body) {
   try {
@@ -18,29 +20,28 @@ export async function createConversation(body) {
       diagnosis: "none",
     };
 
-    // 1. Create and save the new conversation
     const newConversation = new ConversationDTO(conversation);
     await newConversation.save();
 
-    const healthInformation = patientAccount.healthInfo;
+    console.log(`Conversation ID: ${newConversation._id}`);
 
-    let promptToGPT = `Hello ChatGPT. I am a medical professional using this AI to assist with patient assessments. I have the following health information about the patient:`;
+    let gptFirstMessage: Message = {
+      senderType: "gpt",
+      content: `Hey, welcome to Health Aid! How can I help you ${patientAccount.firstName} ${patientAccount.lastName}?`,
+    };
 
-    for (const healthInfoId of healthInformation) {
-      const healthInfoObject = await HealthInformationDTO.findById(
-        healthInfoId
-      );
-      if (healthInfoObject) {
-        promptToGPT += `
-        Question: ${healthInfoObject.question} Answer: ${healthInfoObject.answer} `;
-      }
-    }
+    const newMessage = new MessageDTO(gptFirstMessage);
+    await newMessage.save();
 
-    console.log(`Conversatio ID: ${newConversation._id}`);
-    let gptResponse = await AskGPT(promptToGPT, [], `${newConversation._id}`);
+    await ConversationDTO.findByIdAndUpdate(
+      newConversation._id,
+      { $push: { messages: newMessage._id } },
+      { new: true, useFindAndModify: false }
+    );
+
     return {
       conversationId: newConversation._id,
-      gptResponse: gptResponse,
+      gptResponse: gptFirstMessage,
     };
   } catch (err) {
     console.log("error:", err);

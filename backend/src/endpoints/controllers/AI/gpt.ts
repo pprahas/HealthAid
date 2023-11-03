@@ -2,6 +2,8 @@ import { Message, MessageDTO } from "@models/Message";
 import OpenAI from "openai";
 import { Request, Response } from "express";
 import { ConversationDTO } from "@models/Conversation";
+import { PatientDTO } from "@models/Patient";
+import { HealthInformationDTO } from "@models/HealthInformation";
 
 const DEFAULT_PROMPT = "You are an AI doctor that will come up with an inital AI diagnosis"
 
@@ -9,7 +11,22 @@ export async function AskGPTWrapper(req: Request, res: Response) {
   try {
     let messages: [Message] = req.body.messages;
     let conversationId = req.body.conversationId;
-    let response = await AskGPT("", messages, conversationId);
+    const conversation = await ConversationDTO.findById(conversationId)
+    const patientAccount = await PatientDTO.findById(conversation.patient);
+
+    let promptToGPT = `Hello ChatGPT. I am a medical professional using this AI to assist with patient assessments. I have the following health history information about the patient (this was collected when they first joined so it might not pertain to their current symptoms):`;
+    const healthInformation = patientAccount.healthInfo;
+    for (const healthInfoId of healthInformation) {
+      const healthInfoObject = await HealthInformationDTO.findById(
+        healthInfoId
+      );
+      if (healthInfoObject) {
+        promptToGPT += `
+        Question: ${healthInfoObject.question} Answer: ${healthInfoObject.answer} `;
+      }
+    }
+
+    let response = await AskGPT(promptToGPT, messages, conversationId);
     res.status(200).send(response);
   } catch (error) {
     return res.status(400).send(error);
@@ -56,7 +73,7 @@ export async function AskGPT(
 
     const chatCompletion = await openai.chat.completions.create({
       messages: formattedMessages,
-      model: "gpt-3.5-turbo",
+      model: "gpt-4",
     });
     console.log(formattedMessages);
     console.log(chatCompletion);
