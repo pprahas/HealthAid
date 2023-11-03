@@ -38,11 +38,16 @@ export function Sidebar() {
   };
 
   async function getAllPatients() {
-    const patientData = await Promise.all(doctor.patients.map(getPatients));
-    patientData.filter((patient) => {
-      return patient.activeAccount;
+    const patientData = (await Promise.all(
+      doctor.patients.map(getPatients)
+    )) as Patient[];
+    let activePatients: Patient[] = [];
+    patientData.forEach((pat) => {
+      if (pat.activeAccount) {
+        activePatients.push(pat);
+      }
     });
-    setPatientList(patientData);
+    setPatientList(activePatients);
     setSidebarIndex(0);
   }
 
