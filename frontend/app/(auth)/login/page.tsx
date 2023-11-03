@@ -2,6 +2,7 @@
 import { title } from "@/components/primitives";
 import { useState } from "react";
 import { Button } from "@nextui-org/button";
+import { Console } from "console";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -28,7 +29,10 @@ export default function LoginPage() {
         let loginData = await response.json();
         let user = loginData.user;
         localStorage.setItem("user", JSON.stringify(user));
-        if (user.userType == "doctor") {
+        console.log("EMAIL  " + email)
+        if(email === "admin@healthaid.com"){
+          window.location.href = "/adminHome";
+        } else if (user.userType === "doctor") {
           window.location.href = "/doctor/home";
         } else {
           window.location.href = "/home";
