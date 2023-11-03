@@ -52,7 +52,16 @@ export default function DoctorCalendar() {
     }
   };
 
+  const checkDeactivated = () => {
+    if(doctor.hasOwnProperty('activeAccount') && doctor.activeAccount === false && window.location.pathname !== '/doctor/profile'
+    ) {
+      window.alert("Account has not yet been approved");
+      window.location.href = "/doctor/profile";
+    }
+  }
+
   useEffect(() => {
+    checkDeactivated();
     getAppointments();
   }, [doctor]);
 

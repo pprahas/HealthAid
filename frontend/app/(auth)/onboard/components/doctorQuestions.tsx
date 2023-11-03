@@ -198,15 +198,23 @@ const DoctorQuestions = () => {
           />
         </div>
         <div>
-          <Input
-            isRequired
+          <label className="block text-lg text-gray-700">
+            NPI Number
+          </label>
+          <input
+            // type="text"
+            // label="NPI"
+            // defaultValue=""
+            // onChange={(e) => {
+            //   setNpi(e.target.value);
+            // }}
             type="text"
-            label="NPI"
-            defaultValue=""
+            className="p-4 shadow-sm rounded-xl bg-gray-100 hover:bg-gray-200 transition duration-200"
+            placeholder={"123456789"}
+            // value={answers[index]}
             onChange={(e) => {
               setNpi(e.target.value);
-            }}
-          />
+            }}          />
         </div>
         
 

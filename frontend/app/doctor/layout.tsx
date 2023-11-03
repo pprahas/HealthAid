@@ -4,6 +4,7 @@ import { Navbar } from "./components/navbar";
 import { Sidebar } from "./components/sidebarDoctor";
 import { useEffect, useState, createContext, useContext } from "react";
 import axios, { AxiosError } from "axios";
+
 import {
   Conversation,
   DefaultConversation,
@@ -86,6 +87,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
       const data = await response.data;
       setDoctor(data.doctor);
+
+      // Checks if account is deactivated
+      //
+      if(data.doctor.hasOwnProperty('activeAccount') && data.doctor.activeAccount === false && window.location.pathname !== '/doctor/profile'
+      ) {
+        window.alert("Account has not yet been approved");
+        window.location.href = "/doctor/profile";
+      }
+      // 
+
     } catch (error) {
       console.error("Error:", error);
     }

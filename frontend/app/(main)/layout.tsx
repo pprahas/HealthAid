@@ -95,7 +95,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         //
         if(data.patient.hasOwnProperty('activeAccount') && data.patient.activeAccount === false && window.location.pathname !== '/profile'
         ) {
-          console.log("Account not active")
+          window.alert("Your Account has been deactivated. Please Re-Activate to use.");
           window.location.href = "/profile";
         }
         // 

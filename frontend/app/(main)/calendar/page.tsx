@@ -74,7 +74,7 @@ export default function PatientCalendar() {
 
   const checkDeactivated = () => {    
     if(patient.hasOwnProperty('activeAccount') && patient.activeAccount === false && window.location.pathname !== '/profile') {
-      console.log("Account not active")
+      window.alert("Your Account has been deactivated. Please Re-Activate to use.");
       window.location.href = "/profile";
       }
   }

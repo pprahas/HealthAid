@@ -53,6 +53,7 @@ export default function AdminHomePage() {
         console.log(`Denied ${selectedRequest.doctorEmail}`);
       }
     }
+    window.location.reload();
   };
 
   async function getAllRequests() {
