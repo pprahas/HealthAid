@@ -2,6 +2,7 @@ import { Schema, model } from "mongoose";
 import { Doctor } from "./Doctor";
 import { Appointment } from "./Appointment";
 import { HealthInformation } from "./HealthInformation";
+import { Prescription } from "./Prescription";
 
 // Local Model
 export type Patient = {
@@ -12,6 +13,8 @@ export type Patient = {
   userType: String;
   birthday?: Date;
   network?: string;
+  reminders?: string;
+  remindersValue?: string;
   gender?: string;
   weight?: Number;
   height?: Number;
@@ -20,6 +23,7 @@ export type Patient = {
   doctors?: [Doctor];
   appointments?: [Appointment];
   healthInfo?: [HealthInformation];
+  prescriptions?: [Prescription];
 };
 
 export const patientSchema = new Schema(
@@ -78,6 +82,15 @@ export const patientSchema = new Schema(
       type: Boolean,
       default: true,
       required: true,
+    },
+    reminders: {
+      type: String,
+    },
+    remindersValue: {
+      type: String,
+    },
+    prescriptions: {
+      type: [{ type: Schema.ObjectId, ref: "Prescription" }],
     },
   },
   { timestamps: true }
