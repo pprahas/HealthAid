@@ -53,6 +53,9 @@ export default function DoctorHome() {
   const [currentMessage, setCurrentMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [creatingAppointment, setCreatingAppointment] = useState(false);
+  const [apptTitle, setApptTitle] = useState("");
+  const [apptDate, setApptDate] = useState(new Date());
 
   useEffect(() => {}, []);
 
@@ -121,6 +124,46 @@ export default function DoctorHome() {
     setCurrentConvo(conversation);
   };
 
+  const handleInputChange = (field: string, value: string | Date) => {
+    if (field == "title" && typeof value == "string") {
+      setApptTitle(value);
+    }
+    if (field == "start" && value instanceof Date) {
+      setApptDate(value);
+    }
+  };
+
+  async function createAppointment(
+    doctorId: string,
+    patientId: string,
+    time: Date,
+    title: string
+  ) {
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/appointment/create",
+        {
+          doctorId: doctorId,
+          patientId: patientId,
+          time: time,
+          title: title,
+        }
+      );
+
+      const data = await response.data;
+    } catch (error) {
+    } finally {
+      setApptTitle("");
+      setApptDate(new Date());
+    }
+  }
+
+  function toLocalISOString(date: Date) {
+    const off = date.getTimezoneOffset();
+    const adjustedDate = new Date(date.getTime() - off * 60 * 1000);
+    return adjustedDate.toISOString().slice(0, -1);
+  }
+
   useEffect(() => {
     if (patient._id == "" && patientList[sidebarIndex]) {
       getConversations(patientList[sidebarIndex]._id);
@@ -151,6 +194,68 @@ export default function DoctorHome() {
             {patientList[sidebarIndex]?.bio}
           </h1>
         )}
+        <div className={`grid grid-cols-1 gap-y-3 text-2xl`}>
+          <div className="flex flex-col items-start">
+            <p className="my-3">
+              <Button
+                size="lg"
+                color="success"
+                className="text-xl shadow-md"
+                isDisabled={creatingAppointment}
+                onClick={(e) => {
+                  setCreatingAppointment(true);
+                }}
+              >
+                Schedule Appointment
+              </Button>
+            </p>
+          </div>
+          {creatingAppointment && (
+            <div className="flex flex-col w-[100vw] space-y-[1vw] overflow-visible text-[1vw]">
+              <div className="flex space-x-2">
+                <div>{"Title: "}</div>
+                <input
+                  className="bg-white border-b-[0.1vw] border-black"
+                  type="text"
+                  value={apptTitle}
+                  onChange={(e) => handleInputChange("title", e.target.value)}
+                />
+              </div>
+              <div className="flex space-x-2">
+                <div>{"Start Time: "}</div>
+                <input
+                  className="bg-white border-b-[0.1vw] border-black"
+                  type="datetime-local"
+                  value={apptDate ? toLocalISOString(apptDate) : ""}
+                  onChange={(e) =>
+                    handleInputChange("start", new Date(e.target.value))
+                  }
+                />
+              </div>
+              <div className="w-full">
+                <Button
+                  size="lg"
+                  color="success"
+                  className="text-xl shadow-md"
+                  isDisabled={apptTitle == ""}
+                  onClick={(e) => {
+                    if (creatingAppointment) {
+                      createAppointment(
+                        doctor._id,
+                        patientList[sidebarIndex]?._id,
+                        apptDate,
+                        apptTitle
+                      );
+                    }
+                    setCreatingAppointment(false);
+                  }}
+                >
+                  Save Appointment
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
         <div className="space-y-5 pt-5">
           {currentConvo &&
             convoList?.map((conversation, index: number) => (
