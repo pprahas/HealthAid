@@ -12,6 +12,8 @@ export type Patient = {
   userType: String;
   birthday?: Date;
   network?: string;
+  reminders?: string;
+  remindersValue?: string;
   gender?: string;
   weight?: Number;
   height?: Number;
@@ -76,8 +78,14 @@ export const patientSchema = new Schema(
     },
     activeAccount: {
       type: Boolean,
-      default: true,    
+      default: true,
       required: true,
+    },
+    reminders: {
+      type: String,
+    },
+    remindersValue: {
+      type: String,
     },
   },
   { timestamps: true }
