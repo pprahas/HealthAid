@@ -54,6 +54,7 @@ export const ChatContainer = ({ messages }: chatProps) => {
   const [autoDoctor, setAutoDoctor] = useState("");
   const [isAuto, setIsAuto] = useState(true);
   const [sentToDoctor, setSentToDoctor] = useState(false);
+  const [lastSeenIndex, setLastSeenIndex] = useState("");
 
   const formatDate = (dateTimeStr: string) => {
     // Convert UTC date-time string to local Date object
@@ -279,6 +280,30 @@ export const ChatContainer = ({ messages }: chatProps) => {
 
   useEffect(() => {}, [messages, allDoctors]);
 
+  const markAsSeen = async (messageId: String) => {
+    await axios.post("http://localhost:8080/conversation/markAsSeen", {
+      messageId: messageId,
+    });
+    console.log(`marking ${messageId}}`);
+  };
+
+  useEffect(() => {
+    console.log(messages);
+    let lastId = "";
+    let currMessages = messages;
+    for (let i = 0; i < currMessages.length; i++) {
+      let message = currMessages[i];
+      if (message.senderType == "me") {
+        if (message.seen) {
+          lastId = message.id;
+        }
+      } else if (message.senderType == "doctor") {
+        markAsSeen(message.id);
+      }
+    }
+    setLastSeenIndex(lastId);
+  }, [messages]);
+
   return (
     <div className="h-full mr-10">
       <div className="bg-gray-300 rounded-2xl px-3 py-2 flow-root">
@@ -364,7 +389,8 @@ export const ChatContainer = ({ messages }: chatProps) => {
       {messages &&
         messages.map((message: Message, index: number) => (
           <div key={index}>
-            {message.senderType === "gpt" && (
+            {(message.senderType === "gpt" ||
+              message.senderType === "doctor") && (
               <div>
                 <div className="py-2 flex flex-row items-end justify-start">
                   <div className="">
@@ -381,12 +407,11 @@ export const ChatContainer = ({ messages }: chatProps) => {
                           .replaceAll("*", "")}
                       </span>
                     </div>
-                    <div className="ml-2">{formatDate(`${message.date}`)}</div>
                   </div>
                 </div>
               </div>
             )}
-            {message.senderType !== "gpt" && (
+            {message.senderType === "me" && (
               <div>
                 <div className="py-2 flex flex-row items-end justify-end">
                   <div className="flex flex-col">
@@ -400,7 +425,11 @@ export const ChatContainer = ({ messages }: chatProps) => {
                           .replaceAll("*", "")}
                       </div>
                     </div>
-                    <div className="ml-2">{formatDate(`${message.date}`)}</div>
+                    {
+                      <div className="ml-2">
+                        {message.id == lastSeenIndex && "seen"}
+                      </div>
+                    }
                   </div>
                   <div>
                     <Avatar sender={message.senderType} />

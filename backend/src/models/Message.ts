@@ -14,6 +14,11 @@ export const messageSchema = new Schema(
     content: {
       type: String,
     },
+    seen: {
+      type: Boolean,
+      required: false,
+      default: false
+    }
   },
   { timestamps: true }
 );

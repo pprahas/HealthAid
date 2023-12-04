@@ -56,3 +56,37 @@ export async function sendMessage(patientId: String, conversationId: String, mes
     }
 }
 
+export async function sendMessageDoc(doctorId: String, conversationId: String, message: Message) {
+    // 1. Create and save the new message
+    const newMessage = new MessageDTO(message);
+    await newMessage.save();
+
+    // 2. Add the new message's ObjectId to the Conversation's messages array and retrieve the updated conversation
+    await ConversationDTO.findByIdAndUpdate(
+        conversationId,
+        { $push: { messages: newMessage._id } },
+        { new: true, useFindAndModify: false }
+    );
+}
+
+export async function sendMessagePat(patientId: String, conversationId: String, message: Message) {
+    // 1. Create and save the new message
+    const newMessage = new MessageDTO(message);
+    await newMessage.save();
+
+    // 2. Add the new message's ObjectId to the Conversation's messages array and retrieve the updated conversation
+    await ConversationDTO.findByIdAndUpdate(
+        conversationId,
+        { $push: { messages: newMessage._id } },
+        { new: true, useFindAndModify: false }
+    );
+}
+
+export async function markAsSeen(messageId: String) {
+    await MessageDTO.findByIdAndUpdate(
+        messageId,
+        { $set: { seen: true } },
+        { new: false, useFindAndModify: true }
+    );
+}
+

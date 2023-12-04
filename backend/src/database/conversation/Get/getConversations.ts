@@ -16,9 +16,11 @@ export async function getConversations(patientId: String, doctorId: String) {
             const currMessageDTO = await MessageDTO.findById(messageId);
             console.log("Message:", currMessageDTO)
             return {
+              id: currMessageDTO.id,
               senderType: currMessageDTO.senderType,
               content: currMessageDTO.content,
               date: currMessageDTO.createdAt,
+              seen: currMessageDTO.seen,
             };
           })
         );

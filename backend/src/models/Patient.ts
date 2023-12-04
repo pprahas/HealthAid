@@ -76,7 +76,7 @@ export const patientSchema = new Schema(
     },
     activeAccount: {
       type: Boolean,
-      default: true,    
+      default: true,
       required: true,
     },
   },

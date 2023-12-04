@@ -119,9 +119,11 @@ export const DefaultConversation: Conversation = {
 
 // Message
 export interface Message {
+  id: "",
   date: Date;
   senderType: string;
   content: String;
+  seen: boolean
 }
 
 

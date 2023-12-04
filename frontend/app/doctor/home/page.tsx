@@ -14,9 +14,10 @@ import {
 } from "@/app/doctor/layout";
 import { SetStateAction, useContext, useState } from "react";
 import { DefaultConversation, Patient, PatientDefault } from "@/types";
-import { Doctor, DoctorDefault, Conversation } from "@/types";
+import { Doctor, DoctorDefault, Conversation, Message } from "@/types";
 import { RightArrow } from "@/components/rightArrow";
 import { ChatContainerDoctor } from "@/components/chatContainerDoctor";
+import { UnreadIcon } from "@/components/unreadIcon";
 
 export default function DoctorHome() {
   const [patientList, setPatientList] = useContext(PatientListContext) as [
@@ -49,6 +50,10 @@ export default function DoctorHome() {
     SetStateAction<Doctor>
   ];
 
+  const [currentMessage, setCurrentMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+
   useEffect(() => {}, []);
 
   const getConversations = async (patientId: string) => {
@@ -68,7 +73,51 @@ export default function DoctorHome() {
     }
   };
 
+  useEffect(() => {}, [currentConvo]);
+
+  const sendMessage = async (message: string) => {
+    setLoading(true);
+    let date = new Date();
+    let newMessage: Message = {
+      id: "",
+      senderType: "doctor",
+      content: message,
+      date: date,
+      seen: false,
+    };
+    setCurrentMessage("");
+    let convo = currentConvo;
+    convo.messages.push(newMessage);
+    setCurrentConvo(convo);
+
+    // Make api call
+    try {
+      const sendMessageResponse = await axios.post(
+        "http://localhost:8080/conversation/sendMessageDoc",
+        {
+          doctorId: doctor._id,
+          conversationId: currentConvo._id,
+          newMessage: message,
+        }
+      );
+    } catch (error) {
+      console.error("Error:", error);
+      setError(true);
+    }
+    setLoading(false);
+  };
+
   const updateConvo = (conversation: Conversation) => {
+    let currMessages = conversation.messages;
+    for (let i = 0; i < currMessages.length; i++) {
+      let message = currMessages[i];
+      if (message.senderType == "me") {
+        if (message.seen == undefined || !message.seen) {
+          message.seen = true;
+        }
+      }
+    }
+    conversation.messages = currMessages;
     setCurrentConvo(conversation);
   };
 
@@ -84,21 +133,24 @@ export default function DoctorHome() {
   return (
     <section className="columns-2 items-start h-[calc(100vh-60px)]">
       <div className="w-full h-full pt-9 pl-10 pr-8 overflow-hidden">
-      <h1 className="font-bold text-4xl">
-        {patientList[sidebarIndex]?.firstName}{" "}
-        {patientList[sidebarIndex]?.lastName}
-        <br />
-      </h1>
-      {patientList[sidebarIndex]?.email && (
-        <h1 className="text-2xl">
-          {"Email: "}{patientList[sidebarIndex]?.email}<br />
+        <h1 className="font-bold text-4xl">
+          {patientList[sidebarIndex]?.firstName}{" "}
+          {patientList[sidebarIndex]?.lastName}
+          <br />
         </h1>
-      )}
-      {patientList[sidebarIndex]?.bio && (
-        <h1 className="text-2xl">
-          {"Bio: "}{patientList[sidebarIndex]?.bio}
-        </h1>
-      )}
+        {patientList[sidebarIndex]?.email && (
+          <h1 className="text-2xl">
+            {"Email: "}
+            {patientList[sidebarIndex]?.email}
+            <br />
+          </h1>
+        )}
+        {patientList[sidebarIndex]?.bio && (
+          <h1 className="text-2xl">
+            {"Bio: "}
+            {patientList[sidebarIndex]?.bio}
+          </h1>
+        )}
         <div className="space-y-5 pt-5">
           {currentConvo &&
             convoList?.map((conversation, index: number) => (
@@ -118,7 +170,10 @@ export default function DoctorHome() {
                     ? conversation.title
                     : `Conversation ${index + 1}`}
                 </div>
-                <div>
+                <div className="flex">
+                  {conversation.messages.filter((message) => {
+                    return message.senderType == "me" && !message.seen;
+                  }).length > 0 && <UnreadIcon />}
                   <RightArrow />
                 </div>
               </div>
@@ -131,6 +186,43 @@ export default function DoctorHome() {
             <ChatContainerDoctor messages={currentConvo.messages} />
           )}
         </div>
+        {(currentConvo.diagnosis == "denied" ||
+          currentConvo.diagnosis == "approved") && (
+          <div className="h-min my-1 place-items-center">
+            <div className="flex flex-col text-[#ff0000] font-bold">
+              {error && <div>An error occurred while sending a message</div>}
+              <div className="flex space-x-1 pr-10 text-black">
+                <Textarea
+                  disabled={loading}
+                  maxRows={2}
+                  placeholder="Tell ChatGPT about your symptoms"
+                  size="lg"
+                  value={currentMessage}
+                  onValueChange={(value) => {
+                    setError(false);
+                    setCurrentMessage(value);
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" && !event.shiftKey) {
+                      event.preventDefault();
+                      sendMessage(currentMessage);
+                    }
+                  }}
+                />
+                <Button color="success" className="h-16 my-1.5 shadow-md">
+                  <div
+                    onClick={() => {
+                      sendMessage(currentMessage);
+                    }}
+                    className="font-bold"
+                  >
+                    Send
+                  </div>
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

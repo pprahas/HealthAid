@@ -26,6 +26,7 @@ import { RightArrow } from "@/components/rightArrow";
 import { Message } from "@/types";
 import { Spinner } from "@nextui-org/spinner";
 import { after } from "node:test";
+import { UnreadIcon } from "@/components/unreadIcon";
 
 export default function PatientHome() {
   const [sidebarIndex, setSidebarIndex] = useContext(SidebarContext) as any[];
@@ -99,6 +100,7 @@ export default function PatientHome() {
       );
 
       const data = await response.data;
+      console.log(data);
       setConvoList(data);
     } catch (error) {
       console.error("Error:", error);
@@ -264,12 +266,41 @@ export default function PatientHome() {
   }
 
   const sendMessage = async (message: string) => {
+    if (
+      convo.diagnosis == "approved" ||
+      convo.diagnosis == "denied" ||
+      convo.diagnosis == "pending"
+    ) {
+      let date = new Date();
+      let newMessage: Message = {
+        id: "",
+        senderType: "me",
+        content: message,
+        date: date,
+        seen: false,
+      };
+      setCurrentMessage("");
+      let currentConvo = convo;
+      currentConvo.messages.push(newMessage);
+      setConvo(currentConvo);
+      try {
+        await axios.post("http://localhost:8080/conversation/sendMessagePat", {
+          patientId: patient._id,
+          conversationId: convo._id,
+          newMessage: message,
+        });
+      } catch {}
+      return;
+    }
+
     setLoading(true);
     let date = new Date();
     let newMessage: Message = {
+      id: "",
       senderType: "me",
       content: message,
       date: date,
+      seen: false,
     };
     setCurrentMessage("");
     let currentConvo = convo;
@@ -305,6 +336,16 @@ export default function PatientHome() {
   };
 
   const updateConvo = (conversation: Conversation) => {
+    let currMessages = conversation.messages;
+    for (let i = 0; i < currMessages.length; i++) {
+      let message = currMessages[i];
+      if (message.senderType == "doctor") {
+        if (message.seen == undefined || !message.seen) {
+          message.seen = true;
+        }
+      }
+    }
+    conversation.messages = currMessages;
     setConvo(conversation);
   };
 
@@ -513,7 +554,10 @@ export default function PatientHome() {
                         ? conversation.title
                         : `Conversation ${index + 1}`}
                     </div>
-                    <div>
+                    <div className="flex">
+                      {conversation.messages.filter((message) => {
+                        return message.senderType == "doctor" && !message.seen;
+                      }).length > 0 && <UnreadIcon />}
                       <RightArrow />
                     </div>
                   </div>
@@ -525,40 +569,42 @@ export default function PatientHome() {
           <div className="flex-grow overflow-y-auto snap-y">
             {convo && <ChatContainer messages={convo.messages} />}
           </div>
-          <div className="h-min my-1 place-items-center">
-            <div className="flex flex-col text-[#ff0000] font-bold">
-              {error && <div>An error occurred while sending a message</div>}
-              <div className="flex space-x-1 pr-10 text-black">
-                <Textarea
-                  disabled={loading}
-                  maxRows={2}
-                  placeholder="Tell ChatGPT about your symptoms"
-                  size="lg"
-                  value={currentMessage}
-                  onValueChange={(value) => {
-                    setError(false);
-                    setCurrentMessage(value);
-                  }}
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter" && !event.shiftKey) {
-                      event.preventDefault();
-                      sendMessage(currentMessage);
-                    }
-                  }}
-                />
-                <Button color="success" className="h-16 my-1.5 shadow-md">
-                  <div
-                    onClick={() => {
-                      sendMessage(currentMessage);
+          {
+            <div className="h-min my-1 place-items-center">
+              <div className="flex flex-col text-[#ff0000] font-bold">
+                {error && <div>An error occurred while sending a message</div>}
+                <div className="flex space-x-1 pr-10 text-black">
+                  <Textarea
+                    disabled={loading}
+                    maxRows={2}
+                    placeholder="Tell ChatGPT about your symptoms"
+                    size="lg"
+                    value={currentMessage}
+                    onValueChange={(value) => {
+                      setError(false);
+                      setCurrentMessage(value);
                     }}
-                    className="font-bold"
-                  >
-                    Send
-                  </div>
-                </Button>
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" && !event.shiftKey) {
+                        event.preventDefault();
+                        sendMessage(currentMessage);
+                      }
+                    }}
+                  />
+                  <Button color="success" className="h-16 my-1.5 shadow-md">
+                    <div
+                      onClick={() => {
+                        sendMessage(currentMessage);
+                      }}
+                      className="font-bold"
+                    >
+                      Send
+                    </div>
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>
+          }
         </div>
       </section>
     );

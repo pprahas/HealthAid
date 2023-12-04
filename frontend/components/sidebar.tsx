@@ -110,7 +110,7 @@ export function Sidebar() {
   };
 
   useEffect(() => {
-    setConvo(convoList[convoList.length - 1]);
+    setConvo(convoList[0]);
   }, [convoList]);
 
   const createNewConvo = async () => {

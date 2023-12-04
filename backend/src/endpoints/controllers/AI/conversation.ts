@@ -1,6 +1,11 @@
 import { Request, Response } from "express";
 import { createConversation as createConvo } from "@database/conversation/Set/createConversation";
-import { sendMessage as sendMessageToGpt } from "@database/conversation/Set/sendMessage";
+import {
+  sendMessage as sendMessageToGpt,
+  sendMessageDoc as sendMessageDoctor,
+  markAsSeen as markMessageSeen,
+  sendMessagePat as sendMessagePatient
+} from "@database/conversation/Set/sendMessage";
 import { getConversations as getConvo } from "@database/conversation/Get/getConversations";
 import { Message } from "@models/Message";
 
@@ -28,6 +33,48 @@ export async function sendMessage(req: Request, res: Response) {
     }
     let gptResponse = await sendMessageToGpt(patientId, conversationId, message)
     return res.status(200).send(gptResponse)
+  } catch (error) {
+    return res.status(400).send(error);
+  }
+}
+
+export async function sendMessageDoc(req: Request, res: Response) {
+  try {
+    let doctorId = req.body.doctorId
+    let conversationId = req.body.conversationId
+    let newMessage = req.body.newMessage
+    let message: Message = {
+      senderType: "doctor",
+      content: newMessage
+    }
+    let gptResponse = await sendMessageDoctor(doctorId, conversationId, message)
+    return res.status(200).send(gptResponse)
+  } catch (error) {
+    return res.status(400).send(error);
+  }
+}
+
+export async function sendMessagePat(req: Request, res: Response) {
+  try {
+    let doctorId = req.body.patietId
+    let conversationId = req.body.conversationId
+    let newMessage = req.body.newMessage
+    let message: Message = {
+      senderType: "me",
+      content: newMessage
+    }
+    let gptResponse = await sendMessagePatient(doctorId, conversationId, message)
+    return res.status(200).send(gptResponse)
+  } catch (error) {
+    return res.status(400).send(error);
+  }
+}
+
+export async function markAsSeen(req: Request, res: Response) {
+  try {
+    let messageId = req.body.messageId
+    await markMessageSeen(messageId)
+    return res.status(200).send()
   } catch (error) {
     return res.status(400).send(error);
   }
