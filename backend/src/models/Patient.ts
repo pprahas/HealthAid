@@ -2,6 +2,7 @@ import { Schema, model } from "mongoose";
 import { Doctor } from "./Doctor";
 import { Appointment } from "./Appointment";
 import { HealthInformation } from "./HealthInformation";
+import { Prescription } from "./Prescription";
 
 // Local Model
 export type Patient = {
@@ -22,6 +23,7 @@ export type Patient = {
   doctors?: [Doctor];
   appointments?: [Appointment];
   healthInfo?: [HealthInformation];
+  prescriptions?: [Prescription];
 };
 
 export const patientSchema = new Schema(
@@ -86,6 +88,9 @@ export const patientSchema = new Schema(
     },
     remindersValue: {
       type: String,
+    },
+    prescriptions: {
+      type: [{ type: Schema.ObjectId, ref: "Prescription" }],
     },
   },
   { timestamps: true }

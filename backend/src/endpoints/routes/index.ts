@@ -17,6 +17,7 @@ import appointmentRoutes from "./appointment/appointment";
 import createRequest from "./doctorRequest/createRequest";
 import reviewRequest from "./doctorRequest/reviewRequest";
 import getRequest from "./doctorRequest/getRequest";
+import prescriptionRoutes from "./prescription/prescription";
 
 export default class Routes {
   constructor(app: Application) {
@@ -34,6 +35,7 @@ export default class Routes {
     app.use("/getClinic", getClinic);
     app.use("/updateDiagnosis", diagnosisRoutes);
     app.use("/appointment", appointmentRoutes);
+    app.use("/prescription", prescriptionRoutes);
     app.use("/createRequest", createRequest);
     app.use("/reviewRequest", reviewRequest);
     app.use("/getRequest", getRequest);
