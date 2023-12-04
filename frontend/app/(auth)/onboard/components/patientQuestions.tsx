@@ -109,6 +109,8 @@ const PatientQuestions = () => {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [insurance, setInsurance] = useState("");
+  const [reminders, setReminders] = useState("Email");
+  const [remindersValue, setRemindersValue] = useState("");
   const [error, setError] = useState("");
 
   const handleInputChange = (question: string, value: string): void => {
@@ -133,6 +135,8 @@ const PatientQuestions = () => {
 
         let record: Record<string, string> = {};
         record["insurance"] = insurance;
+        record["reminders"] = reminders;
+        record["remindersValue"] = remindersValue;
 
         const response = await axios.post(
           "http://localhost:8080/updatePatient",
@@ -147,9 +151,9 @@ const PatientQuestions = () => {
 
         //window.location.href = "/home";
         if (currUserObject.email === "admin@healthaid.com") {
-          router.push('/adminHome')
+          router.push("/adminHome");
         } else {
-          router.push('/home')
+          router.push("/home");
         }
       } catch (error) {
         const axiosError = error as AxiosError;
@@ -236,7 +240,29 @@ const PatientQuestions = () => {
             <option value="GuideWell">GuideWell</option>
           </select>
         </div>
+        <div className="mb-4 w-1/2 px-5">
+          <label className="block text-gray-700">Reminders</label>
 
+          <select
+            className="p-4 shadow-sm rounded-xl bg-gray-100 hover:bg-gray-200 transition duration-200"
+            value={reminders}
+            // onChange={(e) => handleInputChange("Insurance", e.target.value)}
+            onChange={(e) => setReminders(e.target.value)}
+          >
+            <option value="Email">Email</option>
+            <option value="Phone">Phone</option>
+          </select>
+          <label className="block text-gray-700">Value</label>
+
+          <input
+            type="text"
+            className="p-4 shadow-sm rounded-xl bg-gray-100 hover:bg-gray-200 transition duration-200"
+            placeholder="Value"
+            value={remindersValue}
+            onChange={(e) => setRemindersValue(e.target.value)}
+            // onChange={e.target.value}
+          />
+        </div>
         {/* {questions.map((question, index) => (
           <div key={index} className="mb-4 w-1/2 px-5">
             <label className="block text-gray-700">{question.question}</label>
