@@ -28,6 +28,17 @@ import { Spinner } from "@nextui-org/spinner";
 import { after } from "node:test";
 import { UnreadIcon } from "@/components/unreadIcon";
 
+interface EventProps {
+  _id?: string;
+  start?: Date;
+  end?: Date;
+  title?: string;
+  doctorName?: string;
+  patientName?: string;
+  doctorId?: string;
+  patientId?: string;
+}
+
 export default function PatientHome() {
   const [sidebarIndex, setSidebarIndex] = useContext(SidebarContext) as any[];
   const [patient, setPatient] = useContext(PatientContext) as [
@@ -60,6 +71,10 @@ export default function PatientHome() {
   const [apptTitle, setApptTitle] = useState("");
   const [apptDate, setApptDate] = useState(new Date());
   const [allDoctors, setAllDoctors] = useState([] as Doctor[]);
+  const [doctorEvents, setDoctorEvents] = useState<[EventProps]>([{}]);
+  const [patientEvents, setPatientEvents] = useState<[EventProps]>([{}]);
+  const [apptError, setApptError] = useState("");
+  const [saveApptEnabled, setSaveApptEnabled] = useState(false);
 
   const getDoctorInfo = async () => {
     if (sidebarIndex == 0) {
@@ -320,9 +335,11 @@ export default function PatientHome() {
       const data = await sendMessageResponse.data;
 
       let newGPTMessage: Message = {
+        id: "",
         senderType: data.senderType,
         content: data.content,
         date: new Date(),
+        seen: false,
       };
       await handleConvoUpdate(data.content);
       let currentConvo = convo;
@@ -367,7 +384,91 @@ export default function PatientHome() {
     if (doctor._id != "gpt") {
       getClinicInformation(doctor.clinic);
     }
+    getDoctorAppts();
+    getPatientAppts();
   }, [doctor]);
+
+  const getDoctorAppts = async () => {
+    if (doctor._id) {
+      try {
+        const requestBody = {
+          id: doctor._id,
+        };
+
+        const response = await fetch("http://localhost:8080/appointment/get", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestBody),
+          mode: "cors",
+        });
+
+        if (response.ok) {
+          let appointmentsData = await response.json();
+          let newEvents: [EventProps] = [{}];
+          appointmentsData.forEach((appointmentData: any) => {
+            let startTime = new Date(appointmentData.time);
+            let endTime = new Date(startTime.getTime() + 60 * 60 * 1000);
+            newEvents.push({
+              _id: appointmentData._id,
+              start: startTime,
+              end: endTime,
+              title: appointmentData.title,
+              patientName: appointmentData.patientName,
+              doctorName: appointmentData.doctorName,
+              doctorId: appointmentData.doctorId,
+              patientId: appointmentData.patientId,
+            });
+          });
+          console.log(newEvents);
+          setDoctorEvents(newEvents);
+        } else {
+        }
+      } catch (error) {}
+    }
+  };
+
+  const getPatientAppts = async () => {
+    if (patient._id) {
+      try {
+        const requestBody = {
+          id: patient._id,
+        };
+
+        const response = await fetch("http://localhost:8080/appointment/get", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestBody),
+          mode: "cors",
+        });
+
+        if (response.ok) {
+          let appointmentsData = await response.json();
+          let newEvents: [EventProps] = [{}];
+          appointmentsData.forEach((appointmentData: any) => {
+            let startTime = new Date(appointmentData.time);
+            let endTime = new Date(startTime.getTime() + 60 * 60 * 1000);
+            newEvents.push({
+              _id: appointmentData._id,
+              start: startTime,
+              end: endTime,
+              title: appointmentData.title,
+              patientName: appointmentData.patientName,
+              doctorName: appointmentData.doctorName,
+              doctorId: appointmentData.doctorId,
+              patientId: appointmentData.patientId,
+            });
+          });
+          console.log(newEvents);
+          setPatientEvents(newEvents);
+        } else {
+        }
+      } catch (error) {}
+    }
+  };
 
   useEffect(() => {
     setConvo(DefaultConversation);
@@ -376,10 +477,64 @@ export default function PatientHome() {
 
   const handleInputChange = (field: string, value: string | Date) => {
     if (field == "title" && typeof value == "string") {
+      setSaveApptEnabled(value != "");
       setApptTitle(value);
     }
     if (field == "start" && value instanceof Date) {
-      setApptDate(value);
+      let newValueEnd = new Date(value);
+      newValueEnd.setHours(newValueEnd.getHours() + 1);
+
+      // Find all overlapping events
+      let patientOverlappingEvents = patientEvents.filter((event) => {
+        if (event && event.start && event.end) {
+          let eventStart = new Date(event.start);
+          let eventEnd = new Date(event.end);
+          let startsDuringAnotherEvent =
+            eventStart <= value && eventEnd > value;
+          let endsDuringAnotherEvent =
+            eventStart < newValueEnd && eventEnd >= newValueEnd;
+          let overlapsAnotherEvent =
+            eventStart >= value && eventEnd <= newValueEnd;
+
+          return (
+            startsDuringAnotherEvent ||
+            endsDuringAnotherEvent ||
+            overlapsAnotherEvent
+          );
+        }
+        return false;
+      });
+
+      let doctorOverlappingEvents = doctorEvents.filter((event) => {
+        if (event && event.start && event.end) {
+          let eventStart = new Date(event.start);
+          let eventEnd = new Date(event.end);
+          let startsDuringAnotherEvent =
+            eventStart <= value && eventEnd > value;
+          let endsDuringAnotherEvent =
+            eventStart < newValueEnd && eventEnd >= newValueEnd;
+          let overlapsAnotherEvent =
+            eventStart >= value && eventEnd <= newValueEnd;
+
+          return (
+            startsDuringAnotherEvent ||
+            endsDuringAnotherEvent ||
+            overlapsAnotherEvent
+          );
+        }
+        return false;
+      });
+
+      if (patientOverlappingEvents.length > 0) {
+        setApptError("You already have an appointment during this time");
+        setApptDate(value);
+        setSaveApptEnabled(false);
+      } else if (doctorOverlappingEvents.length > 0) {
+      } else {
+        setApptError("The patient is not avaiable during this time");
+        setApptDate(value);
+        setSaveApptEnabled(apptTitle != "");
+      }
     }
   };
 
@@ -503,12 +658,15 @@ export default function PatientHome() {
                       }
                     />
                   </div>
+                  {apptError != "" && (
+                    <div className="text-red-600">{apptError}</div>
+                  )}
                   <div className="w-full">
                     <Button
                       size="lg"
                       color="success"
                       className="text-xl shadow-md"
-                      isDisabled={apptTitle == ""}
+                      isDisabled={!saveApptEnabled}
                       onClick={(e) => {
                         if (creatingAppointment) {
                           createAppointment(
