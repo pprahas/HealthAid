@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { createPrescription } from "@endpoints/controllers/prescription/createPrescription";
+import { getPrescription } from "@endpoints/controllers/prescription/getPrescription";
 
 class PrescriptionRoutes {
   router = Router();
@@ -10,6 +11,7 @@ class PrescriptionRoutes {
 
   initializeRoutes() {
     this.router.post("/create", createPrescription);
+    this.router.post("/get", getPrescription);
   }
 }
 
