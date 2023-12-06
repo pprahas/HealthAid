@@ -35,9 +35,11 @@ export async function createPrescription(
     });
 
     patientAccount.prescriptions.push(newPrescription._id);
+    doctorAccount.prescriptions.push(newPrescription._id);
 
     await newPrescription.save();
     await patientAccount.save();
+    await doctorAccount.save();
   } catch (error) {
     throw error;
   }
