@@ -82,15 +82,13 @@ export default function DoctorHome() {
   const [doctorEvents, setDoctorEvents] = useState<[EventProps]>([{}]);
   const [apptError, setApptError] = useState("");
   const [saveApptEnabled, setSaveApptEnabled] = useState(false);
-  const [writingPerscription, setWritingPerscription] = useState(false);
-  const [perscriptionName, setPerscriptionName] = useState("");
-  const [perscriptionSchedule, setPerscriptionSchedule] = useState("");
-  const [perscriptionRefills, setPerscriptionRefills] = useState(0);
-  const [patientPerscriptions, setPatientPerscriptions] = useState<
-    [Prescription]
-  >([{}]);
+  const [writingPrescription, setWritingPrescription] = useState(false);
+  const [prescriptionName, setPrescriptionName] = useState("");
+  const [prescriptionSchedule, setPrescriptionSchedule] = useState("");
+  const [prescriptionRefills, setPrescriptionRefills] = useState(0);
+  const [prescriptions, setPrescriptions] = useState<[Prescription]>([{}]);
 
-  const allPerscriptionSchedules: [string] = [
+  const allPrescriptionSchedules: [string] = [
     "Twice a day",
     "Daily",
     "Weekly",
@@ -99,6 +97,25 @@ export default function DoctorHome() {
   ];
 
   useEffect(() => {}, []);
+
+  const getPrescriptions = async (doctorId: string) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/prescription/get",
+        {
+          doctorId: doctor._id,
+        }
+      );
+      const data = await response.data;
+      setPrescriptions(data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  useEffect(() => {
+    getPrescriptions(doctor._id);
+  }, [doctor]);
 
   const getConversations = async (patientId: string) => {
     try {
@@ -168,11 +185,11 @@ export default function DoctorHome() {
 
   const handleInputChange = (field: string, value: string | Date | Number) => {
     console.log(`${field}: ${value}`);
-    if (field == "perscriptionName" && typeof value == "string") {
-      setPerscriptionName(value);
+    if (field == "prescriptionName" && typeof value == "string") {
+      setPrescriptionName(value);
     }
-    if (field == "perscriptionRefills" && typeof value == "number") {
-      setPerscriptionRefills(value);
+    if (field == "prescriptionRefills" && typeof value == "number") {
+      setPrescriptionRefills(value);
     }
     if (field == "title" && typeof value == "string") {
       setSaveApptEnabled(value != "");
@@ -346,7 +363,7 @@ export default function DoctorHome() {
     }
   }
 
-  async function createPerscription(
+  async function createPrescription(
     doctorId: string,
     patientId: string,
     name: string,
@@ -355,7 +372,7 @@ export default function DoctorHome() {
   ) {
     try {
       const response = await axios.post(
-        "http://localhost:8080/perscription/create",
+        "http://localhost:8080/prescription/create",
         {
           patientId: patientId,
           doctorId: doctorId,
@@ -365,14 +382,23 @@ export default function DoctorHome() {
           remainingRefills: remainingRefills,
         }
       );
-      let newPerscription: Perscription = new Perscription();
-      var currPerscriptions = [...patientPerscriptions];
-      currPerscriptions.push(newPerscription);
+      let newPrescription: Prescription = {
+        patientId: patientId,
+        doctorId: doctorId,
+        date: new Date(),
+        reminderCycle: cycle,
+        name: name,
+        remainingRefills: remainingRefills,
+      };
+
+      var currPrescriptions: [Prescription] = [...prescriptions];
+      currPrescriptions.push(newPrescription);
+      setPrescriptions(currPrescriptions);
     } catch (error) {
     } finally {
-      setPerscriptionName("");
-      setPerscriptionRefills(0);
-      setPerscriptionSchedule("");
+      setPrescriptionName("");
+      setPrescriptionRefills(0);
+      setPrescriptionSchedule("");
     }
   }
 
@@ -425,7 +451,7 @@ export default function DoctorHome() {
                 className="text-xl shadow-md"
                 isDisabled={creatingAppointment}
                 onClick={(e) => {
-                  setWritingPerscription(false);
+                  setWritingPrescription(false);
                   setCreatingAppointment(true);
                 }}
               >
@@ -440,10 +466,10 @@ export default function DoctorHome() {
                 isDisabled={creatingAppointment}
                 onClick={(e) => {
                   setCreatingAppointment(false);
-                  setWritingPerscription(true);
+                  setWritingPrescription(true);
                 }}
               >
-                Write Perscription
+                Write Prescription
               </Button>
             </p>
           </div>
@@ -495,16 +521,16 @@ export default function DoctorHome() {
               </div>
             </div>
           )}
-          {writingPerscription && (
+          {writingPrescription && (
             <div className="flex flex-col w-[100vw] space-y-[1vw] overflow-visible text-[1vw]">
               <div className="flex space-x-2">
                 <div>{"Name: "}</div>
                 <input
                   className="bg-white border-b-[0.1vw] border-black"
                   type="text"
-                  value={perscriptionName}
+                  value={prescriptionName}
                   onChange={(e) =>
-                    handleInputChange("perscriptionName", e.target.value)
+                    handleInputChange("prescriptionName", e.target.value)
                   }
                 />
               </div>
@@ -513,11 +539,11 @@ export default function DoctorHome() {
                 <input
                   className="bg-white border-b-[0.1vw] border-black"
                   type="number"
-                  value={perscriptionRefills}
+                  value={prescriptionRefills}
                   onChange={(e) => {
                     console.log(e.target.value);
                     handleInputChange(
-                      "perscriptionRefills",
+                      "prescriptionRefills",
                       Number(e.target.value)
                     );
                   }}
@@ -538,7 +564,7 @@ export default function DoctorHome() {
                         variant="flat"
                         className="ml-2 text-md"
                       >
-                        {perscriptionSchedule || "Select Schedule"}
+                        {prescriptionSchedule || "Select Schedule"}
                       </Button>
                     </DropdownTrigger>
                     <DropdownMenu
@@ -548,10 +574,10 @@ export default function DoctorHome() {
                       disallowEmptySelection
                       selectionMode="single"
                       onAction={(key) => {
-                        setPerscriptionSchedule(key);
+                        setPrescriptionSchedule(key);
                       }}
                     >
-                      {allPerscriptionSchedules.map((schedule) => (
+                      {allPrescriptionSchedules.map((schedule) => (
                         <DropdownItem key={schedule}>{schedule}</DropdownItem>
                       ))}
                     </DropdownMenu>
@@ -567,23 +593,24 @@ export default function DoctorHome() {
                   color="success"
                   className="text-xl shadow-md"
                   isDisabled={
-                    perscriptionName == "" ||
-                    perscriptionRefills == 0 ||
-                    perscriptionSchedule == ""
+                    prescriptionName == "" ||
+                    prescriptionRefills == 0 ||
+                    prescriptionSchedule == ""
                   }
                   onClick={(e) => {
-                    if (creatingAppointment) {
-                      createAppointment(
+                    if (writingPrescription) {
+                      createPrescription(
                         doctor._id,
                         patientList[sidebarIndex]?._id,
-                        apptDate,
-                        apptTitle
+                        prescriptionName,
+                        prescriptionRefills,
+                        prescriptionSchedule
                       );
                     }
-                    setCreatingAppointment(false);
+                    setWritingPrescription(false);
                   }}
                 >
-                  Send Perscription
+                  Send Prescription
                 </Button>
               </div>
             </div>
