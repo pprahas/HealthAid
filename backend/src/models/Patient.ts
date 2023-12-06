@@ -20,6 +20,7 @@ export type Patient = {
   height?: Number;
   bio?: string;
   insurance?: string;
+  deliveryOption?: string;
   doctors?: [Doctor];
   appointments?: [Appointment];
   healthInfo?: [HealthInformation];
@@ -67,6 +68,9 @@ export const patientSchema = new Schema(
       type: String,
     },
     insurance: {
+      type: String,
+    },
+    deliveryOption: {
       type: String,
     },
     doctors: {

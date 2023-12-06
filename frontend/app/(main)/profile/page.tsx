@@ -39,6 +39,7 @@ export default function ProfilePage() {
   const [weight, setWeight] = useState("");
   const [bio, setBio] = useState("");
   const [insurance, setInsurance] = useState("");
+  const [deliveryOption, setDeliveryOption] = useState("");
 
   const [personalInfoLoaded, setIsLoaded] = useState(false);
   const [healthInfoLoaded, setHealthInfoLoaded] = useState(false);
@@ -83,6 +84,7 @@ export default function ProfilePage() {
     record["weight"] = weight;
     record["bio"] = bio;
     record["insurance"] = insurance;
+    record["deliveryOption"] = deliveryOption;
 
     try {
       const response = await axios.post("http://localhost:8080/updatePatient", {
@@ -195,6 +197,7 @@ export default function ProfilePage() {
     setWeight((patient.weight as unknown as string) || "");
     setBio((patient.bio as unknown as string) || "");
     setInsurance((patient.insurance as unknown as string) || "");
+    setDeliveryOption((patient.deliveryOption as unknown as string) || "");
     setIsLoaded(true);
     setActiveAccount(patient.activeAccount)
   }, [patient]);
@@ -295,6 +298,18 @@ export default function ProfilePage() {
                 />
               </Skeleton>
             </div>
+            <div>How would you like to receive prescriptions?</div>
+            <div className="col-span-2">
+              <select
+                className="p-4 shadow-sm rounded-xl bg-gray-100 hover:bg-gray-200 transition duration-200"
+                value={deliveryOption}
+                onChange={(e) => setDeliveryOption(e.target.value)}
+              >
+                <option value="Delivery">Delivery</option>
+                <option value="Pick Up">Pick up</option>
+              </select>
+            </div>
+            
           </div>
 
           <div className="flex pt-10 space-x-8">

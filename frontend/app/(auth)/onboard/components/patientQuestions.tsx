@@ -111,6 +111,7 @@ const PatientQuestions = () => {
   const [insurance, setInsurance] = useState("");
   const [reminders, setReminders] = useState("Email");
   const [remindersValue, setRemindersValue] = useState("");
+  const [deliveryOption, setDeliveryOption] = useState("");
   const [error, setError] = useState("");
 
   const handleInputChange = (question: string, value: string): void => {
@@ -137,6 +138,7 @@ const PatientQuestions = () => {
         record["insurance"] = insurance;
         record["reminders"] = reminders;
         record["remindersValue"] = remindersValue;
+        record["deliveryOption"] = deliveryOption;
 
         const response = await axios.post(
           "http://localhost:8080/updatePatient",
@@ -263,6 +265,17 @@ const PatientQuestions = () => {
             // onChange={e.target.value}
           />
         </div>
+        <div className="mb-4 w-1/2 px-5">
+          <label className="block text-gray-700">How would you like to receive prescriptions?</label>
+          <select
+            className="p-4 shadow-sm rounded-xl bg-gray-100 hover:bg-gray-200 transition duration-200"
+            value={deliveryOption}
+            onChange={(e) => setDeliveryOption(e.target.value)}
+          >
+            <option value="Delivery">Delivery</option>
+            <option value="Pick Up">Pick up</option>
+          </select>
+        </div>
         {/* {questions.map((question, index) => (
           <div key={index} className="mb-4 w-1/2 px-5">
             <label className="block text-gray-700">{question.question}</label>
@@ -294,8 +307,10 @@ const PatientQuestions = () => {
             )}
           </div>
         ))} */}
+      </form>
+      <div className="flex justify-center">
 
-        <div className="pt-[3vh]">
+      <div className="pt-[3vh] w-1/5 flex items-center justify-center">
           <Button
             isLoading={loading}
             type="submit"
@@ -306,7 +321,7 @@ const PatientQuestions = () => {
             Finished!
           </Button>
         </div>
-      </form>
+      </div>
     </div>
   );
 };
