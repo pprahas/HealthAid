@@ -13,11 +13,22 @@ import {
   SidebarContext,
 } from "@/app/doctor/layout";
 import { SetStateAction, useContext, useState } from "react";
-import { DefaultConversation, Patient, PatientDefault } from "@/types";
+import {
+  DefaultConversation,
+  Patient,
+  PatientDefault,
+  Prescription,
+} from "@/types";
 import { Doctor, DoctorDefault, Conversation, Message } from "@/types";
 import { RightArrow } from "@/components/rightArrow";
 import { ChatContainerDoctor } from "@/components/chatContainerDoctor";
 import { UnreadIcon } from "@/components/unreadIcon";
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@nextui-org/react";
 
 interface EventProps {
   _id?: string;
@@ -71,6 +82,21 @@ export default function DoctorHome() {
   const [doctorEvents, setDoctorEvents] = useState<[EventProps]>([{}]);
   const [apptError, setApptError] = useState("");
   const [saveApptEnabled, setSaveApptEnabled] = useState(false);
+  const [writingPerscription, setWritingPerscription] = useState(false);
+  const [perscriptionName, setPerscriptionName] = useState("");
+  const [perscriptionSchedule, setPerscriptionSchedule] = useState("");
+  const [perscriptionRefills, setPerscriptionRefills] = useState(0);
+  const [patientPerscriptions, setPatientPerscriptions] = useState<
+    [Prescription]
+  >([{}]);
+
+  const allPerscriptionSchedules: [string] = [
+    "Twice a day",
+    "Daily",
+    "Weekly",
+    "Bi-Weekly",
+    "Monthly",
+  ];
 
   useEffect(() => {}, []);
 
@@ -140,7 +166,14 @@ export default function DoctorHome() {
     setCurrentConvo(conversation);
   };
 
-  const handleInputChange = (field: string, value: string | Date) => {
+  const handleInputChange = (field: string, value: string | Date | Number) => {
+    console.log(`${field}: ${value}`);
+    if (field == "perscriptionName" && typeof value == "string") {
+      setPerscriptionName(value);
+    }
+    if (field == "perscriptionRefills" && typeof value == "number") {
+      setPerscriptionRefills(value);
+    }
     if (field == "title" && typeof value == "string") {
       setSaveApptEnabled(value != "");
       setApptTitle(value);
@@ -313,6 +346,36 @@ export default function DoctorHome() {
     }
   }
 
+  async function createPerscription(
+    doctorId: string,
+    patientId: string,
+    name: string,
+    remainingRefills: number,
+    cycle: string
+  ) {
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/perscription/create",
+        {
+          patientId: patientId,
+          doctorId: doctorId,
+          date: new Date(),
+          reminderCycle: cycle,
+          name: name,
+          remainingRefills: remainingRefills,
+        }
+      );
+      let newPerscription: Perscription = new Perscription();
+      var currPerscriptions = [...patientPerscriptions];
+      currPerscriptions.push(newPerscription);
+    } catch (error) {
+    } finally {
+      setPerscriptionName("");
+      setPerscriptionRefills(0);
+      setPerscriptionSchedule("");
+    }
+  }
+
   function toLocalISOString(date: Date) {
     try {
       const off = date.getTimezoneOffset();
@@ -354,7 +417,7 @@ export default function DoctorHome() {
           </h1>
         )}
         <div className={`grid grid-cols-1 gap-y-3 text-2xl`}>
-          <div className="flex flex-col items-start">
+          <div className="flex space-x-5 items-start">
             <p className="my-3">
               <Button
                 size="lg"
@@ -362,10 +425,25 @@ export default function DoctorHome() {
                 className="text-xl shadow-md"
                 isDisabled={creatingAppointment}
                 onClick={(e) => {
+                  setWritingPerscription(false);
                   setCreatingAppointment(true);
                 }}
               >
                 Schedule Appointment
+              </Button>
+            </p>
+            <p className="my-3">
+              <Button
+                size="lg"
+                color="success"
+                className="text-xl shadow-md"
+                isDisabled={creatingAppointment}
+                onClick={(e) => {
+                  setCreatingAppointment(false);
+                  setWritingPerscription(true);
+                }}
+              >
+                Write Perscription
               </Button>
             </p>
           </div>
@@ -413,6 +491,99 @@ export default function DoctorHome() {
                   }}
                 >
                   Save Appointment
+                </Button>
+              </div>
+            </div>
+          )}
+          {writingPerscription && (
+            <div className="flex flex-col w-[100vw] space-y-[1vw] overflow-visible text-[1vw]">
+              <div className="flex space-x-2">
+                <div>{"Name: "}</div>
+                <input
+                  className="bg-white border-b-[0.1vw] border-black"
+                  type="text"
+                  value={perscriptionName}
+                  onChange={(e) =>
+                    handleInputChange("perscriptionName", e.target.value)
+                  }
+                />
+              </div>
+              <div className="flex space-x-2">
+                <div>{"# of refills: "}</div>
+                <input
+                  className="bg-white border-b-[0.1vw] border-black"
+                  type="number"
+                  value={perscriptionRefills}
+                  onChange={(e) => {
+                    console.log(e.target.value);
+                    handleInputChange(
+                      "perscriptionRefills",
+                      Number(e.target.value)
+                    );
+                  }}
+                />
+              </div>
+              <div className="flex space-x-2">
+                <div>
+                  Schedule:
+                  <Dropdown
+                    classNames={{
+                      base: "bg-white",
+                    }}
+                  >
+                    <DropdownTrigger>
+                      <Button
+                        radius="lg"
+                        color="primary"
+                        variant="flat"
+                        className="ml-2 text-md"
+                      >
+                        {perscriptionSchedule || "Select Schedule"}
+                      </Button>
+                    </DropdownTrigger>
+                    <DropdownMenu
+                      aria-label="Prescription Schedule"
+                      variant="light"
+                      color="primary"
+                      disallowEmptySelection
+                      selectionMode="single"
+                      onAction={(key) => {
+                        setPerscriptionSchedule(key);
+                      }}
+                    >
+                      {allPerscriptionSchedules.map((schedule) => (
+                        <DropdownItem key={schedule}>{schedule}</DropdownItem>
+                      ))}
+                    </DropdownMenu>
+                  </Dropdown>
+                </div>
+              </div>
+              {apptError != "" && (
+                <div className="text-red-600">{apptError}</div>
+              )}
+              <div className="w-full">
+                <Button
+                  size="lg"
+                  color="success"
+                  className="text-xl shadow-md"
+                  isDisabled={
+                    perscriptionName == "" ||
+                    perscriptionRefills == 0 ||
+                    perscriptionSchedule == ""
+                  }
+                  onClick={(e) => {
+                    if (creatingAppointment) {
+                      createAppointment(
+                        doctor._id,
+                        patientList[sidebarIndex]?._id,
+                        apptDate,
+                        apptTitle
+                      );
+                    }
+                    setCreatingAppointment(false);
+                  }}
+                >
+                  Send Perscription
                 </Button>
               </div>
             </div>

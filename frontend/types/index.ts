@@ -137,8 +137,11 @@ export interface Diagnosis {
 
 // Prescription
 export interface Prescription {
-  date: Date;
-  nam: string;
-  expirationDate: Date;
-  remainingRefills?: Number;
+  patientId?: string,
+  doctorId?: string,
+  date?: Date,
+  reminderCycle?: string,
+  name?: string,
+  remainingRefills?: number,
+  requestRefills?: number,
 }
