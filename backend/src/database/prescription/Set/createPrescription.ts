@@ -12,7 +12,7 @@ export async function createPrescription(
   date,
   reminderCycle,
   name,
-  remainingRefills,
+  remainingRefills
 ) {
   try {
     const patientAccount = await PatientDTO.findById(patientId);
