@@ -35,6 +35,10 @@ const prescriptionSchema = new Schema(
       type: Number,
       required: false,
     },
+    requestedRefills: {
+      type: Number,
+      required: false,
+    },
   },
   { timestamps: true }
 );
