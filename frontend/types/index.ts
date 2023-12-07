@@ -74,6 +74,7 @@ export interface Doctor extends User {
   birthday?: Date;
   clinic?: string;
   appointments?: [Appointment];
+  prescriptions?: [Prescription]
   patients: string[];
   bio?: string;
 }
@@ -138,11 +139,12 @@ export interface Diagnosis {
 
 // Prescription
 export interface Prescription {
-  patientId?: string,
-  doctorId?: string,
-  date?: Date,
-  reminderCycle?: string,
-  name?: string,
-  remainingRefills?: number,
-  requestRefills?: number,
+  _id: string,
+  patientId: string,
+  doctorId: string,
+  date: Date,
+  reminderCycle: string,
+  name: string,
+  remainingRefills: number,
+  requestedRefills: number,
 }
