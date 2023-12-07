@@ -27,6 +27,7 @@ import { Message } from "@/types";
 import { Spinner } from "@nextui-org/spinner";
 import { after } from "node:test";
 import { UnreadIcon } from "@/components/unreadIcon";
+import { TypingIndicator } from "@/components/typingIndicator";
 
 interface EventProps {
   _id?: string;
@@ -75,6 +76,7 @@ export default function PatientHome() {
   const [patientEvents, setPatientEvents] = useState<[EventProps]>([{}]);
   const [apptError, setApptError] = useState("");
   const [saveApptEnabled, setSaveApptEnabled] = useState(false);
+  const [typing, setTyping] = useState(false);
 
   const getDoctorInfo = async () => {
     if (sidebarIndex == 0) {
@@ -281,6 +283,7 @@ export default function PatientHome() {
   }
 
   const sendMessage = async (message: string) => {
+    console.log(convo.diagnosis);
     if (
       convo.diagnosis == "approved" ||
       convo.diagnosis == "denied" ||
@@ -321,6 +324,7 @@ export default function PatientHome() {
     let currentConvo = convo;
     currentConvo.messages.push(newMessage);
     setConvo(currentConvo);
+    setTyping(true);
 
     // Make api call
     try {
@@ -348,6 +352,8 @@ export default function PatientHome() {
     } catch (error) {
       console.error("Error:", error);
       setError(true);
+    } finally {
+      setTyping(false);
     }
     setLoading(false);
   };
@@ -725,9 +731,11 @@ export default function PatientHome() {
         </div>
         <div className="flex-auto w-[60%] h-[calc(100vh-56px)] bg-slate-200 rounded-tl-3xl pt-8 pl-10 flex flex-col overflow-hidden">
           <div className="flex-grow overflow-y-auto snap-y">
-            {convo && <ChatContainer messages={convo.messages} />}
+            {convo && (
+              <ChatContainer messages={convo.messages} typing={typing} />
+            )}
           </div>
-          {
+          {convo && (
             <div className="h-min my-1 place-items-center">
               <div className="flex flex-col text-[#ff0000] font-bold">
                 {error && <div>An error occurred while sending a message</div>}
@@ -735,7 +743,12 @@ export default function PatientHome() {
                   <Textarea
                     disabled={loading}
                     maxRows={2}
-                    placeholder="Tell ChatGPT about your symptoms"
+                    placeholder={
+                      (convo && convo.diagnosis == "approved") ||
+                      convo.diagnosis == "denied"
+                        ? "Talk to your doctor"
+                        : "Tell ChatGPT about your symptoms"
+                    }
                     size="lg"
                     value={currentMessage}
                     onValueChange={(value) => {
@@ -762,7 +775,7 @@ export default function PatientHome() {
                 </div>
               </div>
             </div>
-          }
+          )}
         </div>
       </section>
     );

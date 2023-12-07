@@ -22,12 +22,14 @@ import {
   DropdownSection,
   DropdownItem,
 } from "@nextui-org/dropdown";
+import { TypingIndicator } from "./typingIndicator";
 
 interface chatProps {
   messages: Message[];
+  typing: boolean;
 }
 
-export const ChatContainer = ({ messages }: chatProps) => {
+export const ChatContainer = ({ messages, typing }: chatProps) => {
   const [convo, setConvo] = useContext(CurrentConvoContext) as [
     Conversation,
     React.Dispatch<React.SetStateAction<Conversation>>
@@ -439,6 +441,7 @@ export const ChatContainer = ({ messages }: chatProps) => {
             )}
           </div>
         ))}
+      {typing && <TypingIndicator />}
     </div>
   );
 };

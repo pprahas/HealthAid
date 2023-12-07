@@ -31,6 +31,7 @@ import {
   DropdownTrigger,
 } from "@nextui-org/react";
 import { PatientPerscriptionView } from "@/components/patientPerscriptions";
+import { TypingIndicator } from "@/components/typingIndicator";
 
 interface EventProps {
   _id?: string;
@@ -657,7 +658,7 @@ export default function DoctorHome() {
                 <Textarea
                   disabled={loading}
                   maxRows={2}
-                  placeholder="Tell ChatGPT about your symptoms"
+                  placeholder="Talk to your patient"
                   size="lg"
                   value={currentMessage}
                   onValueChange={(value) => {
