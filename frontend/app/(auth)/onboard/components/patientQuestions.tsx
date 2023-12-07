@@ -109,9 +109,9 @@ const PatientQuestions = () => {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [insurance, setInsurance] = useState("");
-  const [reminders, setReminders] = useState("Email");
-  const [remindersValue, setRemindersValue] = useState("");
-  const [deliveryOption, setDeliveryOption] = useState("");
+  const [reminders, setReminders] = useState("Yes");
+  // const [remindersValue, setRemindersValue] = useState("");
+  const [deliveryOption, setDeliveryOption] = useState("Delivery");
   const [error, setError] = useState("");
 
   const handleInputChange = (question: string, value: string): void => {
@@ -137,7 +137,7 @@ const PatientQuestions = () => {
         let record: Record<string, string> = {};
         record["insurance"] = insurance;
         record["reminders"] = reminders;
-        record["remindersValue"] = remindersValue;
+        // record["remindersValue"] = remindersValue;
         record["deliveryOption"] = deliveryOption;
 
         const response = await axios.post(
@@ -251,22 +251,23 @@ const PatientQuestions = () => {
             // onChange={(e) => handleInputChange("Insurance", e.target.value)}
             onChange={(e) => setReminders(e.target.value)}
           >
-            <option value="Email">Email</option>
-            <option value="Phone">Phone</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
           </select>
-          <label className="block text-gray-700">Value</label>
+          {/* <label className="block text-gray-700">Value</label> */}
 
-          <input
+          {/* <input
             type="text"
             className="p-4 shadow-sm rounded-xl bg-gray-100 hover:bg-gray-200 transition duration-200"
             placeholder="Value"
             value={remindersValue}
             onChange={(e) => setRemindersValue(e.target.value)}
-            // onChange={e.target.value}
-          />
+          /> */}
         </div>
         <div className="mb-4 w-1/2 px-5">
-          <label className="block text-gray-700">How would you like to receive prescriptions?</label>
+          <label className="block text-gray-700">
+            How would you like to receive prescriptions?
+          </label>
           <select
             className="p-4 shadow-sm rounded-xl bg-gray-100 hover:bg-gray-200 transition duration-200"
             value={deliveryOption}
@@ -309,8 +310,7 @@ const PatientQuestions = () => {
         ))} */}
       </form>
       <div className="flex justify-center">
-
-      <div className="pt-[3vh] w-1/5 flex items-center justify-center">
+        <div className="pt-[3vh] w-1/5 flex items-center justify-center">
           <Button
             isLoading={loading}
             type="submit"
