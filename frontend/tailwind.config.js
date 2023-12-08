@@ -21,6 +21,8 @@ module.exports = {
       "healthaid": {
         colors: {
           background: "#A1E5AB",
+          patBackground: "#A1E5AB",
+          docBackground: "#9cd7ed",
           foreground: "#000000",
           primary: {
             100: "#D6EDFF",

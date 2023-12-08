@@ -706,7 +706,7 @@ export default function PatientHome() {
                     key={index}
                     className={`${
                       convo._id == conversation._id
-                        ? "bg-background font-bold"
+                        ? "bg-patBackground font-bold"
                         : "cursor-pointer bg-slate-200 hover:bg-secondary-300 transition duration-500"
                     } text-xl shadow-md rounded-3xl p-2 pr-3 pl-5 flex items-center justify-between`}
                     onClick={() => {

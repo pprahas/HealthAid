@@ -114,7 +114,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               value={[activeTabIndex, setActiveTabIndex]}
             >
               <PatientContext.Provider value={[patient, setPatient]}>
-                <div className="healthaid font-outfit min-h-screen flex flex-col bg-background">
+                <div className="healthaid font-outfit min-h-screen flex flex-col bg-docBackground">
                   <header className="last:sticky flex top-0 h-15 items-center">
                     <aside className="w-full md:w-60 top-0 h-14 flex justify-center items-center">
                       <div
