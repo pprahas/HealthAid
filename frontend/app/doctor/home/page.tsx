@@ -5,6 +5,7 @@ import { Textarea } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
 import axios, { AxiosError } from "axios";
 import {
+  AllPrescriptionsContext,
   ConvoListContext,
   CurrentConvoContext,
   DoctorContext,
@@ -29,6 +30,8 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from "@nextui-org/react";
+import { PatientPerscriptionView } from "@/components/patientPerscriptions";
+import { TypingIndicator } from "@/components/typingIndicator";
 
 interface EventProps {
   _id?: string;
@@ -86,7 +89,6 @@ export default function DoctorHome() {
   const [prescriptionName, setPrescriptionName] = useState("");
   const [prescriptionSchedule, setPrescriptionSchedule] = useState("");
   const [prescriptionRefills, setPrescriptionRefills] = useState(0);
-  const [prescriptions, setPrescriptions] = useState<[Prescription]>([{}]);
 
   const allPrescriptionSchedules: [string] = [
     "Twice a day",
@@ -98,24 +100,30 @@ export default function DoctorHome() {
 
   useEffect(() => {}, []);
 
-  const getPrescriptions = async (doctorId: string) => {
+  const getPrescriptions = async () => {
     try {
       const response = await axios.post(
         "http://localhost:8080/prescription/get",
         {
-          doctorId: doctor._id,
+          id: doctor._id,
         }
       );
       const data = await response.data;
-      setPrescriptions(data);
+      let currDoc = doctor;
+      currDoc.prescriptions = data;
+      setDoctor(currDoc);
+      console.log("prescriptions: ", data);
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
   useEffect(() => {
-    getPrescriptions(doctor._id);
-  }, [doctor]);
+    if (doctor._id != "") {
+      console.log(`getting perscriptions for ${doctor._id}`);
+      getPrescriptions();
+    }
+  }, [doctor._id]);
 
   const getConversations = async (patientId: string) => {
     try {
@@ -382,18 +390,7 @@ export default function DoctorHome() {
           remainingRefills: remainingRefills,
         }
       );
-      let newPrescription: Prescription = {
-        patientId: patientId,
-        doctorId: doctorId,
-        date: new Date(),
-        reminderCycle: cycle,
-        name: name,
-        remainingRefills: remainingRefills,
-      };
-
-      var currPrescriptions: [Prescription] = [...prescriptions];
-      currPrescriptions.push(newPrescription);
-      setPrescriptions(currPrescriptions);
+      await getPrescriptions();
     } catch (error) {
     } finally {
       setPrescriptionName("");
@@ -616,6 +613,7 @@ export default function DoctorHome() {
             </div>
           )}
         </div>
+        <PatientPerscriptionView prescriptions={doctor.prescriptions} />
         <div className="space-y-5 pt-5">
           {currentConvo &&
             convoList?.map((conversation, index: number) => (
@@ -660,7 +658,7 @@ export default function DoctorHome() {
                 <Textarea
                   disabled={loading}
                   maxRows={2}
-                  placeholder="Tell ChatGPT about your symptoms"
+                  placeholder="Talk to your patient"
                   size="lg"
                   value={currentMessage}
                   onValueChange={(value) => {

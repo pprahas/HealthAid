@@ -43,11 +43,13 @@ export async function createPrescription(
     await patientAccount.save();
     await doctorAccount.save();
 
-    sendEmail(patientAccount,
-      name,
-      date,
-      reminderCycle,
-      remainingRefills);
+    if(patientAccount.reminders === "Yes"){
+      sendEmail(patientAccount,
+        name,
+        date,
+        reminderCycle,
+        remainingRefills);
+    }
 
   } catch (error) {
     throw error;

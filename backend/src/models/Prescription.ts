@@ -39,6 +39,10 @@ const prescriptionSchema = new Schema(
       type: Number,
       required: false,
     },
+    status: {
+      type: Number,
+      required: false,
+    },
   },
   { timestamps: true }
 );

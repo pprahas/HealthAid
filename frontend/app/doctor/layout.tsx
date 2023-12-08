@@ -12,6 +12,7 @@ import {
   DoctorDefault,
   Patient,
   PatientDefault,
+  Prescription,
   UserDefualt,
 } from "@/types";
 
@@ -90,13 +91,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
       // Checks if account is deactivated
       //
-      if(data.doctor.hasOwnProperty('activeAccount') && data.doctor.activeAccount === false && window.location.pathname !== '/doctor/profile'
+      if (
+        data.doctor.hasOwnProperty("activeAccount") &&
+        data.doctor.activeAccount === false &&
+        window.location.pathname !== "/doctor/profile"
       ) {
         window.alert("Account has not yet been approved");
         window.location.href = "/doctor/profile";
       }
-      // 
-
+      //
     } catch (error) {
       console.error("Error:", error);
     }
