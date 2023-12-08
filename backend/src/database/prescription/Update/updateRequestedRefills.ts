@@ -9,6 +9,7 @@ export async function updateRequestedRefills(prescriptionId, requestedRefills) {
     }
 
     prescription.requestedRefills = requestedRefills;
+    prescription.status = 0 // Status pending
 
     await prescription.save();
   } catch (error) {

@@ -8,9 +8,12 @@ export async function updateRequests(prescriptionId, action) {
       throw "No Prescription found";
     }
 
+    prescription.status = 1 // Status denied
+
     if (action === "Approved") {
       prescription.remainingRefills =
         prescription.remainingRefills + prescription.requestedRefills;
+      prescription.status = 2 // Status approved
     }
 
     prescription.requestedRefills = 0;
