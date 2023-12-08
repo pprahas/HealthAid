@@ -144,5 +144,6 @@ export interface Prescription {
   reminderCycle?: string,
   name?: string,
   remainingRefills?: number,
-  requestRefills?: number,
+  requestedRefills?: number,
+  status?: number
 }

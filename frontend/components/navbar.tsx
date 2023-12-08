@@ -44,6 +44,14 @@ export const Navbar = () => {
           href: "",
         },
         {
+          label: "Prescriptions",
+          href: "/prescriptions",
+        },
+        {
+          label: "|",
+          href: "",
+        },
+        {
           label: "Calendar",
           href: "/calendar",
         },
